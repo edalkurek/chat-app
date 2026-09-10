@@ -166,7 +166,6 @@
 
     html:not(.dark) #promptLibraryBtn,
     html:not(.dark) #attachFileBtn,
-    html:not(.dark) #formatCodeBtn,
     html:not(.dark) #voiceInputBtn {
       background-color: #f8fafc !important;
       border-color: #cbd5e1 !important;
@@ -175,7 +174,6 @@
 
     html:not(.dark) #promptLibraryBtn:hover,
     html:not(.dark) #attachFileBtn:hover,
-    html:not(.dark) #formatCodeBtn:hover,
     html:not(.dark) #voiceInputBtn:hover {
       background-color: #f1f5f9 !important;
       border-color: #94a3b8 !important;
@@ -991,10 +989,6 @@
             <path d="m21 21-4.3-4.3" />
           </svg>
         </div>
-        <select id="folderFilter" aria-label="Klasöre göre filtrele"
-          class="w-full bg-base border border-border rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-accent text-gray-300 transition">
-          <option value="">📁 Tüm klasörler</option>
-        </select>
       </div>
       <div id="conversationList" class="flex-1 overflow-y-auto p-2"></div>
     </aside>
@@ -1004,9 +998,9 @@
 
       <!-- Üst Bar -->
       <header
-        class="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 border-b border-border bg-panel/85 backdrop-blur-md z-10">
-        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        class="flex items-center justify-between gap-2 px-3 sm:px-5 py-2.5 border-b border-border bg-panel/85 backdrop-blur-md z-10">
+        <div class="flex flex-1 items-center gap-2 sm:gap-3 min-w-0">
+          <div class="flex flex-1 items-center gap-2 sm:gap-3 min-w-0">
             <!-- Kurumsal Logo & Durum -->
             <div
               class="relative flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#002d72] via-[#0b4d9c] to-[#00a3e0] text-white shadow-md shadow-blue-900/30">
@@ -1025,7 +1019,7 @@
                 <span class="relative inline-flex h-2.5 w-2.5 rounded-full border border-panel bg-emerald-500"></span>
               </span>
             </div>
-            <div class="hidden sm:block leading-tight">
+            <div class="hidden xl:block leading-tight">
               <div class="text-sm font-bold tracking-tight">
                 <span class="text-[#00a3e0] font-extrabold">Yapı Kredi</span>
                 <span class="text-gray-200"> Teknoloji</span>
@@ -1033,11 +1027,11 @@
             </div>
 
             <!-- Model Seçimi -->
-            <div class="flex items-center gap-1.5 ml-0.5 sm:ml-3 pl-1.5 sm:pl-3 border-l border-border">
+            <div class="flex flex-1 items-center gap-1.5 ml-0.5 sm:ml-3 pl-1.5 sm:pl-3 border-l border-border min-w-0">
               <select id="modelSelect" aria-label="Model seçimi"
-                class="max-w-[120px] xs:max-w-[145px] sm:max-w-[190px] bg-panel2 border border-border rounded-lg px-2 sm:px-2.5 py-1.5 text-xs font-medium outline-none focus:border-accent focus:ring-1 focus:ring-accent/40 text-gray-200 transition"></select>
+                class="w-full max-w-[132px] sm:max-w-[190px] bg-panel2 border border-border rounded-lg px-2 sm:px-2.5 py-1.5 text-xs font-medium outline-none focus:border-accent focus:ring-1 focus:ring-accent/40 text-gray-200 transition"></select>
               <button id="modelCompareBtn"
-                class="hidden md:inline-flex shrink-0 rounded-lg border border-border bg-panel2 px-2 py-1 text-[11px] font-medium text-gray-400 hover:border-accent hover:text-accent transition"
+                class="hidden shrink-0 rounded-lg border border-border bg-panel2 px-2 py-1 text-[11px] font-medium text-gray-400 hover:border-accent hover:text-accent transition"
                 title="Yeni model tanımla">＋ Model</button>
               <p id="modelLabel" class="hidden text-xs font-mono text-gray-500 truncate"></p>
             </div>
@@ -1046,7 +1040,7 @@
         <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
           <!-- Arama Butonu (md ve üstünde açık, altında Menüde) -->
           <button id="globalSearchBtn" title="Mesajlarda Arama Yap"
-            class="hidden md:inline-flex p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
+            class="hidden p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -1055,7 +1049,7 @@
           </button>
           <!-- Dışa Aktar Butonu (lg ve üstünde açık, altında Menüde) -->
           <button id="exportBtn" title="Sohbeti dışa aktar (Markdown / Metin / PDF)"
-            class="hidden lg:inline-flex p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
+            class="hidden p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -1075,17 +1069,18 @@
           </button>
           <!-- Yeni Sohbet Butonu (Her zaman görünür) -->
           <button id="newChatBtn" title="Yeni Sohbet Başlat"
-            class="p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-emerald-400 transition">
+            class="inline-flex items-center gap-2 px-2 sm:px-2.5 py-2 rounded-xl border border-accent/25 bg-accent/10 text-blue-300 hover:border-accent/50 hover:bg-accent/20 hover:text-white transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h6"></path>
               <line x1="19" y1="2" x2="19" y2="8"></line>
               <line x1="16" y1="5" x2="22" y2="5"></line>
             </svg>
+            <span class="hidden xl:inline text-xs font-semibold whitespace-nowrap">Yeni sohbet</span>
           </button>
           <!-- Tema Değiştir Butonu (sm ve üstünde açık, mobilde Menüde) -->
           <button id="themeToggleBtn" title="Temayı Değiştir (Aydınlık / Karanlık)"
-            class="hidden sm:inline-flex p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-yellow-400 transition">
+            class="hidden p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-yellow-400 transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="5"></circle>
@@ -1101,7 +1096,7 @@
           </button>
           <!-- Sohbeti Temizle Butonu (md ve üstünde açık, altında Menüde) -->
           <button id="clearChatBtn" title="Mevcut Sohbeti Temizle"
-            class="hidden md:inline-flex p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-red-400 transition">
+            class="hidden p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-red-400 transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 6 5 6 21 6"></polyline>
@@ -1112,7 +1107,7 @@
           </button>
           <!-- API Ayarları Butonu (Her zaman görünür) -->
           <button id="toggleSettingsBtn" title="API Ayarları"
-            class="p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
+            class="hidden p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
@@ -1122,9 +1117,9 @@
             </svg>
           </button>
 
-          <!-- Responsive Diğer İşlemler Menüsü (lg ve altında görünür) -->
-          <div class="relative lg:hidden">
-            <button id="moreActionsBtn" title="Diğer İşlemler" aria-label="Diğer İşlemler"
+          <!-- İkincil işlemler menüsü -->
+          <div class="relative">
+            <button id="moreActionsBtn" title="Diğer İşlemler" aria-label="Diğer İşlemler" aria-haspopup="menu" aria-expanded="false"
               class="p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1134,10 +1129,10 @@
               </svg>
             </button>
             <div id="moreActionsDropdown"
-              class="hidden absolute right-0 top-full mt-2 w-52 rounded-2xl border border-border bg-panel/95 backdrop-blur-xl shadow-2xl p-1.5 z-50 text-xs animate-fadeIn">
-              <!-- Arama (md altında gösterilir) -->
+              class="hidden absolute right-0 top-full mt-2 w-56 rounded-2xl border border-border bg-panel/95 backdrop-blur-xl shadow-2xl p-1.5 z-50 text-xs animate-fadeIn">
+              <!-- Arama -->
               <button id="moreSearchBtn" type="button"
-                class="md:hidden flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
+                class="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" class="text-blue-400 shrink-0">
                   <circle cx="11" cy="11" r="8"></circle>
@@ -1145,7 +1140,7 @@
                 </svg>
                 <span>Mesajlarda Ara</span>
               </button>
-              <!-- Dışa Aktar (lg altında gösterilir) -->
+              <!-- Dışa Aktar -->
               <button id="moreExportBtn" type="button"
                 class="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -1156,22 +1151,32 @@
                 </svg>
                 <span>Sohbeti Dışa Aktar</span>
               </button>
-              <!-- Model Ekle (md altında gösterilir) -->
+              <div class="h-px bg-border/60 my-1"></div>
+              <!-- Model Ekle -->
               <button id="moreModelBtn" type="button"
-                class="md:hidden flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
+                class="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
                 <span class="text-blue-400 font-bold shrink-0 text-sm leading-none pl-0.5">＋</span>
                 <span>Yeni Model Tanımla</span>
               </button>
-              <!-- Tema Değiştir (sm altında gösterilir) -->
+              <button id="moreSettingsBtn" type="button"
+                class="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" class="text-sky-400 shrink-0">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1-2.9 2.9-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1-2.9-2.9.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1 2.9-2.9.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1 2.9 2.9-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+                </svg>
+                <span>API Ayarları</span>
+              </button>
+              <!-- Tema Değiştir -->
               <button id="moreThemeBtn" type="button"
-                class="sm:hidden flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
+                class="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-panel2 transition text-left">
                 <span id="moreThemeIcon" class="shrink-0 flex items-center justify-center text-yellow-400"></span>
                 <span id="moreThemeText">Temayı Değiştir</span>
               </button>
-              <div class="h-px bg-border/60 my-1 md:hidden"></div>
-              <!-- Sohbeti Temizle (md altında gösterilir) -->
+              <div class="h-px bg-border/60 my-1"></div>
+              <!-- Sohbeti Temizle -->
               <button id="moreClearBtn" type="button"
-                class="md:hidden flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition text-left">
+                class="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition text-left">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" class="shrink-0">
                   <polyline points="3 6 5 6 21 6"></polyline>
@@ -1293,11 +1298,6 @@
                   <span class="text-emerald-400 font-bold">＋</span>
                   <span class="hidden sm:inline text-[11px] font-medium">Dosya</span>
                 </button>
-                <button id="formatCodeBtn" type="button" title="Kod Bloğu / JSON Formatla" aria-label="Formatla"
-                  class="flex h-8 items-center gap-1.5 px-2.5 rounded-lg border border-border/70 bg-panel text-gray-400 hover:border-cyan-500 hover:text-cyan-400 hover:bg-panel3 transition text-xs">
-                  <span class="text-cyan-400 font-mono font-bold">{ }</span>
-                  <span class="hidden sm:inline text-[11px] font-medium">Format</span>
-                </button>
                 <input id="fileInput" type="file" multiple class="hidden"
                   accept=".txt,.md,.csv,.json,.js,.ts,.jsx,.tsx,.py,.java,.cs,.go,.rs,.sql,.xml,.yaml,.yml,.html,.css,.log" />
               </div>
@@ -1401,11 +1401,11 @@
         <!-- Butonlar -->
         <div class="flex flex-col gap-2.5 pt-2">
           <button id="testCfgBtn"
-            class="w-full bg-panel2 hover:bg-border border border-border text-gray-200 text-sm font-medium py-2.5 rounded-lg transition">
+            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg transition">
             Bağlantıyı Test Et
           </button>
           <button id="downloadCloneBtn"
-            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+            class="w-full bg-panel2 hover:bg-border border border-border text-gray-200 text-sm font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -1610,27 +1610,6 @@
     </div>
   </div>
 
-  <div id="organizeModal" class="app-modal fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" role="dialog"
-    aria-modal="true">
-    <div class="modal-card w-full max-w-md rounded-2xl border border-border bg-panel shadow-2xl p-5 space-y-4">
-      <div class="flex justify-between">
-        <h2 class="font-semibold text-gray-100">Sohbeti Düzenle</h2><button data-close-modal="organizeModal"
-          class="text-gray-400 hover:text-white">✕</button>
-      </div>
-      <div><label class="block text-xs text-gray-400 mb-1">Klasör</label><input id="organizeFolder"
-          class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
-          placeholder="Örn. Risk Analizleri" />
-      </div>
-      <div><label class="block text-xs text-gray-400 mb-1">Etiketler</label><input id="organizeTags"
-          class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
-          placeholder="security, risk-assessment" />
-        <p class="mt-1 text-[10px] text-gray-500">Virgülle ayırın.</p>
-      </div>
-      <button id="saveOrganizationBtn"
-        class="w-full rounded-lg bg-accent py-2 text-sm font-medium text-white hover:bg-blue-500 transition">Kaydet</button>
-    </div>
-  </div>
-
   <div id="exportModal" class="app-modal fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" role="dialog"
     aria-modal="true">
     <div class="modal-card w-full max-w-sm rounded-2xl border border-border bg-panel shadow-2xl p-5 space-y-3.5">
@@ -1649,7 +1628,7 @@
             class="w-4 h-4 mt-0.5 rounded border-border bg-base text-accent focus:ring-0 cursor-pointer accent-blue-600">
           <div>
             <span class="font-medium text-gray-200">Yalnızca mesaj içeriklerini aktar</span>
-            <p class="text-[11px] text-gray-400 font-normal mt-0.5">Başlık, tarih, klasör ve etiket üst bilgilerini
+            <p class="text-[11px] text-gray-400 font-normal mt-0.5">Başlık, tarih ve etiket üst bilgilerini
               hariç tutar.</p>
           </div>
         </label>
@@ -1893,7 +1872,6 @@
     let editingMessageIndex = null;
     let headersVisible = false;
     let attachedFiles = [];
-    let organizingConversationId = null;
     let customModels = [];
     let promptTemplates = [];
     let activeRequestController = null;
@@ -1916,7 +1894,6 @@
       historySidebar: document.getElementById('historySidebar'),
       conversationList: document.getElementById('conversationList'),
       conversationSearch: document.getElementById('conversationSearch'),
-      folderFilter: document.getElementById('folderFilter'),
       toggleHistoryBtn: document.getElementById('toggleHistoryBtn'),
       closeHistoryBtn: document.getElementById('closeHistoryBtn'),
       sidebarNewChatBtn: document.getElementById('sidebarNewChatBtn'),
@@ -1970,10 +1947,6 @@
       fileInput: document.getElementById('fileInput'),
       attachmentList: document.getElementById('attachmentList'),
       sessionCost: document.getElementById('sessionCost'),
-      organizeModal: document.getElementById('organizeModal'),
-      organizeFolder: document.getElementById('organizeFolder'),
-      organizeTags: document.getElementById('organizeTags'),
-      saveOrganizationBtn: document.getElementById('saveOrganizationBtn'),
       exportBtn: document.getElementById('exportBtn'),
       exportModal: document.getElementById('exportModal'),
       exportOnlyMessages: document.getElementById('exportOnlyMessages'),
@@ -1993,9 +1966,6 @@
       toastContainer: document.getElementById('toastContainer'),
       voiceInputBtn: document.getElementById('voiceInputBtn'),
       scrollToBottomBtn: document.getElementById('scrollToBottomBtn'),
-
-      // Format Butonu
-      formatCodeBtn: document.getElementById('formatCodeBtn'),
 
       // Global ve Sohbet İçi Arama
       globalSearchBtn: document.getElementById('globalSearchBtn'),
@@ -2045,6 +2015,7 @@
       moreSearchBtn: document.getElementById('moreSearchBtn'),
       moreExportBtn: document.getElementById('moreExportBtn'),
       moreModelBtn: document.getElementById('moreModelBtn'),
+      moreSettingsBtn: document.getElementById('moreSettingsBtn'),
       moreThemeBtn: document.getElementById('moreThemeBtn'),
       moreThemeIcon: document.getElementById('moreThemeIcon'),
       moreThemeText: document.getElementById('moreThemeText'),
@@ -2679,14 +2650,12 @@
           const tags = (conversation?.tags || []).map(tag => '#' + tag).join(' ');
           lines.push('# ' + title, '');
           lines.push('- Tarih: ' + new Date(conversation?.createdAt || Date.now()).toLocaleString('tr-TR'));
-          lines.push('- Klasör: ' + (conversation?.folder || 'Klasörsüz'));
           lines.push('- Etiketler: ' + (tags || '—'), '');
         } else {
           // Düz metin (.txt)
           const tags = (conversation?.tags || []).join(', ');
           lines.push('=== ' + title + ' ===');
           lines.push('Tarih: ' + new Date(conversation?.createdAt || Date.now()).toLocaleString('tr-TR'));
-          lines.push('Klasör: ' + (conversation?.folder || 'Klasörsüz'));
           lines.push('Etiketler: ' + (tags || '—'));
           lines.push('----------------------------------------', '');
         }
@@ -2911,7 +2880,6 @@
         title: getConversationTitle(messages || []),
         createdAt: now,
         updatedAt: now,
-        folder: '',
         tags: [],
         pinned: false,
         titleEdited: false,
@@ -2935,13 +2903,15 @@
       try {
         const storedConversations = JSON.parse(localStorage.getItem(LS_CONVERSATIONS_KEY) || '[]');
         conversations = Array.isArray(storedConversations)
-          ? storedConversations.filter(item => item && item.id && Array.isArray(item.messages)).map(item => ({
-            ...item,
-            folder: typeof item.folder === 'string' ? item.folder : '',
-            tags: Array.isArray(item.tags) ? item.tags : [],
-            pinned: Boolean(item.pinned),
-            titleEdited: Boolean(item.titleEdited),
-          }))
+          ? storedConversations.filter(item => item && item.id && Array.isArray(item.messages)).map(item => {
+            const { folder: _legacyFolder, ...conversation } = item;
+            return {
+              ...conversation,
+              tags: Array.isArray(item.tags) ? item.tags : [],
+              pinned: Boolean(item.pinned),
+              titleEdited: Boolean(item.titleEdited),
+            };
+          })
           : [];
         activeConversationId = localStorage.getItem(LS_ACTIVE_CONVERSATION_KEY) || null;
 
@@ -3072,11 +3042,10 @@
     function renderConversationList() {
       el.conversationList.innerHTML = '';
       const query = (el.conversationSearch.value || '').trim().toLocaleLowerCase('tr-TR');
-      const folder = el.folderFilter.value;
       const orderedConversations = [...conversations]
         .filter(conversation => {
-          const haystack = [conversation.title, conversation.folder, ...(conversation.tags || []), ...(conversation.messages || []).map(message => message.content)].join(' ').toLocaleLowerCase('tr-TR');
-          return (!query || haystack.includes(query)) && (!folder || conversation.folder === folder);
+          const haystack = [conversation.title, ...(conversation.tags || []), ...(conversation.messages || []).map(message => message.content)].join(' ').toLocaleLowerCase('tr-TR');
+          return !query || haystack.includes(query);
         })
         .sort((a, b) => Number(b.pinned) - Number(a.pinned) || (b.updatedAt || 0) - (a.updatedAt || 0));
 
@@ -3114,9 +3083,12 @@
         title.textContent = conversation.title || 'Yeni Sohbet';
 
         const meta = document.createElement('div');
-        meta.className = 'mt-0.5 text-[9px] text-gray-600';
+        meta.className = 'mt-1 flex min-w-0 items-center gap-1.5 text-[9px] text-gray-600';
         const messageCount = conversation.messages.filter(msg => msg.role === 'user').length;
-        meta.textContent = (conversation.folder ? conversation.folder + ' · ' : '') + messageCount + ' mesaj · ' + formatConversationDate(conversation.updatedAt);
+        const details = document.createElement('span');
+        details.className = 'shrink-0';
+        details.textContent = messageCount + ' mesaj · ' + formatConversationDate(conversation.updatedAt);
+        meta.appendChild(details);
 
         selectButton.appendChild(title);
         selectButton.appendChild(meta);
@@ -3127,30 +3099,32 @@
           selectButton.appendChild(tags);
         }
 
-        const organizeButton = document.createElement('button');
-        organizeButton.type = 'button';
-        organizeButton.title = 'Klasör ve etiketler';
-        organizeButton.className = 'shrink-0 p-1.5 rounded-md text-gray-600 opacity-0 group-hover:opacity-100 hover:text-accent hover:bg-blue-500/10 transition';
-        organizeButton.textContent = '#';
-        organizeButton.addEventListener('click', () => openOrganization(conversation.id));
+        const renameButton = document.createElement('button');
+        renameButton.type = 'button';
+        renameButton.title = 'Sohbet adını değiştir';
+        renameButton.setAttribute('aria-label', 'Sohbet adını değiştir');
+        renameButton.className = 'shrink-0 p-1.5 rounded-md text-gray-600 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 hover:text-blue-400 hover:bg-blue-500/10 transition';
+        renameButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>';
+        renameButton.addEventListener('click', () => renameConversation(conversation.id));
 
         const pinButton = document.createElement('button');
         pinButton.type = 'button';
         pinButton.title = conversation.pinned ? 'Sabitlemeyi kaldır' : 'Sohbeti sabitle';
-        pinButton.className = 'shrink-0 p-1.5 rounded-md transition ' + (conversation.pinned ? 'text-amber-400' : 'text-gray-600 opacity-0 group-hover:opacity-100 hover:text-amber-400 hover:bg-amber-500/10');
-        pinButton.textContent = '◆';
+        pinButton.setAttribute('aria-label', pinButton.title);
+        pinButton.className = 'shrink-0 p-1.5 rounded-md opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 hover:text-amber-400 hover:bg-amber-500/10 transition ' + (conversation.pinned ? 'text-amber-400' : 'text-gray-600');
+        pinButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="' + (conversation.pinned ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v2l2 3v4l2 2H5l2-2V8l2-3Z"></path><path d="M12 14v7"></path></svg>';
         pinButton.addEventListener('click', () => toggleConversationPin(conversation.id));
 
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button';
         deleteButton.title = 'Sohbeti Sil';
-        deleteButton.className = 'shrink-0 mr-1 p-1.5 rounded-md text-gray-600 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:bg-red-500/10 transition';
+        deleteButton.className = 'shrink-0 mr-1 p-1.5 rounded-md text-gray-600 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 hover:text-red-400 hover:bg-red-500/10 transition';
         deleteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
         deleteButton.addEventListener('click', () => deleteConversation(conversation.id));
 
         row.appendChild(selectButton);
+        row.appendChild(renameButton);
         row.appendChild(pinButton);
-        row.appendChild(organizeButton);
         row.appendChild(deleteButton);
         el.conversationList.appendChild(row);
       });
@@ -3178,35 +3152,6 @@
       persistConversationStore();
       renderConversationList();
       showToast('Sohbet yeniden adlandırıldı.', 'success');
-    }
-
-    function renderFolderFilter() {
-      const selected = el.folderFilter.value;
-      const folders = [...new Set(conversations.map(conversation => conversation.folder).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'tr'));
-      el.folderFilter.innerHTML = '<option value="">Tüm klasörler</option>' + folders.map(folder => '<option value="' + escapeHtml(folder) + '">' + escapeHtml(folder) + '</option>').join('');
-      if (folders.includes(selected)) el.folderFilter.value = selected;
-    }
-
-    function openOrganization(conversationId) {
-      const conversation = conversations.find(item => item.id === conversationId);
-      if (!conversation) return;
-      organizingConversationId = conversationId;
-      el.organizeFolder.value = conversation.folder || '';
-      el.organizeTags.value = (conversation.tags || []).join(', ');
-      openModal('organizeModal');
-    }
-
-    function saveOrganization() {
-      const conversation = conversations.find(item => item.id === organizingConversationId);
-      if (!conversation) return;
-      conversation.folder = el.organizeFolder.value.trim().slice(0, 60);
-      conversation.tags = [...new Set(el.organizeTags.value.split(',').map(tag => tag.trim().replace(/^#/, '').toLocaleLowerCase('tr-TR')).filter(Boolean))].slice(0, 12);
-      conversation.updatedAt = Date.now();
-      persistConversationStore();
-      renderFolderFilter();
-      renderConversationList();
-      closeModal('organizeModal');
-      showToast('Klasör ve etiketler kaydedildi.', 'success');
     }
 
     function switchConversation(conversationId) {
@@ -3741,7 +3686,6 @@
             results.push({
               conversationId: conv.id,
               conversationTitle: conv.title || 'Yeni Sohbet',
-              conversationFolder: conv.folder || '',
               conversationDate: conv.updatedAt,
               role: msg.role,
               messageIndex: msgIndex,
@@ -3781,8 +3725,7 @@
 
         const leftTitle = document.createElement('div');
         leftTitle.className = 'flex items-center gap-1.5 font-medium text-gray-200 truncate';
-        leftTitle.innerHTML = '<span class="text-accent">💬</span><span class="truncate">' + escapeHtml(item.conversationTitle) + '</span>' +
-          (item.conversationFolder ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-base text-gray-400 border border-border">' + escapeHtml(item.conversationFolder) + '</span>' : '');
+        leftTitle.innerHTML = '<span class="text-accent">💬</span><span class="truncate">' + escapeHtml(item.conversationTitle) + '</span>';
 
         const roleBadge = document.createElement('span');
         roleBadge.className = 'shrink-0 text-[10px] px-2 py-0.5 rounded-md ' +
@@ -3956,75 +3899,7 @@
       updateInChatCurrentMatch();
     }
 
-    /* ============================================================
-       KOD BLOĞU VE JSON FORMATLAMA
-       ============================================================ */
-    function handleFormatButtonClick() {
-      if (!el.userInput) return;
-      const val = el.userInput.value;
-      const trimmed = val.trim();
-
-      // 1. Mesaj kutusu boşsa: boş bir kod bloğu aç ve imleci içine yerleştir
-      if (!trimmed) {
-        el.userInput.value = '```json\n\n```';
-        autoResize();
-        el.userInput.focus();
-        el.userInput.setSelectionRange(8, 8);
-        return;
-      }
-
-      // Seçili metin varsa sadece seçili alanı kod bloğuna sar / formatla
-      const start = el.userInput.selectionStart;
-      const end = el.userInput.selectionEnd;
-      if (start !== end && start != null && end != null) {
-        const selected = val.substring(start, end).trim();
-        if (selected) {
-          let replacement = '';
-          try {
-            const parsed = JSON.parse(selected);
-            replacement = '```json\n' + JSON.stringify(parsed, null, 2) + '\n```';
-          } catch (_) {
-            replacement = '```json\n' + selected + '\n```';
-          }
-          el.userInput.value = val.substring(0, start) + replacement + val.substring(end);
-          autoResize();
-          el.userInput.focus();
-          return;
-        }
-      }
-
-      // 2. Halihazırda kod bloğuna sarılıysa (```json ... ``` veya ``` ... ```)
-      const codeBlockMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
-      if (codeBlockMatch) {
-        const inner = codeBlockMatch[1].trim();
-        if (!inner) {
-          el.userInput.focus();
-          el.userInput.setSelectionRange(8, 8);
-          return;
-        }
-        try {
-          const parsed = JSON.parse(inner);
-          el.userInput.value = '```json\n' + JSON.stringify(parsed, null, 2) + '\n```';
-          autoResize();
-          el.userInput.focus();
-          return;
-        } catch (_) {
-          return;
-        }
-      }
-
-      // 3. Düz metin ise JSON kontrolü yap: JSON varsa formatlı kod bloğu yap, yoksa kod bloğuna sar
-      try {
-        const parsed = JSON.parse(trimmed);
-        el.userInput.value = '```json\n' + JSON.stringify(parsed, null, 2) + '\n```';
-      } catch (_) {
-        el.userInput.value = '```json\n' + trimmed + '\n```';
-      }
-
-      autoResize();
-      el.userInput.focus();
-    }
-
+    /* Kod bloklarını sohbet içinde zenginleştir. */
     function decorateCodeBlocks(container) {
       container.querySelectorAll('a').forEach(link => {
         link.target = '_blank';
@@ -4197,7 +4072,7 @@
       copyBtn.title = role === 'assistant' ? 'Özgün Markdown metnini kopyala' : 'Kopyala';
       copyBtn.type = 'button';
       copyBtn.className = 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-gray-500 hover:bg-panel2 hover:text-gray-300 transition text-[11px]';
-      const copyIdle = svgCopy + '<span>' + (role === 'assistant' ? 'Markdown' : 'Kopyala') + '</span>';
+      const copyIdle = svgCopy + '<span>Kopyala</span>';
       const copyDone = svgCheck + '<span>Kopyalandı</span>';
       copyBtn.innerHTML = copyIdle;
       copyBtn.addEventListener('click', () => copyWithFeedback(copyBtn, content, copyIdle, copyDone));
@@ -4848,8 +4723,6 @@
       handleSlashInput();
     });
 
-    el.formatCodeBtn?.addEventListener('click', handleFormatButtonClick);
-
     document.addEventListener('click', (e) => {
       if (el.slashMenu && !el.slashMenu.contains(e.target) && e.target !== el.userInput) {
         closeSlashMenu();
@@ -4938,7 +4811,6 @@
     });
 
     el.conversationSearch.addEventListener('input', renderConversationList);
-    el.folderFilter.addEventListener('change', renderConversationList);
     el.modelSelect.addEventListener('change', () => selectModel(el.modelSelect.value));
     el.modelCompareBtn.addEventListener('click', () => openModal('modelModal'));
     el.modelDefinitionForm.addEventListener('submit', addCustomModel);
@@ -4962,7 +4834,6 @@
     });
     el.attachFileBtn.addEventListener('click', () => el.fileInput.click());
     el.fileInput.addEventListener('change', () => handleFiles(el.fileInput.files));
-    el.saveOrganizationBtn.addEventListener('click', saveOrganization);
     el.exportBtn.addEventListener('click', () => openModal('exportModal'));
     el.exportMarkdownBtn.addEventListener('click', exportMarkdown);
     el.exportTextBtn?.addEventListener('click', exportText);
@@ -5012,12 +4883,28 @@
     el.moreActionsBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
       el.moreActionsDropdown?.classList.toggle('hidden');
+      el.moreActionsBtn.setAttribute('aria-expanded', String(!el.moreActionsDropdown?.classList.contains('hidden')));
+    });
+
+    el.moreActionsDropdown?.addEventListener('click', (e) => {
+      if (e.target.closest('button')) {
+        el.moreActionsBtn?.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    el.moreActionsDropdown?.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        el.moreActionsDropdown.classList.add('hidden');
+        el.moreActionsBtn?.setAttribute('aria-expanded', 'false');
+        el.moreActionsBtn?.focus();
+      }
     });
 
     window.addEventListener('click', (e) => {
       if (el.moreActionsDropdown && !el.moreActionsDropdown.classList.contains('hidden')) {
         if (!el.moreActionsBtn?.contains(e.target) && !el.moreActionsDropdown.contains(e.target)) {
           el.moreActionsDropdown.classList.add('hidden');
+          el.moreActionsBtn?.setAttribute('aria-expanded', 'false');
         }
       }
       document.querySelectorAll('.message-export-dropdown').forEach(d => {
@@ -5040,6 +4927,12 @@
     el.moreModelBtn?.addEventListener('click', () => {
       el.moreActionsDropdown?.classList.add('hidden');
       openModal('modelModal');
+    });
+
+    el.moreSettingsBtn?.addEventListener('click', () => {
+      el.moreActionsDropdown?.classList.add('hidden');
+      el.moreActionsBtn?.setAttribute('aria-expanded', 'false');
+      el.settingsPanel.classList.toggle('settings-hidden');
     });
 
     el.moreThemeBtn?.addEventListener('click', () => {
@@ -5226,7 +5119,6 @@
       fillSettingsForm();
       renderModelControls();
       renderPromptTemplates();
-      renderFolderFilter();
       setHeadersVisibility(false);
       if (window.innerWidth >= 768 && localStorage.getItem(LS_HISTORY_SIDEBAR_KEY) === 'hidden') {
         el.historySidebar.classList.add('history-hidden');

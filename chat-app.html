@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 
 <head>
   <meta charset="UTF-8" />
@@ -207,6 +207,50 @@
     html:not(.dark) [data-quick-upload]:hover {
       background-color: #f8fafc !important;
       border-color: #cbd5e1 !important;
+    }
+
+    /* Seçili şablon: prompt metnini göstermeden bağlamı belirginleştirir */
+    .selected-template-card {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(14, 165, 233, 0.08));
+      border: 1px solid rgba(96, 165, 250, 0.32);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 12px -9px rgba(59, 130, 246, 0.8);
+    }
+
+    .composer-shell.template-active {
+      border-color: rgba(96, 165, 250, 0.58) !important;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12), 0 8px 26px -18px rgba(37, 99, 235, 0.75);
+    }
+
+    .template-enhanced-bubble {
+      overflow: hidden;
+      background: linear-gradient(145deg, #2563eb 0%, #4f46e5 100%);
+      border: 1px solid rgba(191, 219, 254, 0.2);
+      box-shadow: 0 8px 22px -12px rgba(30, 64, 175, 0.7);
+    }
+
+    .template-message-context {
+      background: rgba(15, 23, 42, 0.14);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .template-message-context-icon {
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    html:not(.dark) .selected-template-card {
+      background: linear-gradient(135deg, #eff6ff, #ecfeff) !important;
+      border-color: #93c5fd !important;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.08) !important;
+    }
+
+    html:not(.dark) .selected-template-card .template-selection-title {
+      color: #1e3a8a !important;
+    }
+
+    html:not(.dark) .composer-shell.template-active {
+      border-color: #93c5fd !important;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.08), 0 8px 24px -18px rgba(37, 99, 235, 0.6) !important;
     }
 
     /* Modallar ve Şablon Kartları */
@@ -1269,11 +1313,23 @@
               class="drag-overlay absolute inset-0 z-10 items-center justify-center rounded-2xl border-2 border-dashed border-blue-400 bg-base/95 text-sm font-medium text-blue-300 pointer-events-none">
               Dosyaları buraya bırakın</div>
 
+            <!-- Seçilen prompt, ham metin yerine küçük bir etiketle gösterilir -->
+            <div id="selectedTemplateCard"
+              class="selected-template-card hidden mb-2 max-w-full self-start items-center gap-2 rounded-lg px-2 py-1.5"
+              role="status" aria-live="polite">
+              <span id="selectedTemplateIcon"
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-500/15 text-[11px]" aria-hidden="true"></span>
+              <strong id="selectedTemplateTitle" class="template-selection-title truncate text-[11px] font-semibold text-blue-100"></strong>
+              <button id="clearSelectedTemplateBtn" type="button" title="Şablon seçimini kaldır"
+                aria-label="Şablon seçimini kaldır"
+                class="ml-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-xs text-blue-200/70 hover:bg-white/10 hover:text-white transition">×</button>
+            </div>
+
             <!-- Üst Katman: Geniş Metin Alanı ve Sesle Yaz -->
             <div class="relative flex items-start w-full">
               <textarea id="userInput" rows="1" placeholder="Bir mesaj yazın veya / yazarak komutları görün..."
                 class="w-full bg-transparent resize-none outline-none text-sm placeholder-gray-500 max-h-48 pl-2 pr-9 py-1 leading-relaxed text-gray-100"></textarea>
-              <button id="voiceInputBtn" type="button" title="Sesle yaz (Web Speech API)" aria-label="Sesle yaz"
+              <button id="voiceInputBtn" type="button" title="Sesle yaz" aria-label="Sesle yaz"
                 class="absolute right-1 top-0.5 flex h-7 w-7 items-center justify-center rounded-lg border border-transparent text-gray-400 hover:border-blue-400 hover:text-blue-400 hover:bg-panel3 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1435,7 +1491,7 @@
               class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-panel2 text-blue-400 border border-border">4
               şablon</span>
           </div>
-          <p class="text-xs text-gray-500 mt-0.5">Bir şablon seçip sohbete aktarın veya kendi şablonlarınızı yönetin.
+          <p class="text-xs text-gray-500 mt-0.5">Bir şablonu mesajınıza uygulayın veya kendi şablonlarınızı yönetin.
           </p>
         </div>
         <div class="flex items-center gap-2">
@@ -1514,7 +1570,7 @@
             <button type="button" class="px-2 py-0.5 rounded bg-panel3 hover:bg-accent/30 text-xs transition"
               data-icon="△">△</button>
             <button type="button" class="px-2 py-0.5 rounded bg-panel3 hover:bg-accent/30 text-xs transition"
-              data-icon="▤">▤</button>
+              data-icon="📄">📄</button>
             <button type="button" class="px-2 py-0.5 rounded bg-panel3 hover:bg-accent/30 text-xs transition"
               data-icon="⚡">⚡</button>
             <button type="button" class="px-2 py-0.5 rounded bg-panel3 hover:bg-accent/30 text-xs transition"
@@ -1542,12 +1598,19 @@
         </div>
 
         <div class="mt-3">
+          <label for="templateFormPlaceholder" class="mb-1 block text-xs text-gray-400">Mesaj Alanı İpucu</label>
+          <input id="templateFormPlaceholder" maxlength="180"
+            class="w-full rounded-lg border border-border bg-base px-3 py-2 text-xs text-gray-100 outline-none focus:border-accent"
+            placeholder="örn. İncelememi istediğiniz sorguyu ve tablo yapısını paylaşın…" />
+        </div>
+
+        <div class="mt-3">
           <label for="templateFormPrompt" class="mb-1 block text-xs text-gray-400">Prompt İçeriği *</label>
           <textarea id="templateFormPrompt" rows="4" required
             class="w-full rounded-lg border border-border bg-base p-3 text-xs text-gray-100 outline-none focus:border-accent font-sans leading-relaxed"
-            placeholder="Şablonun sohbete eklenecek tam prompt talimatını buraya yazın..."></textarea>
-          <p class="mt-1 text-[10px] text-gray-500">Kullanıcı bu şablonu seçtiğinde bu metin mesaj yazma alanına
-            aktarılır.</p>
+            placeholder="Modele gönderilecek tam prompt talimatını buraya yazın..."></textarea>
+          <p class="mt-1 text-[10px] text-gray-500">Bu talimat modele gönderilir ancak kullanıcıya veya sohbet
+            balonunda ham metin olarak gösterilmez.</p>
         </div>
 
         <div class="mt-3 flex items-center justify-between gap-3">
@@ -1845,8 +1908,11 @@
         "Content-Type": "application/json"
       },
       bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": ""\n}',
-      responsePath: "choices.0.message.content"
+      responsePath: "choices.0.message.content",
+      transcriptionUrl: "",
+      transcriptionModel: "whisper-1"
     };
+    let embeddedCustomModels = [];
     /* DEFAULT_CONFIG_END */
 
     /* ============================================================
@@ -1859,6 +1925,8 @@
     const LS_HISTORY_SIDEBAR_KEY = 'aiChat.historySidebar.v1';
     const LS_CUSTOM_MODELS_KEY = 'aiChat.customModels.v1';
     const LS_TEMPLATES_KEY = 'aiChat.promptTemplates.v1';
+    const LS_TEMPLATES_VERSION_KEY = 'aiChat.promptTemplates.version';
+    const DEFAULT_TEMPLATES_VERSION = 3;
     const LS_EXPORT_ONLY_MESSAGES_KEY = 'aiChat.exportOnlyMessages.v1';
     const LS_EXPORT_INCLUDE_ROLES_KEY = 'aiChat.exportIncludeRoles.v1';
     const CONTEXT_TOKEN_LIMIT = 132000;
@@ -1874,14 +1942,77 @@
     let attachedFiles = [];
     let customModels = [];
     let promptTemplates = [];
+    let selectedPromptTemplate = null;
     let activeRequestController = null;
     let requestStoppedByUser = false;
 
     const DEFAULT_PROMPT_TEMPLATES = [
-      { id: 'tpl-code-review', title: 'Code Review', icon: '⌘', description: 'Kod kalitesi, güvenlik ve performans incelemesi', prompt: 'Aşağıdaki kodu incele. Bulguları önem derecesine göre sırala; güvenlik açıklarını, hataları, performans ve sürdürülebilirlik sorunlarını belirt. Her bulgu için dosya/satır bağlamı, gerekçe ve uygulanabilir düzeltme önerisi ver.\n\nKod:\n```\n\n```' },
-      { id: 'tpl-meeting-minutes', title: 'Meeting Minutes', icon: '◷', description: 'Toplantı notlarından karar ve aksiyon çıkarımı', prompt: 'Aşağıdaki toplantı notlarını profesyonel toplantı tutanağına dönüştür. Katılımcıları, gündemi, alınan kararları, açık konuları ve sorumlu kişi/termin içeren aksiyon listesini ayrı başlıklarda sun. Belirsiz bilgileri uydurma.\n\nNotlar:\n' },
-      { id: 'tpl-risk-analysis', title: 'Risk Analysis', icon: '△', description: 'Olasılık, etki ve aksiyon bazlı risk analizi', prompt: 'Aşağıdaki konu için kurumsal risk analizi hazırla. Her risk için açıklama, kategori, olasılık (1-5), etki (1-5), risk skoru, mevcut kontroller, önerilen aksiyon, sorumlu ve hedef tarih alanlarını kullan. En kritik riskleri önce sırala.\n\nKonu:\n' },
-      { id: 'tpl-tech-doc', title: 'Technical Documentation', icon: '▤', description: 'Yapılandırılmış teknik dokümantasyon', prompt: 'Aşağıdaki sistem veya kod için teknik dokümantasyon oluştur. Amaç, kapsam, mimari, bileşenler, veri akışı, kurulum, yapılandırma, kullanım örnekleri, hata senaryoları, güvenlik notları ve operasyon adımlarını kapsa. Varsayımları açıkça belirt.\n\nİçerik:\n' },
+      {
+        id: 'tpl-code-review', title: 'Kod İncelemesi', icon: '⌘', isCustom: false,
+        description: 'Hata, güvenlik, performans ve bakım kolaylığı odaklı inceleme',
+        placeholder: 'İncelememi istediğiniz kodu, diff’i veya dosyayı paylaşın…',
+        prompt: `Kıdemli bir yazılım mühendisi gibi davran ve paylaşılan kodu bağlamıyla birlikte incele.
+
+Hedefler:
+- Doğruluk hatalarını, güvenlik açıklarını, performans sorunlarını ve bakım maliyetini artıran noktaları tespit et.
+- Yalnızca somut ve kanıtlanabilir bulguları raporla; eksik bağlam varsa bunu açıkça belirt.
+- Her bulgu için önem derecesi (Kritik/Yüksek/Orta/Düşük), konum, etki, gerekçe ve uygulanabilir düzeltme ver.
+- Uygunsa küçük bir düzeltme örneği veya diff sun; mevcut davranışı gereksiz yere değiştirme.
+- Test edilmesi gereken sınır durumlarını ve eksik testleri listele.
+
+Çıktıyı Markdown olarak; Kısa Özet, Öncelikli Bulgular, Önerilen Düzeltmeler ve Test Kontrol Listesi başlıklarıyla düzenle. Kod ve diff örneklerini dil etiketi bulunan kod bloklarında göster. Sorun bulamazsan bunu net biçimde söyle.
+
+İncelenecek kod, diff veya bağlam:`
+      },
+      {
+        id: 'tpl-meeting-minutes', title: 'Toplantı Tutanağı', icon: '◷', isCustom: false,
+        description: 'Dağınık notlardan karar, aksiyon ve açık konu çıkarır',
+        placeholder: 'Toplantı notlarını veya görüşme dökümünü ekleyin…',
+        prompt: `Paylaşılan toplantı notlarını karar vermeyi ve takibi kolaylaştıran profesyonel bir tutanağa dönüştür.
+
+Kurallar:
+- Yalnızca notlarda bulunan bilgileri kullan; isim, tarih, karar veya sorumlu uydurma.
+- Belirsiz ifadeleri "Netleştirilmeli" olarak işaretle ve gerekli takip sorusunu yaz.
+- Tekrarları birleştir, konu dışı ayrıntıları ayıkla, anlamı değiştirme.
+- Aksiyonları tablo halinde; aksiyon, sorumlu, hedef tarih, öncelik ve durum sütunlarıyla ver.
+
+Çıktıyı Markdown başlıklarıyla düzenle: Toplantı Bilgileri, Yönetici Özeti, Görüşülen Konular, Alınan Kararlar, Aksiyonlar, Açık Konular ve Takip Soruları. Aksiyonları tablo halinde sun; karar ile öneriyi birbirinden ayır.
+
+Toplantı notları:`
+      },
+      {
+        id: 'tpl-risk-analysis', title: 'Risk Analizi', icon: '△', isCustom: false,
+        description: 'Olasılık, etki, kontrol ve aksiyon bazlı önceliklendirme',
+        placeholder: 'Analiz etmek istediğiniz konu, proje veya değişikliği açıklayın…',
+        prompt: `Verilen konu için karar almayı destekleyen, izlenebilir bir kurumsal risk analizi hazırla.
+
+Yöntem:
+- Riskleri stratejik, operasyonel, teknik, siber güvenlik, uyum, finansal ve itibar boyutlarında değerlendir.
+- Her risk için neden, olay ve etki zincirini netleştir.
+- Olasılık ve etkiyi 1-5 arasında puanla; skoru olasılık × etki olarak hesapla.
+- Mevcut kontrol, kontrol sonrası kalan risk, erken uyarı göstergesi, azaltıcı aksiyon, sorumlu ve hedef tarih alanlarını kullan.
+- Veri yetersizse varsayımı açıkça etiketle; kesinlik izlenimi verme.
+
+Çıktıyı Markdown olarak; Yönetici Özeti, Risk Tablosu, Öncelikli Aksiyon Planı ve Netleştirilecek Sorular başlıklarıyla sun. Risk ve aksiyonları tablolarda göster; kritik riskleri ilk sıraya yerleştir.
+
+Analiz edilecek konu ve mevcut bağlam:`
+      },
+      {
+        id: 'tpl-tech-doc', title: 'Teknik Dokümantasyon', icon: '📄', isCustom: false,
+        description: 'Geliştirici ve operasyon ekipleri için uygulanabilir sistem dokümanı',
+        placeholder: 'Dokümante etmek istediğiniz kodu veya süreci açıklayın…',
+        prompt: `Paylaşılan sistem, servis veya kod için güncel tutulabilir ve uygulamaya dönük teknik dokümantasyon oluştur.
+
+Yazım ilkeleri:
+- Hedef kitleyi geliştirici ve operasyon ekipleri olarak kabul et.
+- Verilmeyen ayrıntıları uydurma; varsayımları, bilinmeyenleri ve doğrulama gereken noktaları ayrıca belirt.
+- Komut, yapılandırma ve API örneklerini çalıştırılabilir biçimde ver; gizli bilgi veya gerçek kimlik bilgisi kullanma.
+- Mimari bileşenleri, sorumlulukları ve veri akışını net ilişkilerle açıkla.
+
+Çıktıyı tutarlı Markdown başlıklarıyla düzenle: Amaç ve Kapsam, Önkoşullar, Mimari, Bileşenler, Veri Akışı, Kurulum, Yapılandırma, Kullanım/API Örnekleri, Hata Senaryoları, Güvenlik, Gözlemlenebilirlik, Operasyon/Runbook, Test ve Sorun Giderme. Komut ve kod örneklerinde dil etiketli kod blokları, yapısal verilerde tablo kullan. Uygunsa Mermaid diyagramı ekle.
+
+Dokümante edilecek içerik ve bağlam:`
+      },
     ];
     const PROMPT_TEMPLATES = promptTemplates;
 
@@ -1901,6 +2032,10 @@
       sendBtn: document.getElementById('sendBtn'),
       stopBtn: document.getElementById('stopBtn'),
       composerBox: document.getElementById('composerBox'),
+      selectedTemplateCard: document.getElementById('selectedTemplateCard'),
+      selectedTemplateIcon: document.getElementById('selectedTemplateIcon'),
+      selectedTemplateTitle: document.getElementById('selectedTemplateTitle'),
+      clearSelectedTemplateBtn: document.getElementById('clearSelectedTemplateBtn'),
       newChatBtn: document.getElementById('newChatBtn'),
       clearChatBtn: document.getElementById('clearChatBtn'),
       toggleSettingsBtn: document.getElementById('toggleSettingsBtn'),
@@ -1938,6 +2073,7 @@
       templateFormTitle: document.getElementById('templateFormTitle'),
       templateFormIcon: document.getElementById('templateFormIcon'),
       templateFormDesc: document.getElementById('templateFormDesc'),
+      templateFormPlaceholder: document.getElementById('templateFormPlaceholder'),
       templateFormPrompt: document.getElementById('templateFormPrompt'),
       templateFormStatus: document.getElementById('templateFormStatus'),
       cancelTemplateFormBtn: document.getElementById('cancelTemplateFormBtn'),
@@ -2178,20 +2314,25 @@
       return models;
     }
 
-    function loadCustomModels() {
-      try {
-        const stored = JSON.parse(localStorage.getItem(LS_CUSTOM_MODELS_KEY) || '[]');
-        customModels = Array.isArray(stored) ? stored.filter(model =>
-          model && typeof model.id === 'string' && model.id.trim() && typeof model.name === 'string'
-        ).map(model => ({
+    function normalizeCustomModels(models) {
+      return Array.isArray(models) ? models.filter(model =>
+        model && typeof model.id === 'string' && model.id.trim() && typeof model.name === 'string'
+      ).map(model => ({
           id: model.id.trim().slice(0, 100),
           name: model.name.trim().slice(0, 80) || model.id.trim().slice(0, 100),
           ability: String(model.ability || 'Özel model').slice(0, 160),
           context: String(model.context || 'API’ye bağlı').slice(0, 40),
           custom: true,
         })) : [];
+    }
+
+    function loadCustomModels() {
+      try {
+        const storedJson = localStorage.getItem(LS_CUSTOM_MODELS_KEY);
+        const stored = storedJson === null ? embeddedCustomModels : JSON.parse(storedJson);
+        customModels = normalizeCustomModels(stored);
       } catch (_) {
-        customModels = [];
+        customModels = normalizeCustomModels(embeddedCustomModels);
       }
     }
 
@@ -2230,7 +2371,6 @@
         if (el.cfgBody) el.cfgBody.value = apiConfig.bodyTemplate;
         saveConfigToLS();
         updateModelLabel();
-        showStatus('Model Body alanına yazıldı: ' + modelId, 'success');
         if (el.modelDefinitionStatus) el.modelDefinitionStatus.textContent = '';
         return true;
       } catch (error) {
@@ -2327,12 +2467,28 @@
             title: String(item.title || 'Başlıksız').slice(0, 80),
             icon: String(item.icon || '✨').slice(0, 8),
             description: String(item.description || '').slice(0, 160),
+            placeholder: String(item.placeholder || '').slice(0, 180),
             prompt: String(item.prompt || ''),
             isCustom: Boolean(item.isCustom ?? true),
           }));
         } else {
           promptTemplates = DEFAULT_PROMPT_TEMPLATES.map(t => ({ ...t }));
           savePromptTemplates();
+        }
+
+        const storedVersion = Number(localStorage.getItem(LS_TEMPLATES_VERSION_KEY) || 0);
+        if (storedVersion < DEFAULT_TEMPLATES_VERSION) {
+          const defaultsById = new Map(DEFAULT_PROMPT_TEMPLATES.map(template => [template.id, template]));
+          const loadedIds = new Set(promptTemplates.map(template => template.id));
+          promptTemplates = promptTemplates.map(template => {
+            const improvedDefault = defaultsById.get(template.id);
+            return improvedDefault ? { ...improvedDefault } : template;
+          });
+          DEFAULT_PROMPT_TEMPLATES.forEach(template => {
+            if (!loadedIds.has(template.id)) promptTemplates.push({ ...template });
+          });
+          savePromptTemplates();
+          localStorage.setItem(LS_TEMPLATES_VERSION_KEY, String(DEFAULT_TEMPLATES_VERSION));
         }
       } catch (e) {
         console.warn('Şablonlar yüklenemedi, varsayılanlar yükleniyor:', e);
@@ -2352,6 +2508,17 @@
       if (!confirm('Tüm prompt şablonları sıfırlanıp orijinal 4 varsayılan şablona dönülecektir. Devam edilsin mi?')) return;
       promptTemplates = DEFAULT_PROMPT_TEMPLATES.map(t => ({ ...t }));
       savePromptTemplates();
+      localStorage.setItem(LS_TEMPLATES_VERSION_KEY, String(DEFAULT_TEMPLATES_VERSION));
+      if (selectedPromptTemplate) {
+        const refreshed = promptTemplates.find(template => template.id === selectedPromptTemplate.id);
+        if (refreshed) {
+          selectedPromptTemplate = createTemplateSnapshot(refreshed);
+          persistActiveTemplate();
+          renderSelectedTemplate();
+        } else {
+          clearSelectedTemplate();
+        }
+      }
       closeTemplateForm();
       if (el.templateSearchInput) el.templateSearchInput.value = '';
       renderPromptTemplates();
@@ -2372,6 +2539,7 @@
         el.templateFormTitle.value = tpl.title;
         el.templateFormIcon.value = tpl.icon || '✨';
         el.templateFormDesc.value = tpl.description || '';
+        el.templateFormPlaceholder.value = tpl.placeholder || '';
         el.templateFormPrompt.value = tpl.prompt || '';
       } else {
         el.templateFormHeading.textContent = 'Yeni Şablon Ekle';
@@ -2379,6 +2547,7 @@
         el.templateFormTitle.value = '';
         el.templateFormIcon.value = '⚡';
         el.templateFormDesc.value = '';
+        el.templateFormPlaceholder.value = '';
         el.templateFormPrompt.value = '';
       }
       el.templateFormTitle.focus();
@@ -2399,6 +2568,7 @@
       const promptText = el.templateFormPrompt.value.trim();
       const icon = el.templateFormIcon.value.trim() || '✨';
       const desc = el.templateFormDesc.value.trim();
+      const placeholder = el.templateFormPlaceholder.value.trim();
       const id = el.templateFormId.value.trim();
 
       if (!title) {
@@ -2420,6 +2590,7 @@
             title: title.slice(0, 80),
             icon: icon.slice(0, 8),
             description: desc.slice(0, 160),
+            placeholder: placeholder.slice(0, 180),
             prompt: promptText,
           };
           showToast('"' + title + '" şablonu güncellendi.', 'success');
@@ -2430,6 +2601,7 @@
           title: title.slice(0, 80),
           icon: icon.slice(0, 8),
           description: desc.slice(0, 160),
+          placeholder: placeholder.slice(0, 180),
           prompt: promptText,
           isCustom: true,
         };
@@ -2438,6 +2610,10 @@
       }
 
       savePromptTemplates();
+      if (selectedPromptTemplate?.id === id) {
+        const refreshed = promptTemplates.find(template => template.id === id);
+        if (refreshed) selectPromptTemplate(refreshed);
+      }
       closeTemplateForm();
       renderPromptTemplates();
       renderMessages();
@@ -2450,6 +2626,7 @@
 
       promptTemplates = promptTemplates.filter(t => t.id !== templateId);
       savePromptTemplates();
+      if (selectedPromptTemplate?.id === templateId) clearSelectedTemplate();
       if (el.templateFormId.value === templateId) {
         closeTemplateForm();
       }
@@ -2475,14 +2652,64 @@
       showToast('"' + copy.title + '" şablonu çoğaltıldı.', 'success');
     }
 
+    function createTemplateSnapshot(template) {
+      if (!template) return null;
+      return {
+        id: String(template.id || ''),
+        title: String(template.title || 'Şablon'),
+        icon: String(template.icon || '✨'),
+        description: String(template.description || ''),
+        placeholder: String(template.placeholder || ''),
+        prompt: String(template.prompt || ''),
+      };
+    }
+
+    function persistActiveTemplate() {
+      const conversation = conversations.find(item => item.id === activeConversationId);
+      if (!conversation) return;
+      conversation.activeTemplate = createTemplateSnapshot(selectedPromptTemplate);
+      try { persistConversationStore(); } catch (_) { }
+    }
+
+    function renderSelectedTemplate() {
+      if (!el.selectedTemplateCard) return;
+      const hasTemplate = Boolean(selectedPromptTemplate);
+      el.selectedTemplateCard.classList.toggle('hidden', !hasTemplate);
+      el.selectedTemplateCard.classList.toggle('flex', hasTemplate);
+      el.composerBox?.classList.toggle('template-active', hasTemplate);
+      if (!hasTemplate) {
+        if (editingMessageIndex === null) el.userInput.placeholder = 'Bir mesaj yazın veya / yazarak komutları görün...';
+        return;
+      }
+      el.selectedTemplateIcon.textContent = selectedPromptTemplate.icon || '✨';
+      el.selectedTemplateTitle.textContent = selectedPromptTemplate.title || 'Şablon';
+      el.userInput.placeholder = selectedPromptTemplate.placeholder ||
+        ((selectedPromptTemplate.title || 'Bu şablon') + ' için gerekli bilgileri yazın…');
+    }
+
+    function clearSelectedTemplate(options = {}) {
+      selectedPromptTemplate = null;
+      renderSelectedTemplate();
+      if (options.persist !== false) persistActiveTemplate();
+      if (options.notify) showToast('Şablon seçimi kaldırıldı.', 'info');
+    }
+
+    function selectPromptTemplate(template, preservedText) {
+      if (!template) return;
+      selectedPromptTemplate = createTemplateSnapshot(template);
+      if (typeof preservedText === 'string') el.userInput.value = preservedText;
+      renderSelectedTemplate();
+      persistActiveTemplate();
+      autoResize();
+      el.userInput.focus();
+    }
+
     function applyTemplate(templateId) {
       const tpl = promptTemplates.find(t => t.id === templateId);
       if (!tpl) return;
-      el.userInput.value = tpl.prompt;
-      autoResize();
+      selectPromptTemplate(tpl);
       closeModal('promptModal');
-      el.userInput.focus();
-      showToast('"' + tpl.title + '" şablonu yüklendi.', 'info');
+      showToast('"' + tpl.title + '" şablonu seçildi.', 'info');
     }
 
     function renderPromptTemplates() {
@@ -2636,6 +2863,23 @@
       el.sessionCost.textContent = formatTokenCount(usage.total) + ' token';
     }
 
+    function getVisibleMessageContent(message) {
+      const content = String(message?.content || '').trim();
+      if (!message?.template) return content;
+      const templateLabel = String(message.template.title || 'Şablon') + ' şablonuyla';
+      return content ? templateLabel + '\n\n' + content : templateLabel;
+    }
+
+    function getApiMessageContent(message) {
+      if (typeof message?.apiContent === 'string' && message.apiContent.trim()) {
+        return message.apiContent;
+      }
+      const content = String(message?.content || '').trim();
+      const promptText = String(message?.template?.prompt || '').trim();
+      if (!promptText) return content;
+      return content ? promptText + '\n\nKullanıcı bağlamı:\n' + content : promptText;
+    }
+
     function formatConversationForExport(format = 'markdown') {
       const conversation = conversations.find(item => item.id === activeConversationId);
       const title = conversation?.title || 'Sohbet';
@@ -2663,7 +2907,7 @@
 
       chatHistory.forEach((message, idx) => {
         const roleName = message.role === 'user' ? 'Kullanıcı' : message.role === 'assistant' ? 'Asistan' : 'Hata';
-        const content = String(message.content || '').trim();
+        const content = getVisibleMessageContent(message);
         if (!content) return;
 
         if (includeRoles) {
@@ -2883,14 +3127,15 @@
         tags: [],
         pinned: false,
         titleEdited: false,
+        activeTemplate: null,
         messages: Array.isArray(messages) ? messages : [],
       };
     }
 
     function getConversationTitle(messages) {
-      const firstUserMessage = (messages || []).find(msg => msg && msg.role === 'user' && msg.content);
+      const firstUserMessage = (messages || []).find(msg => msg && msg.role === 'user' && (msg.content || msg.template));
       if (!firstUserMessage) return 'Yeni Sohbet';
-      const title = String(firstUserMessage.content).replace(/\s+/g, ' ').trim();
+      const title = String(firstUserMessage.content || firstUserMessage.template?.title || 'Yeni Sohbet').replace(/\s+/g, ' ').trim();
       return title.length > 42 ? title.slice(0, 42) + '…' : title;
     }
 
@@ -2910,6 +3155,7 @@
               tags: Array.isArray(item.tags) ? item.tags : [],
               pinned: Boolean(item.pinned),
               titleEdited: Boolean(item.titleEdited),
+              activeTemplate: createTemplateSnapshot(item.activeTemplate),
             };
           })
           : [];
@@ -2929,6 +3175,7 @@
           activeConversationId = activeConversation.id;
         }
         chatHistory = activeConversation.messages.slice();
+        selectedPromptTemplate = createTemplateSnapshot(activeConversation.activeTemplate);
         localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
         persistConversationStore();
       } catch (e) {
@@ -2937,6 +3184,7 @@
         conversations = [fallbackConversation];
         activeConversationId = fallbackConversation.id;
         chatHistory = [];
+        selectedPromptTemplate = null;
       }
     }
 
@@ -2949,6 +3197,7 @@
           activeConversationId = activeConversation.id;
         }
         activeConversation.messages = chatHistory.slice();
+        activeConversation.activeTemplate = createTemplateSnapshot(selectedPromptTemplate);
         if (!activeConversation.titleEdited) activeConversation.title = getConversationTitle(chatHistory);
         activeConversation.updatedAt = Date.now();
         localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
@@ -3044,7 +3293,7 @@
       const query = (el.conversationSearch.value || '').trim().toLocaleLowerCase('tr-TR');
       const orderedConversations = [...conversations]
         .filter(conversation => {
-          const haystack = [conversation.title, ...(conversation.tags || []), ...(conversation.messages || []).map(message => message.content)].join(' ').toLocaleLowerCase('tr-TR');
+          const haystack = [conversation.title, ...(conversation.tags || []), ...(conversation.messages || []).flatMap(message => [message.content, message.template?.title, message.template?.description])].join(' ').toLocaleLowerCase('tr-TR');
           return !query || haystack.includes(query);
         })
         .sort((a, b) => Number(b.pinned) - Number(a.pinned) || (b.updatedAt || 0) - (a.updatedAt || 0));
@@ -3160,6 +3409,7 @@
       if (!conversation) return;
       activeConversationId = conversation.id;
       chatHistory = conversation.messages.slice();
+      selectedPromptTemplate = createTemplateSnapshot(conversation.activeTemplate);
       localStorage.setItem(LS_ACTIVE_CONVERSATION_KEY, activeConversationId);
       localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
       cancelEditMode(true);
@@ -3187,6 +3437,7 @@
         .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
       activeConversationId = nextConversation.id;
       chatHistory = nextConversation.messages.slice();
+      selectedPromptTemplate = createTemplateSnapshot(nextConversation.activeTemplate);
       localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
       persistConversationStore();
       cancelEditMode(true);
@@ -3627,10 +3878,8 @@
       } else if (cmd.type === 'template' && cmd.template) {
         const val = el.userInput.value;
         const before = val.slice(0, slashTriggerPos);
-        el.userInput.value = (before ? before.trim() + '\n\n' : '') + cmd.template.prompt;
-        autoResize();
-        el.userInput.focus();
-        showToast('Şablon uygulandı: ' + cmd.template.title, 'success');
+        selectPromptTemplate(cmd.template, before.trim());
+        showToast('Şablon seçildi: ' + cmd.template.title, 'success');
       }
     }
 
@@ -3673,7 +3922,7 @@
 
       targetConversations.forEach(conv => {
         (conv.messages || []).forEach((msg, msgIndex) => {
-          const content = String(msg.content || '');
+          const content = getVisibleMessageContent(msg);
           const contentLower = content.toLocaleLowerCase('tr-TR');
           const foundIdx = contentLower.indexOf(queryLower);
           if (foundIdx !== -1) {
@@ -4045,7 +4294,9 @@
 
     function buildMessageNode(message, index) {
       const role = message.role;
-      const content = message.content;
+      const content = String(message.content || '');
+      const visibleCopyContent = getVisibleMessageContent(message);
+      const hasTemplate = role === 'user' && Boolean(message.template);
       const wrap = document.createElement('div');
       wrap.className = 'flex items-start gap-3 animate-fadeIn ' + (role === 'user' ? 'flex-row-reverse' : '');
 
@@ -4075,16 +4326,30 @@
       const copyIdle = svgCopy + '<span>Kopyala</span>';
       const copyDone = svgCheck + '<span>Kopyalandı</span>';
       copyBtn.innerHTML = copyIdle;
-      copyBtn.addEventListener('click', () => copyWithFeedback(copyBtn, content, copyIdle, copyDone));
+      copyBtn.addEventListener('click', () => copyWithFeedback(copyBtn, visibleCopyContent, copyIdle, copyDone));
 
       const bubble = document.createElement('div');
       bubble.className = 'msg-content px-4 py-3 text-sm leading-relaxed break-words shadow-sm ' +
-        (role === 'user'
+        (hasTemplate
+          ? 'template-enhanced-bubble !p-0 rounded-2xl rounded-tr-xs text-white'
+          : role === 'user'
           ? 'rounded-2xl rounded-tr-xs bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-blue-900/25'
           : role === 'error'
             ? 'rounded-2xl rounded-tl-xs bg-red-950/25 text-red-200 border border-red-500/30'
             : 'rounded-2xl rounded-tl-xs bg-panel2/90 text-gray-100 border border-border shadow-black/20');
-      bubble.innerHTML = renderContent(content);
+      if (hasTemplate) {
+        const templateIcon = escapeHtml(message.template.icon || '✨');
+        const templateTitle = escapeHtml(message.template.title || 'Şablon');
+        bubble.innerHTML = `
+          <div class="template-message-context flex items-center gap-2 px-3.5 py-2">
+            <span class="template-message-context-icon flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px]" aria-hidden="true">${templateIcon}</span>
+            <span class="min-w-0 truncate text-[10px] font-semibold tracking-wide text-blue-50/95">${templateTitle}</span>
+            <span class="shrink-0 text-[9px] font-medium text-blue-100/55">şablonuyla</span>
+          </div>
+          ${content.trim() ? '<div class="template-message-body px-4 py-3">' + renderContent(content) + '</div>' : ''}`;
+      } else {
+        bubble.innerHTML = renderContent(content);
+      }
 
       if (role === 'error' && message.detail) {
         const details = document.createElement('details');
@@ -4251,6 +4516,7 @@
       isBusy = state;
       el.sendBtn.disabled = state;
       el.userInput.disabled = state;
+      if (el.clearSelectedTemplateBtn) el.clearSelectedTemplateBtn.disabled = state;
       el.testCfgBtn.disabled = state;
       el.sendBtn.classList.toggle('hidden', state);
       el.stopBtn.classList.toggle('hidden', !state);
@@ -4271,7 +4537,7 @@
     function getApiMessages(history) {
       return history
         .filter(msg => msg && (msg.role === 'user' || msg.role === 'assistant'))
-        .map(msg => ({ role: msg.role, content: String(msg.content ?? '') }));
+        .map(msg => ({ role: msg.role, content: getApiMessageContent(msg) }));
     }
 
     // Şablondaki $PROMPT mesajını gerçek sohbet geçmişiyle değiştirir.
@@ -4409,12 +4675,17 @@
     }
 
     function cancelEditMode(clearInput) {
+      const wasEditing = editingMessageIndex !== null;
       editingMessageIndex = null;
       el.editNotice.classList.add('hidden');
       el.editNotice.classList.remove('flex');
-      el.userInput.placeholder = 'Bir mesaj yazın veya / yazarak komutları görün...';
       if (clearInput) {
         el.userInput.value = '';
+        if (wasEditing) {
+          const conversation = conversations.find(item => item.id === activeConversationId);
+          selectedPromptTemplate = createTemplateSnapshot(conversation?.activeTemplate);
+        }
+        renderSelectedTemplate();
         autoResize();
       }
     }
@@ -4423,7 +4694,10 @@
       if (isBusy || !chatHistory[index] || chatHistory[index].role !== 'user') return;
       editingMessageIndex = index;
       el.userInput.value = chatHistory[index].content;
-      el.userInput.placeholder = 'Mesajı düzenleyin...';
+      const templateSnapshot = chatHistory[index].template;
+      selectedPromptTemplate = templateSnapshot ? { ...templateSnapshot } : null;
+      renderSelectedTemplate();
+      if (!templateSnapshot) el.userInput.placeholder = 'Mesajı düzenleyin...';
       el.editNotice.classList.remove('hidden');
       el.editNotice.classList.add('flex');
       autoResize();
@@ -4441,7 +4715,7 @@
       const startedAt = performance.now();
 
       try {
-        const result = await callApi(lastUserMessage.content, chatHistory);
+        const result = await callApi(getApiMessageContent(lastUserMessage), chatHistory);
         chatHistory.push({
           role: 'assistant',
           content: result.reply,
@@ -4476,16 +4750,23 @@
 
     async function sendMessage() {
       if (isBusy) return;
-      let text = el.userInput.value.trim();
-      if (!text && attachedFiles.length === 0) return;
+      const visibleText = el.userInput.value.trim();
+      if (!visibleText && attachedFiles.length === 0 && !selectedPromptTemplate) return;
 
+      let apiText = visibleText;
       if (attachedFiles.length) {
         const fileContext = attachedFiles.map(file => '\n\n--- Dosya: ' + file.name + ' ---\n' + file.content).join('');
-        text = (text || 'Ekli dosyaları analiz et.') + fileContext;
+        apiText = (apiText || 'Ekli dosyaları analiz et.') + fileContext;
+      }
+      const templateSnapshot = selectedPromptTemplate ? { ...selectedPromptTemplate } : null;
+      if (templateSnapshot?.prompt) {
+        apiText = templateSnapshot.prompt.trim() + (apiText ? '\n\nKullanıcı bağlamı:\n' + apiText : '');
       }
       const messageMetadata = {
         role: 'user',
-        content: text,
+        content: visibleText || (!templateSnapshot && attachedFiles.length ? 'Ekli dosyaları analiz et.' : ''),
+        apiContent: apiText,
+        template: templateSnapshot,
         createdAt: Date.now(),
         attachments: attachedFiles.map(file => ({ name: file.name, type: file.type })),
       };
@@ -4519,13 +4800,21 @@
     /* ============================================================
        10. SELF-CLONING (Ayarları gömüp indirme)
        ============================================================ */
+    function serializeForInlineScript(value) {
+      return JSON.stringify(value, null, 2)
+        .replace(/</g, '\\u003C')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029');
+    }
+
     function downloadClone() {
       if (!readSettingsForm()) return;
       setHeadersVisibility(false);
 
-      // Güncel apiConfig'i kaynak koda gömülecek şekilde stringify et
+      // Güncel API ayarlarını ve özel model listesini kaynak koda göm.
       const configString =
-        'let apiConfig = ' + JSON.stringify(apiConfig, null, 2) + ';';
+        'let apiConfig = ' + serializeForInlineScript(apiConfig) + ';\n' +
+        'let embeddedCustomModels = ' + serializeForInlineScript(customModels) + ';';
 
       // Mevcut sayfanın tam HTML'ini al
       let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
@@ -4553,7 +4842,7 @@
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      showStatus('Ayarlar gömüldü ve dosya indirildi ✓', 'success');
+      showStatus('Ayarlar ve ' + customModels.length + ' özel model gömüldü; dosya indirildi ✓', 'success');
     }
 
     /* ============================================================
@@ -4609,7 +4898,7 @@
 
     function loadTheme() {
       const saved = localStorage.getItem(LS_THEME_KEY);
-      applyTheme(saved !== 'light'); // varsayılan: dark
+      applyTheme(saved === 'dark'); // varsayılan: light
     }
 
     function toggleTheme() {
@@ -4638,6 +4927,8 @@
     function startNewConversation() {
       if (isBusy) return;
       if (chatHistory.length === 0) {
+        cancelEditMode(true);
+        clearSelectedTemplate();
         el.userInput.focus();
         return;
       }
@@ -4646,6 +4937,8 @@
       activeConversationId = conversation.id;
       chatHistory = [];
       cancelEditMode(true);
+      selectedPromptTemplate = null;
+      renderSelectedTemplate();
       saveHistory();
       renderConversationList();
       renderMessages();
@@ -4817,6 +5110,10 @@
     el.promptLibraryBtn.addEventListener('click', () => {
       openModal('promptModal');
       renderPromptTemplates();
+    });
+    el.clearSelectedTemplateBtn?.addEventListener('click', () => {
+      clearSelectedTemplate({ notify: true });
+      el.userInput.focus();
     });
     el.openNewTemplateBtn?.addEventListener('click', () => openTemplateForm());
     el.resetTemplatesBtn?.addEventListener('click', resetPromptTemplates);
@@ -5009,16 +5306,220 @@
        ============================================================ */
     let speechRecognition = null;
     let isRecordingVoice = false;
+    let mediaRecorder = null;
+    let voiceStream = null;
+    let voiceChunks = [];
+    let voiceRecordingTimeout = null;
+    let useRecorderFallback = false;
+
+    function setVoiceButtonState(state) {
+      const active = state === 'recording' || state === 'transcribing';
+      isRecordingVoice = state === 'recording';
+      el.voiceInputBtn.disabled = state === 'transcribing';
+      el.voiceInputBtn.classList.toggle('recording-pulse', state === 'recording');
+      el.voiceInputBtn.classList.toggle('text-red-400', state === 'recording');
+      el.voiceInputBtn.classList.toggle('border-red-400', state === 'recording');
+      el.voiceInputBtn.classList.toggle('bg-red-500/10', state === 'recording');
+      el.voiceInputBtn.classList.toggle('opacity-60', state === 'transcribing');
+      el.voiceInputBtn.setAttribute('aria-pressed', String(active));
+      el.voiceInputBtn.title = state === 'recording'
+        ? 'Kaydı durdur ve metne çevir'
+        : state === 'transcribing'
+          ? 'Ses metne dönüştürülüyor…'
+          : 'Sesle yaz';
+    }
+
+    function appendVoiceTranscript(transcript) {
+      const text = String(transcript || '').trim();
+      if (!text) return;
+      el.userInput.value = (el.userInput.value ? el.userInput.value.trimEnd() + ' ' : '') + text;
+      autoResize();
+      el.userInput.focus();
+      showToast('Ses metne dönüştürüldü.', 'success');
+    }
+
+    function getTranscriptionUrl() {
+      if (apiConfig.transcriptionUrl) return apiConfig.transcriptionUrl.trim();
+      if (!apiConfig.url) return '';
+      try {
+        const url = new URL(apiConfig.url, window.location.href);
+        const originalPath = url.pathname;
+        url.pathname = originalPath
+          .replace(/\/chat\/completions\/?$/i, '/audio/transcriptions')
+          .replace(/\/responses\/?$/i, '/audio/transcriptions')
+          .replace(/\/completions\/?$/i, '/audio/transcriptions');
+        return url.pathname === originalPath ? '' : url.toString();
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function getRecorderMimeType() {
+      if (!window.MediaRecorder || typeof MediaRecorder.isTypeSupported !== 'function') return '';
+      return [
+        'audio/webm;codecs=opus',
+        'audio/mp4;codecs=mp4a.40.2',
+        'audio/mp4',
+        'audio/ogg;codecs=opus',
+        'audio/webm'
+      ].find(type => MediaRecorder.isTypeSupported(type)) || '';
+    }
+
+    function getAudioFileExtension(mimeType) {
+      if (/mp4|m4a/i.test(mimeType)) return 'm4a';
+      if (/ogg/i.test(mimeType)) return 'ogg';
+      if (/wav/i.test(mimeType)) return 'wav';
+      return 'webm';
+    }
+
+    function stopVoiceStream() {
+      if (voiceRecordingTimeout) clearTimeout(voiceRecordingTimeout);
+      voiceRecordingTimeout = null;
+      if (voiceStream) voiceStream.getTracks().forEach(track => track.stop());
+      voiceStream = null;
+    }
+
+    async function transcribeAudio(blob) {
+      const transcriptionUrl = getTranscriptionUrl();
+      if (!transcriptionUrl) {
+        throw new Error('Dikte için Ayarlar bölümünde Transkripsiyon URL alanını doldurun.');
+      }
+
+      const mimeType = blob.type || 'audio/webm';
+      const extension = getAudioFileExtension(mimeType);
+      const formData = new FormData();
+      formData.append('file', blob, 'dikte.' + extension);
+      formData.append('model', apiConfig.transcriptionModel || 'whisper-1');
+      formData.append('language', 'tr');
+
+      // FormData için boundary değerini tarayıcı üretmelidir; JSON Content-Type başlığını taşımıyoruz.
+      const headers = {};
+      Object.entries(apiConfig.headers || {}).forEach(([key, value]) => {
+        if (key.toLowerCase() !== 'content-type') headers[key] = value;
+      });
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+      let response;
+      try {
+        response = await fetch(transcriptionUrl, {
+          method: 'POST',
+          headers,
+          body: formData,
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
+
+      const rawText = await response.text();
+      if (!response.ok) throw new Error('Transkripsiyon HTTP ' + response.status + ': ' + rawText.slice(0, 240));
+
+      try {
+        const data = JSON.parse(rawText);
+        const transcript = data.text ?? data.transcript ?? data.result?.text;
+        if (typeof transcript !== 'string') throw new Error('Yanıtta metin alanı bulunamadı.');
+        return transcript;
+      } catch (error) {
+        if (rawText.trim() && !(error instanceof SyntaxError)) throw error;
+        if (rawText.trim()) return rawText.trim();
+        throw new Error('Transkripsiyon servisi boş yanıt verdi.');
+      }
+    }
+
+    async function finishRecorderFallback() {
+      stopVoiceStream();
+      const mimeType = mediaRecorder?.mimeType || voiceChunks[0]?.type || 'audio/webm';
+      const blob = new Blob(voiceChunks, { type: mimeType });
+      voiceChunks = [];
+      mediaRecorder = null;
+      if (!blob.size) {
+        setVoiceButtonState('idle');
+        showToast('Ses kaydı alınamadı. Mikrofonu kontrol edin.', 'error');
+        return;
+      }
+
+      setVoiceButtonState('transcribing');
+      showToast('Ses metne dönüştürülüyor…', 'info');
+      try {
+        appendVoiceTranscript(await transcribeAudio(blob));
+      } catch (error) {
+        console.warn('Transkripsiyon hatası:', error);
+        const message = error?.name === 'AbortError'
+          ? 'Transkripsiyon zaman aşımına uğradı.'
+          : (error?.message || 'Ses metne dönüştürülemedi.');
+        showToast(message, 'error');
+      } finally {
+        setVoiceButtonState('idle');
+      }
+    }
+
+    async function startRecorderFallback() {
+      if (!window.isSecureContext) {
+        showToast('Mikrofon için bu dosyayı HTTPS veya localhost üzerinden açın.', 'error');
+        return;
+      }
+      if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+        showToast(location.protocol === 'file:'
+          ? 'Mikrofon erişimi için bu dosyayı localhost veya HTTPS üzerinden açın.'
+          : 'Bu tarayıcı mikrofon kaydını desteklemiyor.', 'error');
+        return;
+      }
+      if (!getTranscriptionUrl()) {
+        showToast('Dikte için Ayarlar > Transkripsiyon URL alanını yapılandırın.', 'error');
+        return;
+      }
+
+      try {
+        voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mimeType = getRecorderMimeType();
+        mediaRecorder = mimeType
+          ? new MediaRecorder(voiceStream, { mimeType })
+          : new MediaRecorder(voiceStream);
+        voiceChunks = [];
+        mediaRecorder.ondataavailable = event => {
+          if (event.data?.size) voiceChunks.push(event.data);
+        };
+        mediaRecorder.onerror = event => {
+          console.warn('Ses kayıt hatası:', event.error || event);
+          stopVoiceStream();
+          setVoiceButtonState('idle');
+          showToast('Ses kaydı sırasında bir hata oluştu.', 'error');
+        };
+        mediaRecorder.onstop = finishRecorderFallback;
+        mediaRecorder.start();
+        setVoiceButtonState('recording');
+        showToast('Mikrofon aktif. Bitirince tekrar dokunun.', 'info');
+        voiceRecordingTimeout = setTimeout(() => {
+          if (mediaRecorder?.state === 'recording') mediaRecorder.stop();
+        }, 60000);
+      } catch (error) {
+        stopVoiceStream();
+        setVoiceButtonState('idle');
+        const message = error?.name === 'NotAllowedError'
+          ? 'Mikrofon izni verilmedi. Tarayıcı site ayarlarından izin verin.'
+          : error?.name === 'NotFoundError'
+            ? 'Kullanılabilir mikrofon bulunamadı.'
+            : 'Mikrofon başlatılamadı: ' + (error?.message || error);
+        showToast(message, 'error');
+      }
+    }
+
+    function toggleRecorderFallback() {
+      if (mediaRecorder?.state === 'recording') {
+        mediaRecorder.stop();
+      } else if (!el.voiceInputBtn.disabled) {
+        startRecorderFallback();
+      }
+    }
 
     function initVoiceInput() {
       if (!el.voiceInputBtn) return;
       const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRec) {
-        el.voiceInputBtn.title = 'Tarayıcınız sesle yazmayı desteklemiyor.';
-        el.voiceInputBtn.classList.add('opacity-40', 'cursor-not-allowed');
-        el.voiceInputBtn.addEventListener('click', () => {
-          showToast('Sesle yazma bu tarayıcıda desteklenmiyor.', 'error');
-        });
+        useRecorderFallback = true;
+        el.voiceInputBtn.title = 'Sesle yaz (mikrofon kaydı)';
+        el.voiceInputBtn.addEventListener('click', toggleRecorderFallback);
         return;
       }
 
@@ -5029,33 +5530,38 @@
         speechRecognition.interimResults = false;
 
         speechRecognition.onstart = () => {
-          isRecordingVoice = true;
-          el.voiceInputBtn.classList.add('recording-pulse', 'text-red-400', 'border-red-400', 'bg-red-500/10');
+          setVoiceButtonState('recording');
           showToast('Mikrofon aktif. Konuşabilirsiniz...', 'info');
         };
 
         speechRecognition.onresult = (event) => {
           const transcript = event.results?.[0]?.[0]?.transcript;
-          if (transcript) {
-            el.userInput.value = (el.userInput.value ? el.userInput.value.trim() + ' ' : '') + transcript;
-            autoResize();
-            el.userInput.focus();
-            showToast('Ses metne dönüştürüldü.', 'success');
-          }
+          if (transcript) appendVoiceTranscript(transcript);
         };
 
         speechRecognition.onerror = (err) => {
           console.warn('Speech error:', err);
-          isRecordingVoice = false;
-          el.voiceInputBtn.classList.remove('recording-pulse', 'text-red-400', 'border-red-400', 'bg-red-500/10');
+          setVoiceButtonState('idle');
+          const code = err?.error || '';
+          if (code === 'not-allowed') {
+            showToast('Mikrofon veya konuşma tanıma izni verilmedi.', 'error');
+          } else if (code === 'service-not-allowed' || code === 'language-not-supported') {
+            useRecorderFallback = true;
+            showToast('Tarayıcının konuşma tanıması kullanılamadı. Tekrar dokunarak kayıt fallback’ini kullanın.', 'error');
+          } else if (code && code !== 'aborted' && code !== 'no-speech') {
+            showToast('Ses tanıma hatası: ' + code, 'error');
+          }
         };
 
         speechRecognition.onend = () => {
-          isRecordingVoice = false;
-          el.voiceInputBtn.classList.remove('recording-pulse', 'text-red-400', 'border-red-400', 'bg-red-500/10');
+          setVoiceButtonState('idle');
         };
 
         el.voiceInputBtn.addEventListener('click', () => {
+          if (useRecorderFallback) {
+            toggleRecorderFallback();
+            return;
+          }
           if (isRecordingVoice) {
             speechRecognition.stop();
           } else {
@@ -5116,9 +5622,17 @@
       loadHistory();
       loadCustomModels();
       loadPromptTemplates();
+      if (selectedPromptTemplate) {
+        const currentTemplate = promptTemplates.find(template => template.id === selectedPromptTemplate.id);
+        if (currentTemplate) {
+          selectedPromptTemplate = createTemplateSnapshot(currentTemplate);
+          persistActiveTemplate();
+        }
+      }
       fillSettingsForm();
       renderModelControls();
       renderPromptTemplates();
+      renderSelectedTemplate();
       setHeadersVisibility(false);
       if (window.innerWidth >= 768 && localStorage.getItem(LS_HISTORY_SIDEBAR_KEY) === 'hidden') {
         el.historySidebar.classList.add('history-hidden');

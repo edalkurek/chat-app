@@ -324,6 +324,51 @@
       box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.16) !important;
     }
 
+    /* Model Dropdown Stilleri */
+    html:not(.dark) #modelDropdownBtn {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #modelDropdownBtn:hover {
+      background-color: #f8fafc !important;
+      border-color: #94a3b8 !important;
+    }
+
+    html:not(.dark) #modelDropdownCurrentName {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #modelDropdownCurrentDesc {
+      color: #64748b !important;
+    }
+
+    html:not(.dark) #modelDropdownMenu {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.16) !important;
+    }
+
+    html:not(.dark) [data-dropdown-model] {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) [data-dropdown-model]:hover {
+      background-color: #f1f5f9 !important;
+    }
+
+    html:not(.dark) #modelDropdownDefineBtn,
+    html:not(.dark) #modelDropdownManageBtn {
+      color: #334155 !important;
+    }
+
+    html:not(.dark) #modelDropdownDefineBtn:hover,
+    html:not(.dark) #modelDropdownManageBtn:hover {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+
     html:not(.dark) .message-export-dropdown [data-export-format] {
       color: #334155 !important;
     }
@@ -1100,9 +1145,58 @@
             </div>
 
             <!-- Model Seçimi -->
-            <div class="flex flex-1 items-center gap-1.5 ml-0.5 sm:ml-3 pl-1.5 sm:pl-3 border-l border-border min-w-0">
-              <select id="modelSelect" aria-label="Model seçimi"
-                class="w-full max-w-[132px] sm:max-w-[190px] bg-panel2 border border-border rounded-lg px-2 sm:px-2.5 py-1.5 text-xs font-medium outline-none focus:border-accent focus:ring-1 focus:ring-accent/40 text-gray-200 transition"></select>
+            <div
+              class="relative flex items-center gap-1.5 ml-0.5 sm:ml-3 pl-1.5 sm:pl-3 border-l border-border min-w-0">
+              <div class="relative">
+                <button id="modelDropdownBtn" type="button" aria-haspopup="listbox" aria-expanded="false"
+                  class="group flex items-center gap-2 max-w-[170px] sm:max-w-[270px] bg-panel2 hover:bg-panel3 border border-border hover:border-accent/50 rounded-xl px-2.5 py-1 text-left outline-none focus:border-accent focus:ring-1 focus:ring-accent/40 text-gray-200 transition shadow-sm">
+                  <div
+                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent group-hover:scale-105 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0 flex-1 leading-tight py-0.5">
+                    <div id="modelDropdownCurrentName" class="text-xs font-semibold text-gray-100 truncate">Qwen Custom
+                    </div>
+                    <div id="modelDropdownCurrentDesc" class="text-[10px] text-gray-400 truncate">Hızlı günlük işler ve
+                      kodlama</div>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="text-gray-400 shrink-0 ml-0.5 group-hover:text-gray-200 transition">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Model Açılır Menüsü -->
+                <div id="modelDropdownMenu"
+                  class="hidden absolute left-0 top-full mt-2 w-72 sm:w-84 rounded-2xl border border-border bg-panel/95 backdrop-blur-xl shadow-2xl p-2 z-50 animate-fadeIn space-y-1">
+                  <div
+                    class="flex items-center justify-between px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    <span>Modeller</span>
+                    <span class="text-[9px] text-accent font-normal lowercase">tıkla ve seç</span>
+                  </div>
+                  <div id="modelDropdownList" class="space-y-1 max-h-64 overflow-y-auto pr-0.5"></div>
+                  <div class="border-t border-border/70 pt-1.5 mt-1.5 flex gap-1">
+                    <button id="modelDropdownDefineBtn" type="button"
+                      class="flex flex-1 items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-panel2 transition">
+                      <span class="text-accent font-bold">＋</span>
+                      <span>Yeni Model Tanımla</span>
+                    </button>
+                    <button id="modelDropdownManageBtn" type="button"
+                      class="p-1.5 px-2.5 rounded-xl text-xs text-gray-400 hover:text-white hover:bg-panel2 transition"
+                      title="Modelleri Yönet">
+                      ⚙️
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Arka plan uyumluluğu için gizli select & elemanlar -->
+              <select id="modelSelect" aria-label="Model seçimi" class="hidden"></select>
               <button id="modelCompareBtn"
                 class="hidden shrink-0 rounded-lg border border-border bg-panel2 px-2 py-1 text-[11px] font-medium text-gray-400 hover:border-accent hover:text-accent transition"
                 title="Yeni model tanımla">＋ Model</button>
@@ -2053,13 +2147,45 @@
       headers: {
         "Content-Type": "application/json"
       },
-      bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": ""\n}',
+      bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": "cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit"\n}',
       responsePath: "choices.0.message.content",
       transcriptionUrl: "",
       transcriptionModel: "whisper-1"
     };
-    let embeddedCustomModels = [];
+    let embeddedCustomModels = [
+      {
+        id: "cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit",
+        name: "Qwen Custom",
+        ability: "Hızlı günlük işler ve kodlama",
+        context: "35B",
+        custom: true
+      },
+      {
+        id: "openai/gpt-oss-120b",
+        name: "GPT OSS",
+        ability: "Derin analiz ve karmaşık problemler",
+        context: "120B",
+        custom: true
+      }
+    ];
     /* DEFAULT_CONFIG_END */
+
+    const DEFAULT_CUSTOM_MODELS = [
+      {
+        id: 'cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit',
+        name: 'Qwen Custom',
+        ability: 'Hızlı günlük işler ve kodlama',
+        context: '35B',
+        custom: true
+      },
+      {
+        id: 'openai/gpt-oss-120b',
+        name: 'GPT OSS',
+        ability: 'Derin analiz ve karmaşık problemler',
+        context: '120B',
+        custom: true
+      }
+    ];
 
     /* Sprint 1: Sistem Promptu & Streaming durumu */
     let systemPrompt = '';
@@ -2216,6 +2342,13 @@ Dokümante edilecek içerik ve bağlam:`
       cfgStatus: document.getElementById('cfgStatus'),
       modelLabel: document.getElementById('modelLabel'),
       modelSelect: document.getElementById('modelSelect'),
+      modelDropdownBtn: document.getElementById('modelDropdownBtn'),
+      modelDropdownMenu: document.getElementById('modelDropdownMenu'),
+      modelDropdownList: document.getElementById('modelDropdownList'),
+      modelDropdownCurrentName: document.getElementById('modelDropdownCurrentName'),
+      modelDropdownCurrentDesc: document.getElementById('modelDropdownCurrentDesc'),
+      modelDropdownDefineBtn: document.getElementById('modelDropdownDefineBtn'),
+      modelDropdownManageBtn: document.getElementById('modelDropdownManageBtn'),
       modelCompareBtn: document.getElementById('modelCompareBtn'),
       modelModal: document.getElementById('modelModal'),
       modelComparison: document.getElementById('modelComparison'),
@@ -2480,7 +2613,7 @@ Dokümante edilecek içerik ve bağlam:`
     function getAvailableModels() {
       const models = [...customModels];
       const configured = getConfiguredModel();
-      if (configured && !models.some(model => model.id === configured)) {
+      if (configured && configured !== 'asd' && !models.some(model => model.id === configured)) {
         models.unshift({
           id: configured,
           name: configured,
@@ -2494,7 +2627,7 @@ Dokümante edilecek içerik ve bağlam:`
 
     function normalizeCustomModels(models) {
       return Array.isArray(models) ? models.filter(model =>
-        model && typeof model.id === 'string' && model.id.trim() && typeof model.name === 'string'
+        model && typeof model.id === 'string' && model.id.trim() && typeof model.name === 'string' && model.id.trim() !== 'asd'
       ).map(model => ({
         id: model.id.trim().slice(0, 100),
         name: model.name.trim().slice(0, 80) || model.id.trim().slice(0, 100),
@@ -2507,15 +2640,52 @@ Dokümante edilecek içerik ve bağlam:`
     function loadCustomModels() {
       try {
         const storedJson = localStorage.getItem(LS_CUSTOM_MODELS_KEY);
-        const stored = storedJson === null ? embeddedCustomModels : JSON.parse(storedJson);
-        customModels = normalizeCustomModels(stored);
+        let stored = [];
+        if (storedJson !== null) {
+          stored = JSON.parse(storedJson);
+        } else {
+          stored = embeddedCustomModels;
+        }
+        let normalized = normalizeCustomModels(stored);
+        // Varsayılan modellerin her zaman tanımlı ve güncel olmasını sağla
+        DEFAULT_CUSTOM_MODELS.forEach(def => {
+          const existing = normalized.find(m => m.id === def.id);
+          if (!existing) {
+            normalized.push({ ...def });
+          } else {
+            existing.name = def.name;
+            existing.ability = def.ability;
+            if (def.context && (!existing.context || existing.context === 'API’ye bağlı')) {
+              existing.context = def.context;
+            }
+          }
+        });
+        customModels = normalized;
+        saveCustomModels();
       } catch (_) {
-        customModels = normalizeCustomModels(embeddedCustomModels);
+        customModels = normalizeCustomModels(DEFAULT_CUSTOM_MODELS);
       }
     }
 
     function saveCustomModels() {
       localStorage.setItem(LS_CUSTOM_MODELS_KEY, JSON.stringify(customModels));
+    }
+
+    function toggleModelDropdown(force) {
+      if (!el.modelDropdownMenu) return;
+      const isOpen = !el.modelDropdownMenu.classList.contains('hidden');
+      const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
+      if (shouldOpen) {
+        el.modelDropdownMenu.classList.remove('hidden');
+        el.modelDropdownBtn?.setAttribute('aria-expanded', 'true');
+      } else {
+        el.modelDropdownMenu.classList.add('hidden');
+        el.modelDropdownBtn?.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function closeModelDropdown() {
+      toggleModelDropdown(false);
     }
 
     function selectModel(modelId) {
@@ -2549,6 +2719,7 @@ Dokümante edilecek içerik ve bağlam:`
         if (el.cfgBody) el.cfgBody.value = apiConfig.bodyTemplate;
         saveConfigToLS();
         updateModelLabel();
+        renderModelControls();
         if (el.modelDefinitionStatus) el.modelDefinitionStatus.textContent = '';
         return true;
       } catch (error) {
@@ -2563,15 +2734,76 @@ Dokümante edilecek içerik ve bağlam:`
     function renderModelControls() {
       const configured = getConfiguredModel();
       const models = getAvailableModels();
+      const activeModelId = (configured && models.some(model => model.id === configured))
+        ? configured
+        : (models[0] ? models[0].id : '');
+      const activeModel = models.find(model => model.id === activeModelId) || {
+        name: 'Model Seçin',
+        ability: 'Aktif model yok',
+        id: ''
+      };
+
+      // Header Model Butonu güncellemeleri
+      if (el.modelDropdownCurrentName) {
+        el.modelDropdownCurrentName.textContent = activeModel.name || activeModel.id || 'Model Seçin';
+      }
+      if (el.modelDropdownCurrentDesc) {
+        el.modelDropdownCurrentDesc.textContent = activeModel.ability || activeModel.id || '';
+      }
+
+      // Arka plan select senkronizasyonu
       el.modelSelect.innerHTML = '<option value="" disabled>Model seçin</option>' + models.map(model =>
-        '<option value="' + escapeHtml(model.id) + '">' + escapeHtml(model.name) + '</option>'
+        '<option value="' + escapeHtml(model.id) + '">' + escapeHtml(model.name) + ' — ' + escapeHtml(model.ability) + '</option>'
       ).join('') + '<option value="__define__">＋ Yeni model tanımla…</option>';
-      el.modelSelect.value = configured && models.some(model => model.id === configured) ? configured : '';
+      el.modelSelect.value = activeModelId;
+
+      // Custom Dropdown Listesi
+      if (el.modelDropdownList) {
+        el.modelDropdownList.innerHTML = models.length
+          ? models.map(model => {
+            const isSelected = model.id === activeModelId;
+            return `
+            <button type="button" data-dropdown-model="${escapeHtml(model.id)}"
+              class="w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2.5 ${isSelected ? 'border-accent/40 bg-accent/15 shadow-sm' : 'border-transparent hover:bg-panel2 hover:border-border'}">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-semibold ${isSelected ? 'text-accent' : 'text-gray-100'} truncate">${escapeHtml(model.name)}</span>
+                  ${model.context ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-panel3 text-gray-400 border border-border/60">${escapeHtml(model.context)}</span>` : ''}
+                </div>
+                <div class="text-[11px] text-gray-400 mt-0.5 leading-snug line-clamp-1">${escapeHtml(model.ability)}</div>
+                <div class="text-[9px] font-mono text-gray-500 mt-0.5 truncate">${escapeHtml(model.id)}</div>
+              </div>
+              ${isSelected ? '<span class="text-accent shrink-0 text-sm font-bold">✓</span>' : ''}
+            </button>`;
+          }).join('')
+          : '<div class="p-3 text-center text-xs text-gray-500">Tanımlı model bulunamadı.</div>';
+
+        el.modelDropdownList.querySelectorAll('[data-dropdown-model]').forEach(button => {
+          button.addEventListener('click', () => {
+            selectModel(button.dataset.dropdownModel);
+            closeModelDropdown();
+          });
+        });
+      }
+
+      // Model Yönetim Modalı Tablosu
       el.modelComparison.innerHTML = models.length
-        ? '<table class="w-full min-w-[520px] text-left text-xs"><thead><tr class="border-b border-border text-gray-500"><th class="p-3">Model</th><th class="p-3">Tanım</th><th class="p-3">Bağlam</th><th></th></tr></thead><tbody>' +
-        models.map(model => '<tr class="border-b border-border/60"><td class="p-3 font-medium">' + escapeHtml(model.name) + '<div class="mt-0.5 font-mono text-[9px] font-normal text-gray-600">' + escapeHtml(model.id) + '</div></td><td class="p-3 text-gray-400">' + escapeHtml(model.ability) + '</td><td class="p-3">' + escapeHtml(model.context) + '</td><td class="p-3"><div class="flex justify-end gap-2"><button data-model="' + escapeHtml(model.id) + '" class="rounded-md bg-accent px-2 py-1 text-white">Seç</button><button data-delete-model="' + escapeHtml(model.id) + '" class="rounded-md px-2 py-1 text-red-400 hover:bg-red-500/10" title="Modeli sil">Sil</button></div></td></tr>').join('') +
+        ? '<table class="w-full min-w-[520px] text-left text-xs"><thead><tr class="border-b border-border text-gray-500"><th class="p-3">Model</th><th class="p-3">Tanım / Gösterim</th><th class="p-3">Bağlam</th><th></th></tr></thead><tbody>' +
+        models.map(model => {
+          const isSelected = model.id === activeModelId;
+          return '<tr class="border-b border-border/60 hover:bg-panel2/50 transition"><td class="p-3 font-medium">' +
+            '<div class="flex items-center gap-2"><span class="text-sm font-semibold ' + (isSelected ? 'text-accent' : 'text-gray-200') + '">' + escapeHtml(model.name) + '</span>' +
+            (isSelected ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/20 text-accent font-medium">Aktif</span>' : '') + '</div>' +
+            '<div class="mt-0.5 font-mono text-[10px] font-normal text-gray-500">' + escapeHtml(model.id) + '</div></td>' +
+            '<td class="p-3 text-gray-300 font-medium">' + escapeHtml(model.ability) + '</td>' +
+            '<td class="p-3"><span class="px-2 py-0.5 rounded-md bg-panel3 border border-border text-[11px] text-gray-400">' + escapeHtml(model.context) + '</span></td>' +
+            '<td class="p-3"><div class="flex justify-end gap-2">' +
+            (!isSelected ? '<button data-model="' + escapeHtml(model.id) + '" class="rounded-md bg-accent px-2.5 py-1 text-white hover:bg-blue-500 transition">Seç</button>' : '') +
+            '<button data-delete-model="' + escapeHtml(model.id) + '" class="rounded-md px-2 py-1 text-red-400 hover:bg-red-500/10 transition" title="Modeli sil">Sil</button></div></td></tr>';
+        }).join('') +
         '</tbody></table>'
         : '<div class="rounded-xl border border-dashed border-border p-6 text-center"><p class="text-sm text-gray-400">Henüz model eklenmedi.</p><p class="mt-1 text-xs text-gray-600">Yukarıdaki formdan ilk modelinizi tanımlayın.</p></div>';
+
       el.modelComparison.querySelectorAll('[data-model]').forEach(button => button.addEventListener('click', () => {
         el.modelSelect.value = button.dataset.model;
         if (selectModel(button.dataset.model)) closeModal('modelModal');
@@ -3041,7 +3273,11 @@ Dokümante edilecek içerik ve bağlam:`
           } else {
             content = await file.text();
           }
-          attachedFiles.push({ name: file.name, type: file.type || 'text/plain', content: content });
+          const estTokens = Math.round((content || '').length / 3.5);
+          if (estTokens > 20000) {
+            showToast('⚠️ ' + file.name + ' çok büyük (~' + estTokens.toLocaleString('tr-TR') + ' token). Model sınırını aşmamak için sol alttaki 📚 RAG butonunu kullanmanız önerilir.', 'info');
+          }
+          attachedFiles.push({ name: file.name, size: file.size, type: file.type || 'text/plain', content: content, estTokens: estTokens });
           addedCount += 1;
         } catch (fileErr) {
           console.warn('Dosya okunamadı:', file.name, fileErr);
@@ -3300,14 +3536,16 @@ Dokümante edilecek içerik ve bağlam:`
           const parsed = JSON.parse(raw);
           apiConfig = Object.assign({}, apiConfig, parsed);
         }
-        // Eğer bodyTemplate içinde model tanımlı değilse ekle
+        // Eğer bodyTemplate içinde model tanımlı değilse veya boşsa varsayılan modeli ata
         if (apiConfig.bodyTemplate) {
           try {
             const marker = '__PROMPT_MARKER__';
             const b = JSON.parse(apiConfig.bodyTemplate.split('$PROMPT').join(marker));
-            if (b && typeof b === 'object' && !Array.isArray(b) && !('model' in b)) {
-              b.model = '';
-              apiConfig.bodyTemplate = JSON.stringify(b, null, 2).split(marker).join('$PROMPT');
+            if (b && typeof b === 'object' && !Array.isArray(b)) {
+              if (!b.model || b.model.trim() === '') {
+                b.model = 'cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit';
+                apiConfig.bodyTemplate = JSON.stringify(b, null, 2).split(marker).join('$PROMPT');
+              }
             }
           } catch (_) { }
         }
@@ -3438,15 +3676,9 @@ Dokümante edilecek içerik ve bağlam:`
         const modelId = parsed.model ? String(parsed.model) : '';
         if (el.modelLabel) el.modelLabel.textContent = modelId;
         if (el.modelSelect) {
-          const hasOption = [...el.modelSelect.options].some(option => option.value === modelId);
-          if (modelId && !hasOption) {
-            renderModelControls();
-          } else if (modelId && hasOption) {
-            el.modelSelect.value = modelId;
-          } else if (!modelId) {
-            el.modelSelect.value = '';
-          }
+          el.modelSelect.value = modelId;
         }
+        renderModelControls();
       } catch (_) {
         if (el.modelLabel) el.modelLabel.textContent = '';
       }
@@ -4616,6 +4848,27 @@ Dokümante edilecek içerik ve bağlam:`
       return (milliseconds / 1000).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' sn';
     }
 
+    function getFileIcon(name, type) {
+      const ext = (name || '').split('.').pop().toLowerCase();
+      if (ext === 'pdf') return '📕';
+      if (['xlsx', 'xls', 'csv'].includes(ext)) return '📊';
+      if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return '🖼️';
+      if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return '📦';
+      if (['js', 'ts', 'jsx', 'tsx', 'py', 'java', 'cs', 'go', 'rs', 'sql', 'html', 'css', 'json', 'xml', 'yaml', 'yml'].includes(ext)) return '💻';
+      if (['doc', 'docx'].includes(ext)) return '📘';
+      if (['ppt', 'pptx'].includes(ext)) return '📙';
+      if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) return '🎵';
+      if (['mp4', 'mkv', 'avi', 'mov'].includes(ext)) return '🎬';
+      return '📄';
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes <= 0) return '';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
     function buildMessageNode(message, index) {
       const role = message.role;
       const content = String(message.content || '');
@@ -4652,6 +4905,27 @@ Dokümante edilecek içerik ve bağlam:`
       copyBtn.innerHTML = copyIdle;
       copyBtn.addEventListener('click', () => copyWithFeedback(copyBtn, visibleCopyContent, copyIdle, copyDone));
 
+      // Ekli dosyalar rozetleri (Attachments)
+      let attachmentsHtml = '';
+      if (Array.isArray(message.attachments) && message.attachments.length > 0) {
+        const chipBg = role === 'user'
+          ? 'bg-black/25 hover:bg-black/35 border-white/20 text-white'
+          : 'bg-panel hover:bg-base border-border text-gray-200';
+        const attItems = message.attachments.map(att => {
+          const icon = getFileIcon(att.name, att.type);
+          const safeName = escapeHtml(att.name || 'Ekli dosya');
+          const sizeBadge = att.size ? `<span class="text-[10px] opacity-75 font-mono">(${formatBytes(att.size)})</span>` : '';
+          return `
+            <div class="inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs backdrop-blur-xs transition shadow-xs select-none ${chipBg}" title="${safeName}">
+              <span class="text-sm leading-none">${icon}</span>
+              <span class="max-w-[220px] truncate font-medium tracking-tight">${safeName}</span>
+              ${sizeBadge}
+            </div>
+          `;
+        }).join('');
+        attachmentsHtml = `<div class="msg-attachments mb-2 flex flex-wrap gap-1.5">${attItems}</div>`;
+      }
+
       const bubble = document.createElement('div');
       bubble.className = 'msg-content px-4 py-3 text-sm leading-relaxed break-words shadow-sm ' +
         (hasTemplate
@@ -4670,9 +4944,12 @@ Dokümante edilecek içerik ve bağlam:`
             <span class="min-w-0 truncate text-[10px] font-semibold tracking-wide text-blue-50/95">${templateTitle}</span>
             <span class="shrink-0 text-[9px] font-medium text-blue-100/55">şablonuyla</span>
           </div>
-          ${content.trim() ? '<div class="template-message-body px-4 py-3">' + renderContent(content) + '</div>' : ''}`;
+          <div class="template-message-body px-4 py-3">
+            ${attachmentsHtml}
+            ${content.trim() ? renderContent(content) : ''}
+          </div>`;
       } else {
-        bubble.innerHTML = renderContent(content);
+        bubble.innerHTML = attachmentsHtml + (content.trim() ? renderContent(content) : '');
       }
 
       if (role === 'error' && message.detail) {
@@ -4804,17 +5081,6 @@ Dokümante edilecek içerik ve bağlam:`
         exportWrap.appendChild(dropdown);
         actionRow.appendChild(exportWrap);
       }
-
-      // Yer imi butonu (Sprint 3)
-      const bmKey = activeConversationId + ':' + index;
-      const isBm = bookmarkedMessages.includes(bmKey);
-      const bmBtn = document.createElement('button');
-      bmBtn.type = 'button';
-      bmBtn.title = isBm ? 'Yer imini kaldır' : 'Yer imine ekle';
-      bmBtn.className = 'inline-flex items-center gap-1 rounded-lg px-2 py-1 hover:bg-panel2 transition text-[11px] ' + (isBm ? 'text-amber-400' : 'text-gray-500 hover:text-amber-400');
-      bmBtn.innerHTML = (isBm ? '★' : '☆') + ' <span>Yer İmi</span>';
-      bmBtn.addEventListener('click', () => toggleBookmark(index));
-      actionRow.appendChild(bmBtn);
 
       if (actionRow.childElementCount) bubbleWrap.appendChild(actionRow);
       wrap.appendChild(avatar);
@@ -5096,6 +5362,9 @@ Dokümante edilecek içerik ve bağlam:`
       const detail = error && error.message ? error.message : String(error);
       if (/API URL/i.test(detail)) return 'API bağlantısı henüz yapılandırılmamış.';
       if (/zaman aşımı/i.test(detail)) return 'API zamanında yanıt vermedi.';
+      if (/max_tokens must be at least 1|context_length_exceeded|maximum context length/i.test(detail)) {
+        return '⚠️ Model Bağlam Sınırı Aşıldı: Eklenen dosya veya mesaj modelin token sınırını aştı. Lütfen büyük dosyaları doğrudan mesaja eklemek yerine sol alttaki mor 📚 RAG (Bilgi Bankası) butonuyla yükleyin.';
+      }
       const httpStatus = detail.match(/HTTP\s+(\d+)/i);
       if (httpStatus) return 'API isteği başarısız oldu (HTTP ' + httpStatus[1] + ').';
       return 'İstek tamamlanamadı.';
@@ -5267,7 +5536,7 @@ Dokümante edilecek içerik ve bağlam:`
         apiContent: apiText,
         template: templateSnapshot,
         createdAt: Date.now(),
-        attachments: attachedFiles.map(file => ({ name: file.name, type: file.type })),
+        attachments: attachedFiles.map(file => ({ name: file.name, size: file.size, type: file.type })),
       };
 
       if (editingMessageIndex !== null) {
@@ -5605,6 +5874,33 @@ Dokümante edilecek içerik ve bağlam:`
     el.conversationSearch.addEventListener('input', renderConversationList);
     el.modelSelect.addEventListener('change', () => selectModel(el.modelSelect.value));
     el.modelCompareBtn.addEventListener('click', () => openModal('modelModal'));
+
+    // Model Dropdown Dinleyicileri
+    el.modelDropdownBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleModelDropdown();
+    });
+    el.modelDropdownDefineBtn?.addEventListener('click', () => {
+      closeModelDropdown();
+      openModal('modelModal');
+      setTimeout(() => el.modelDefinitionId?.focus(), 0);
+    });
+    el.modelDropdownManageBtn?.addEventListener('click', () => {
+      closeModelDropdown();
+      openModal('modelModal');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!el.modelDropdownBtn?.contains(e.target) && !el.modelDropdownMenu?.contains(e.target)) {
+        closeModelDropdown();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModelDropdown();
+      }
+    });
 
     // RAG (KB) buton dinleyicisi
     document.getElementById('kbBtn')?.addEventListener('click', () => { openModal('kbModal'); renderKBDocuments(); });
@@ -6691,6 +6987,10 @@ Dokümante edilecek içerik ve bağlam:`
       loadConfig();
       loadHistory();
       loadCustomModels();
+      const currentConfigured = getConfiguredModel();
+      if (!currentConfigured || currentConfigured === 'asd' || !customModels.some(m => m.id === currentConfigured)) {
+        selectModel('cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit');
+      }
       loadPromptTemplates();
       if (selectedPromptTemplate) {
         const currentTemplate = promptTemplates.find(template => template.id === selectedPromptTemplate.id);

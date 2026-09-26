@@ -16,6 +16,10 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>if (window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -977,6 +981,31 @@
         background: #fff !important;
       }
     }
+
+    /* Streaming cursor animation */
+    .streaming-cursor::after {
+      content: '▊';
+      animation: cursorBlink 1s step-end infinite;
+      color: #60a5fa;
+      margin-left: 2px;
+    }
+
+    @keyframes cursorBlink {
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .streaming-message {
+      min-height: 1.5em;
+    }
   </style>
 </head>
 
@@ -1163,7 +1192,8 @@
 
           <!-- İkincil işlemler menüsü -->
           <div class="relative">
-            <button id="moreActionsBtn" title="Diğer İşlemler" aria-label="Diğer İşlemler" aria-haspopup="menu" aria-expanded="false"
+            <button id="moreActionsBtn" title="Diğer İşlemler" aria-label="Diğer İşlemler" aria-haspopup="menu"
+              aria-expanded="false"
               class="p-2 rounded-xl border border-transparent hover:border-border hover:bg-panel2 text-gray-400 hover:text-accent transition">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1207,7 +1237,9 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" class="text-sky-400 shrink-0">
                   <circle cx="12" cy="12" r="3"></circle>
-                  <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1-2.9 2.9-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1-2.9-2.9.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1 2.9-2.9.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1 2.9 2.9-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>
+                  <path
+                    d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1-2.9 2.9-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1-2.9-2.9.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1 2.9-2.9.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1 2.9 2.9-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z">
+                  </path>
                 </svg>
                 <span>API Ayarları</span>
               </button>
@@ -1318,8 +1350,10 @@
               class="selected-template-card hidden mb-2 max-w-full self-start items-center gap-2 rounded-lg px-2 py-1.5"
               role="status" aria-live="polite">
               <span id="selectedTemplateIcon"
-                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-500/15 text-[11px]" aria-hidden="true"></span>
-              <strong id="selectedTemplateTitle" class="template-selection-title truncate text-[11px] font-semibold text-blue-100"></strong>
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-500/15 text-[11px]"
+                aria-hidden="true"></span>
+              <strong id="selectedTemplateTitle"
+                class="template-selection-title truncate text-[11px] font-semibold text-blue-100"></strong>
               <button id="clearSelectedTemplateBtn" type="button" title="Şablon seçimini kaldır"
                 aria-label="Şablon seçimini kaldır"
                 class="ml-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-xs text-blue-200/70 hover:bg-white/10 hover:text-white transition">×</button>
@@ -1355,7 +1389,13 @@
                   <span class="hidden sm:inline text-[11px] font-medium">Dosya</span>
                 </button>
                 <input id="fileInput" type="file" multiple class="hidden"
-                  accept=".txt,.md,.csv,.json,.js,.ts,.jsx,.tsx,.py,.java,.cs,.go,.rs,.sql,.xml,.yaml,.yml,.html,.css,.log" />
+                  accept=".txt,.md,.csv,.json,.js,.ts,.jsx,.tsx,.py,.java,.cs,.go,.rs,.sql,.xml,.yaml,.yml,.html,.css,.log,.pdf,.xlsx,.xls,.png,.jpg,.jpeg,.gif,.webp,.svg" />
+
+                <button id="kbBtn" type="button" title="Bilgi Tabanı (RAG)" aria-label="Bilgi Tabanı"
+                  class="flex h-8 items-center gap-1.5 px-2.5 rounded-lg border border-border/70 bg-panel text-gray-400 hover:border-purple-500 hover:text-purple-400 hover:bg-panel3 transition text-xs">
+                  <span class="text-purple-400 font-bold">📚</span>
+                  <span class="hidden sm:inline text-[11px] font-medium">RAG</span>
+                </button>
               </div>
 
               <div class="flex items-center gap-2">
@@ -1452,6 +1492,27 @@
           <input id="cfgResponsePath" type="text" spellcheck="false" placeholder="choices.0.message.content"
             class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-accent transition text-gray-200" />
           <p class="text-[11px] text-gray-500 mt-1">Örn: choices.0.message.content veya result.text</p>
+        </div>
+
+        <!-- Sistem Promptu -->
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1.5">Sistem Promptu</label>
+          <textarea id="cfgSystemPrompt" rows="3" spellcheck="false"
+            placeholder="Modele her mesajda gönderilecek sistem talimatı (opsiyonel)..."
+            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
+          <p class="text-[11px] text-gray-500 mt-1">Her API isteğinde &quot;system&quot; rolüyle mesaj listesinin başına
+            eklenir.</p>
+        </div>
+
+        <!-- Streaming -->
+        <div>
+          <label class="flex items-center gap-2.5 cursor-pointer select-none">
+            <input type="checkbox" id="cfgStreaming" class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
+            <div>
+              <span class="text-xs font-medium text-gray-300">Streaming Yanıt</span>
+              <p class="text-[10px] text-gray-500">Yanıtı kelime kelime gösterir (API'nin SSE desteği gerekir)</p>
+            </div>
+          </label>
         </div>
 
         <!-- Butonlar -->
@@ -1892,7 +1953,92 @@
       </div>
     </div>
   </div>
+
+  <!-- Bilgi Tabanı (RAG) Modal -->
+  <div id="kbModal" class="app-modal fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" role="dialog"
+    aria-modal="true">
+    <div
+      class="modal-card w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden rounded-2xl border border-border bg-panel shadow-2xl">
+      <div class="flex items-center justify-between border-b border-border px-5 py-4 shrink-0">
+        <div>
+          <h2 class="font-semibold text-gray-100 flex items-center gap-2"><span>📚</span> Bilgi Tabanı (RAG)</h2>
+          <p class="text-xs text-gray-500 mt-0.5">Belgelerinizi yükleyin, içerikleri hakkında soru sorun.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <span class="text-xs text-gray-400">RAG Aktif</span>
+            <input type="checkbox" id="ragToggle" class="w-4 h-4 rounded accent-purple-600 cursor-pointer">
+          </label>
+          <button data-close-modal="kbModal" class="p-2 text-gray-400 hover:text-white" aria-label="Kapat">✕</button>
+        </div>
+      </div>
+      <div class="p-4 pb-2 shrink-0">
+        <div id="kbDropZone"
+          class="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed border-border hover:border-purple-500 bg-panel2/50 hover:bg-purple-500/5 transition cursor-pointer">
+          <span class="text-2xl">📄</span>
+          <p class="text-sm font-medium text-gray-300">Dosya yüklemek için tıklayın veya sürükleyin</p>
+          <p class="text-[10px] text-gray-500">PDF, XLSX, TXT, MD, CSV, JSON — Maks 10 MB</p>
+          <input id="kbFileInput" type="file" multiple class="hidden"
+            accept=".pdf,.xlsx,.xls,.txt,.md,.csv,.json,.xml,.yaml,.yml,.html,.log,.py,.js,.ts,.java,.cs,.go,.rs,.sql,.css">
+        </div>
+        <div id="kbUploadStatus"
+          class="hidden mt-2 p-2.5 rounded-lg bg-purple-500/10 border border-purple-500/30 text-xs text-purple-300 text-center animate-fadeIn">
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto px-4 pb-4">
+        <div class="flex items-center justify-between mb-2 mt-1">
+          <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Yüklü Belgeler</span>
+          <span id="kbDocCount" class="text-[10px] text-gray-500 font-mono">0 belge</span>
+        </div>
+        <div id="kbDocList" class="space-y-2">
+          <p class="text-center text-xs text-gray-600 py-6">Henüz belge yüklenmemiş.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="printArea" class="hidden"></div>
+
+  <!-- Klavye Kısayolları Modalı (Sprint 4) -->
+  <div id="shortcutsModal" class="app-modal fixed inset-0 z-50 items-center justify-center bg-black/70 p-4"
+    role="dialog" aria-modal="true">
+    <div
+      class="modal-card w-full max-w-lg max-h-[80vh] overflow-y-auto rounded-2xl border border-border bg-panel shadow-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-gray-100 flex items-center gap-2">⌨️ Klavye Kısayolları</h2>
+        <button data-close-modal="shortcutsModal" class="p-2 text-gray-400 hover:text-white">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div class="flex items-center justify-between p-2 rounded-lg bg-panel2 border border-border"><span
+              class="text-gray-300">Mesaj gönder</span><kbd
+              class="px-2 py-0.5 rounded bg-base border border-border text-gray-400 font-mono text-[10px]">Enter</kbd>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-panel2 border border-border"><span
+              class="text-gray-300">Yeni satır</span><kbd
+              class="px-2 py-0.5 rounded bg-base border border-border text-gray-400 font-mono text-[10px]">Shift+Enter</kbd>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-panel2 border border-border"><span
+              class="text-gray-300">Global Arama</span><kbd
+              class="px-2 py-0.5 rounded bg-base border border-border text-gray-400 font-mono text-[10px]">Ctrl+K</kbd>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-panel2 border border-border"><span
+              class="text-gray-300">Sohbet İçi Arama</span><kbd
+              class="px-2 py-0.5 rounded bg-base border border-border text-gray-400 font-mono text-[10px]">Ctrl+F</kbd>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-panel2 border border-border"><span
+              class="text-gray-300">Kısayol Paneli</span><kbd
+              class="px-2 py-0.5 rounded bg-base border border-border text-gray-400 font-mono text-[10px]">?</kbd></div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-panel2 border border-border"><span
+              class="text-gray-300">Modalları Kapat</span><kbd
+              class="px-2 py-0.5 rounded bg-base border border-border text-gray-400 font-mono text-[10px]">Escape</kbd>
+          </div>
+        </div>
+        <p class="text-gray-500 text-[10px] mt-2">Slash komutları için mesaj alanına <code class="text-accent">/</code>
+          yazın.</p>
+      </div>
+    </div>
+  </div>
   <div id="toastContainer" class="fixed right-4 top-4 z-[80] flex w-[min(360px,calc(100vw-2rem))] flex-col gap-2"
     aria-live="polite"></div>
 
@@ -1914,6 +2060,25 @@
     };
     let embeddedCustomModels = [];
     /* DEFAULT_CONFIG_END */
+
+    /* Sprint 1: Sistem Promptu & Streaming durumu */
+    let systemPrompt = '';
+    let streamingEnabled = false;
+    const LS_SYSTEM_PROMPT_KEY = 'aiChat.systemPrompt.v1';
+    const LS_STREAMING_KEY = 'aiChat.streaming.v1';
+
+    /* Sprint 2: RAG durumu */
+    let ragEnabled = false;
+    const LS_RAG_KEY = 'aiChat.ragEnabled.v1';
+    const RAG_DB_NAME = 'aiChat_RAG_v1';
+    const RAG_DB_VERSION = 1;
+    const RAG_CHUNK_SIZE = 800;
+    const RAG_CHUNK_OVERLAP = 100;
+    const RAG_TOP_K = 5;
+
+    /* Sprint 3: Mesaj Yer İmi & Dallanma */
+    const LS_BOOKMARKS_KEY = 'aiChat.bookmarks.v1';
+    let bookmarkedMessages = [];
 
     /* ============================================================
        2. SABİTLER & DURUM
@@ -2102,6 +2267,19 @@ Dokümante edilecek içerik ve bağlam:`
       toastContainer: document.getElementById('toastContainer'),
       voiceInputBtn: document.getElementById('voiceInputBtn'),
       scrollToBottomBtn: document.getElementById('scrollToBottomBtn'),
+
+      // Sprint 1: Sistem Promptu & Streaming
+      cfgSystemPrompt: document.getElementById('cfgSystemPrompt'),
+      cfgStreaming: document.getElementById('cfgStreaming'),
+
+      // Sprint 2: RAG / Bilgi Tabanı
+      kbModal: document.getElementById('kbModal'),
+      kbDropZone: document.getElementById('kbDropZone'),
+      kbFileInput: document.getElementById('kbFileInput'),
+      kbUploadStatus: document.getElementById('kbUploadStatus'),
+      kbDocList: document.getElementById('kbDocList'),
+      kbDocCount: document.getElementById('kbDocCount'),
+      ragToggle: document.getElementById('ragToggle'),
 
       // Global ve Sohbet İçi Arama
       globalSearchBtn: document.getElementById('globalSearchBtn'),
@@ -2318,12 +2496,12 @@ Dokümante edilecek içerik ve bağlam:`
       return Array.isArray(models) ? models.filter(model =>
         model && typeof model.id === 'string' && model.id.trim() && typeof model.name === 'string'
       ).map(model => ({
-          id: model.id.trim().slice(0, 100),
-          name: model.name.trim().slice(0, 80) || model.id.trim().slice(0, 100),
-          ability: String(model.ability || 'Özel model').slice(0, 160),
-          context: String(model.context || 'API’ye bağlı').slice(0, 40),
-          custom: true,
-        })) : [];
+        id: model.id.trim().slice(0, 100),
+        name: model.name.trim().slice(0, 80) || model.id.trim().slice(0, 100),
+        ability: String(model.ability || 'Özel model').slice(0, 160),
+        context: String(model.context || 'API’ye bağlı').slice(0, 40),
+        custom: true,
+      })) : [];
     }
 
     function loadCustomModels() {
@@ -2828,15 +3006,46 @@ Dokümante edilecek içerik ve bağlam:`
       const files = [...fileList];
       let addedCount = 0;
       for (const file of files) {
-        if (file.size > 1024 * 1024) {
-          showToast(file.name + ' 1 MB sınırını aşıyor.', 'error');
+        if (file.size > 5 * 1024 * 1024) {
+          showToast(file.name + ' 5 MB sınırını aşıyor.', 'error');
           continue;
         }
         try {
-          attachedFiles.push({ name: file.name, type: file.type || 'text/plain', content: await file.text() });
+          let content;
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (ext === 'pdf' && window.pdfjsLib) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const pages = [];
+            for (let p = 1; p <= pdf.numPages; p++) {
+              const page = await pdf.getPage(p);
+              const tc = await page.getTextContent();
+              pages.push(tc.items.map(item => item.str).join(' '));
+            }
+            content = pages.join('\n\n');
+            showToast(file.name + ': ' + pdf.numPages + ' sayfa okundu.', 'info');
+          } else if (['xlsx', 'xls'].includes(ext) && window.XLSX) {
+            const arrayBuffer = await file.arrayBuffer();
+            const wb = XLSX.read(arrayBuffer, { type: 'array' });
+            content = wb.SheetNames.map(name => '--- Sayfa: ' + name + ' ---\n' + XLSX.utils.sheet_to_csv(wb.Sheets[name])).join('\n\n');
+            showToast(file.name + ': ' + wb.SheetNames.length + ' sayfa okundu.', 'info');
+          } else if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
+            // Görüntü dosyası: base64 olarak oku (vision modeller için)
+            content = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(file);
+            });
+            showToast(file.name + ' görüntü olarak eklendi.', 'info');
+          } else {
+            content = await file.text();
+          }
+          attachedFiles.push({ name: file.name, type: file.type || 'text/plain', content: content });
           addedCount += 1;
-        } catch (_) {
-          showToast(file.name + ' okunamadı.', 'error');
+        } catch (fileErr) {
+          console.warn('Dosya okunamadı:', file.name, fileErr);
+          showToast(file.name + ' okunamadı: ' + (fileErr.message || 'Bilinmeyen hata'), 'error');
         }
       }
       renderAttachments();
@@ -3744,6 +3953,96 @@ Dokümante edilecek içerik ve bağlam:`
         icon: '◑',
         action: () => toggleTheme()
       });
+      commands.push({
+        type: 'action',
+        id: 'cmd-rag',
+        title: '/rag',
+        label: 'Bilgi Tabanı (RAG)',
+        desc: 'Belge yükle ve içerikleri hakkında soru sor',
+        icon: '📚',
+        action: () => { openModal('kbModal'); renderKBDocuments(); }
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-bookmark',
+        title: '/yer-imi',
+        label: 'Yer İmlerini Göster',
+        desc: 'İşaretlenmiş mesajları listeler',
+        icon: '📖',
+        action: () => showBookmarksList()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-autotag',
+        title: '/etiketle',
+        label: 'Otomatik Etiketle',
+        desc: 'Sohbetin konusunu AI ile tespit edip etiket ekler',
+        icon: '🏷️',
+        action: () => autoTagConversation()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-shortcuts',
+        title: '/kisayollar',
+        label: 'Klavye Kısayolları',
+        desc: 'Tüm kısayolları göster',
+        icon: '⌨️',
+        action: () => openModal('shortcutsModal')
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-export-settings',
+        title: '/ayar-aktar',
+        label: 'Ayarları Dışa Aktar',
+        desc: 'API ayarlarını JSON dosyası olarak indir',
+        icon: '📤',
+        action: () => exportSettings()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-import-settings',
+        title: '/ayar-yukle',
+        label: 'Ayar İçe Aktar',
+        desc: 'JSON ayar dosyasını yükle',
+        icon: '📥',
+        action: () => importSettings()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-stats',
+        title: '/istatistik',
+        label: 'Kullanım İstatistikleri',
+        desc: 'Token tüketimi ve sohbet istatistiklerini göster',
+        icon: '📊',
+        action: () => showUsageStats()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-share',
+        title: '/paylas',
+        label: 'Sohbeti Paylaş',
+        desc: 'Sohbeti paylaşılabilir dosya olarak indir',
+        icon: '🔗',
+        action: () => shareConversation()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-conv-export',
+        title: '/sohbet-aktar',
+        label: 'Sohbet Geçmişini Dışa Aktar',
+        desc: 'Tüm sohbet geçmişini JSON olarak indir',
+        icon: '💾',
+        action: () => exportConversations()
+      });
+      commands.push({
+        type: 'action',
+        id: 'cmd-conv-import',
+        title: '/sohbet-yukle',
+        label: 'Sohbet Geçmişini Yükle',
+        desc: 'JSON sohbet dosyasını içe aktar',
+        icon: '📂',
+        action: () => importConversations()
+      });
 
       // Prompt Şablonları
       (promptTemplates || []).forEach(tpl => {
@@ -4240,7 +4539,32 @@ Dokümante edilecek içerik ve bağlam:`
           }
         }
 
-        // 2. Standart Kod Blokları
+        // 2. Chart.js Grafik Desteği (Sprint 4)
+        if ((language === 'chart' || language === 'chartjs') && window.Chart) {
+          const rawConfig = code.textContent.trim();
+          try {
+            const chartConfig = JSON.parse(rawConfig);
+            const card = document.createElement('div');
+            card.className = 'mermaid-diagram-card animate-fadeIn';
+            const cHeader = document.createElement('div');
+            cHeader.className = 'flex items-center justify-between px-3.5 py-2 border-b border-border bg-panel2/80 text-xs';
+            cHeader.innerHTML = '<div class="flex items-center gap-2"><span class="text-emerald-400 font-bold">📊</span><span class="font-mono text-[11px] font-semibold tracking-wider text-emerald-300 uppercase">Chart.js Grafik</span></div>';
+            const canvasWrap = document.createElement('div');
+            canvasWrap.className = 'p-4 bg-panel/80';
+            canvasWrap.style.maxHeight = '400px';
+            const canvas = document.createElement('canvas');
+            canvasWrap.appendChild(canvas);
+            pre.classList.add('hidden');
+            card.appendChild(cHeader);
+            card.appendChild(canvasWrap);
+            card.appendChild(pre);
+            pre.parentNode.insertBefore(card, pre);
+            try { new Chart(canvas.getContext('2d'), chartConfig); } catch (ce) { console.warn('Chart render error:', ce); pre.classList.remove('hidden'); }
+            return;
+          } catch (_) { }
+        }
+
+        // 3. Standart Kod Blokları
         const wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
         const toolbar = document.createElement('div');
@@ -4333,10 +4657,10 @@ Dokümante edilecek içerik ve bağlam:`
         (hasTemplate
           ? 'template-enhanced-bubble !p-0 rounded-2xl rounded-tr-xs text-white'
           : role === 'user'
-          ? 'rounded-2xl rounded-tr-xs bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-blue-900/25'
-          : role === 'error'
-            ? 'rounded-2xl rounded-tl-xs bg-red-950/25 text-red-200 border border-red-500/30'
-            : 'rounded-2xl rounded-tl-xs bg-panel2/90 text-gray-100 border border-border shadow-black/20');
+            ? 'rounded-2xl rounded-tr-xs bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-blue-900/25'
+            : role === 'error'
+              ? 'rounded-2xl rounded-tl-xs bg-red-950/25 text-red-200 border border-red-500/30'
+              : 'rounded-2xl rounded-tl-xs bg-panel2/90 text-gray-100 border border-border shadow-black/20');
       if (hasTemplate) {
         const templateIcon = escapeHtml(message.template.icon || '✨');
         const templateTitle = escapeHtml(message.template.title || 'Şablon');
@@ -4481,6 +4805,17 @@ Dokümante edilecek içerik ve bağlam:`
         actionRow.appendChild(exportWrap);
       }
 
+      // Yer imi butonu (Sprint 3)
+      const bmKey = activeConversationId + ':' + index;
+      const isBm = bookmarkedMessages.includes(bmKey);
+      const bmBtn = document.createElement('button');
+      bmBtn.type = 'button';
+      bmBtn.title = isBm ? 'Yer imini kaldır' : 'Yer imine ekle';
+      bmBtn.className = 'inline-flex items-center gap-1 rounded-lg px-2 py-1 hover:bg-panel2 transition text-[11px] ' + (isBm ? 'text-amber-400' : 'text-gray-500 hover:text-amber-400');
+      bmBtn.innerHTML = (isBm ? '★' : '☆') + ' <span>Yer İmi</span>';
+      bmBtn.addEventListener('click', () => toggleBookmark(index));
+      actionRow.appendChild(bmBtn);
+
       if (actionRow.childElementCount) bubbleWrap.appendChild(actionRow);
       wrap.appendChild(avatar);
       wrap.appendChild(bubbleWrap);
@@ -4572,6 +4907,11 @@ Dokümante edilecek içerik ve bağlam:`
       const messages = getApiMessages(history || []);
       if (messages.length === 0) messages.push({ role: 'user', content: prompt });
 
+      // Sistem promptu varsa messages dizisinin başına ekle
+      if (systemPrompt && systemPrompt.trim()) {
+        messages.unshift({ role: 'system', content: systemPrompt.trim() });
+      }
+
       // Yer tutucunun messages dizisindeki konumunu, benzersiz bir işaretçiyle bul.
       // Böylece şablondaki diğer sabit/system mesajları kaybolmaz.
       const marker = '__CHAT_HISTORY_PROMPT_PLACEHOLDER__';
@@ -4662,6 +5002,93 @@ Dokümante edilecek içerik ve bağlam:`
       };
     }
 
+    /* Sprint 1: SSE Streaming destekli API çağrısı */
+    async function callApiStreaming(prompt, history, onChunk) {
+      if (!apiConfig.url) throw new Error('API URL ayarlanmamış.');
+
+      const controller = new AbortController();
+      activeRequestController = controller;
+      requestStoppedByUser = false;
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+      const options = {
+        method: apiConfig.method || 'POST',
+        headers: apiConfig.headers || {},
+        signal: controller.signal,
+      };
+
+      if (options.method !== 'GET') {
+        let bodyStr;
+        try {
+          bodyStr = buildRequestBody(apiConfig.bodyTemplate || '{"prompt":"$PROMPT"}', prompt, history);
+        } catch (e) {
+          throw new Error('İstek gövdesi geçerli JSON üretmedi.\n' + e.message);
+        }
+        try {
+          const bodyObj = JSON.parse(bodyStr);
+          bodyObj.stream = true;
+          bodyObj.stream_options = { include_usage: true };
+          bodyStr = JSON.stringify(bodyObj);
+        } catch (_) { }
+        options.body = bodyStr;
+      }
+
+      let res;
+      try {
+        res = await fetch(apiConfig.url, options);
+      } catch (fetchErr) {
+        clearTimeout(timeoutId);
+        activeRequestController = null;
+        if (fetchErr.name === 'AbortError') {
+          if (requestStoppedByUser) throw new Error('İstek kullanıcı tarafından durduruldu.');
+          throw new Error('İstek zaman aşımına uğradı.');
+        }
+        throw fetchErr;
+      }
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        activeRequestController = null;
+        const errText = await res.text();
+        throw new Error('HTTP ' + res.status + ': ' + errText.slice(0, 300));
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullContent = '';
+      let buffer = '';
+      let lastUsage = null;
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed === 'data: [DONE]') continue;
+            if (!trimmed.startsWith('data: ')) continue;
+            try {
+              const json = JSON.parse(trimmed.slice(6));
+              const delta = json.choices?.[0]?.delta?.content || '';
+              if (delta) {
+                fullContent += delta;
+                if (onChunk) onChunk(fullContent, delta);
+              }
+              if (json.usage) lastUsage = normalizeUsage(json.usage);
+            } catch (_) { }
+          }
+        }
+      } finally {
+        activeRequestController = null;
+        try { reader.releaseLock(); } catch (_) { }
+      }
+
+      return { reply: fullContent, usage: lastUsage };
+    }
+
     /* ============================================================
        9. MESAJ GÖNDERME AKIŞI
        ============================================================ */
@@ -4711,40 +5138,105 @@ Dokümante edilecek içerik ve bağlam:`
 
       setBusy(true);
       renderMessages();
-      showTypingIndicator();
       const startedAt = performance.now();
 
-      try {
-        const result = await callApi(getApiMessageContent(lastUserMessage), chatHistory);
-        chatHistory.push({
+      if (streamingEnabled) {
+        // Streaming mode: yanıt kelime kelime akar
+        removeTypingIndicator();
+        const streamMsg = {
           role: 'assistant',
-          content: result.reply,
-          usage: result.usage,
+          content: '',
           model: getConfiguredModel(),
           createdAt: Date.now(),
-          elapsedMs: Math.round(performance.now() - startedAt),
-        });
-      } catch (err) {
-        const detail = err && err.message ? err.message : String(err);
-        if (/kullanıcı tarafından durduruldu/i.test(detail)) {
-          showToast('Yanıt üretimi durduruldu.', 'info');
-        } else {
+        };
+        chatHistory.push(streamMsg);
+        const msgIndex = chatHistory.length - 1;
+
+        const streamNode = buildMessageNode(streamMsg, msgIndex);
+        el.messagesInner.appendChild(streamNode);
+        const bubbleEl = streamNode.querySelector('.msg-content');
+        if (bubbleEl) {
+          bubbleEl.classList.add('streaming-cursor', 'streaming-message');
+        }
+        scrollToBottom();
+
+        try {
+          const result = await callApiStreaming(
+            getApiMessageContent(lastUserMessage),
+            chatHistory.slice(0, -1),
+            (fullText) => {
+              chatHistory[msgIndex].content = fullText;
+              if (bubbleEl) {
+                bubbleEl.innerHTML = renderContent(fullText);
+                decorateCodeBlocks(bubbleEl);
+                bubbleEl.classList.add('streaming-cursor');
+              }
+              scrollToBottom();
+            }
+          );
+          chatHistory[msgIndex].content = result.reply;
+          chatHistory[msgIndex].usage = result.usage;
+          chatHistory[msgIndex].elapsedMs = Math.round(performance.now() - startedAt);
+          if (bubbleEl) bubbleEl.classList.remove('streaming-cursor', 'streaming-message');
+        } catch (err) {
+          const detail = err && err.message ? err.message : String(err);
+          if (/kullanıcı tarafından durduruldu/i.test(detail)) {
+            chatHistory[msgIndex].elapsedMs = Math.round(performance.now() - startedAt);
+            if (bubbleEl) bubbleEl.classList.remove('streaming-cursor', 'streaming-message');
+            showToast('Yanıt üretimi durduruldu.', 'info');
+          } else {
+            chatHistory.pop();
+            chatHistory.push({
+              role: 'error',
+              content: getShortErrorMessage(err),
+              detail,
+              createdAt: Date.now(),
+              elapsedMs: Math.round(performance.now() - startedAt),
+            });
+          }
+        } finally {
+          activeRequestController = null;
+          requestStoppedByUser = false;
+          setBusy(false);
+          saveHistory();
+          renderMessages();
+          el.userInput.focus();
+        }
+      } else {
+        // Non-streaming mode (orijinal akış)
+        showTypingIndicator();
+        try {
+          const result = await callApi(getApiMessageContent(lastUserMessage), chatHistory);
           chatHistory.push({
-            role: 'error',
-            content: getShortErrorMessage(err),
-            detail,
+            role: 'assistant',
+            content: result.reply,
+            usage: result.usage,
+            model: getConfiguredModel(),
             createdAt: Date.now(),
             elapsedMs: Math.round(performance.now() - startedAt),
           });
+        } catch (err) {
+          const detail = err && err.message ? err.message : String(err);
+          if (/kullanıcı tarafından durduruldu/i.test(detail)) {
+            showToast('Yanıt üretimi durduruldu.', 'info');
+          } else {
+            chatHistory.push({
+              role: 'error',
+              content: getShortErrorMessage(err),
+              detail,
+              createdAt: Date.now(),
+              elapsedMs: Math.round(performance.now() - startedAt),
+            });
+          }
+        } finally {
+          activeRequestController = null;
+          requestStoppedByUser = false;
+          removeTypingIndicator();
+          setBusy(false);
+          saveHistory();
+          renderMessages();
+          el.userInput.focus();
         }
-      } finally {
-        activeRequestController = null;
-        requestStoppedByUser = false;
-        removeTypingIndicator();
-        setBusy(false);
-        saveHistory();
-        renderMessages();
-        el.userInput.focus();
       }
     }
 
@@ -4757,6 +5249,13 @@ Dokümante edilecek içerik ve bağlam:`
       if (attachedFiles.length) {
         const fileContext = attachedFiles.map(file => '\n\n--- Dosya: ' + file.name + ' ---\n' + file.content).join('');
         apiText = (apiText || 'Ekli dosyaları analiz et.') + fileContext;
+      }
+      // RAG augmentation
+      if (ragEnabled) {
+        try {
+          const ragContext = await augmentWithRAG(visibleText);
+          if (ragContext) apiText = (apiText || visibleText) + ragContext;
+        } catch (_) { }
       }
       const templateSnapshot = selectedPromptTemplate ? { ...selectedPromptTemplate } : null;
       if (templateSnapshot?.prompt) {
@@ -5106,6 +5605,9 @@ Dokümante edilecek içerik ve bağlam:`
     el.conversationSearch.addEventListener('input', renderConversationList);
     el.modelSelect.addEventListener('change', () => selectModel(el.modelSelect.value));
     el.modelCompareBtn.addEventListener('click', () => openModal('modelModal'));
+
+    // RAG (KB) buton dinleyicisi
+    document.getElementById('kbBtn')?.addEventListener('click', () => { openModal('kbModal'); renderKBDocuments(); });
     el.modelDefinitionForm.addEventListener('submit', addCustomModel);
     el.promptLibraryBtn.addEventListener('click', () => {
       openModal('promptModal');
@@ -5610,7 +6112,575 @@ Dokümante edilecek içerik ve bağlam:`
         openInChatSearch();
         return;
       }
+      // ? tuşu ile kısayol paneli (input dışında)
+      if (e.key === '?' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+        e.preventDefault();
+        openModal('shortcutsModal');
+      }
     });
+
+    /* ============================================================
+       14.5 SİSTEM PROMPTU & STREAMING YÖNETİMİ
+       ============================================================ */
+    function loadSystemPrompt() {
+      try {
+        systemPrompt = localStorage.getItem(LS_SYSTEM_PROMPT_KEY) || '';
+        if (el.cfgSystemPrompt) el.cfgSystemPrompt.value = systemPrompt;
+      } catch (_) { }
+    }
+
+    function saveSystemPrompt() {
+      systemPrompt = (el.cfgSystemPrompt?.value || '').trim();
+      try { localStorage.setItem(LS_SYSTEM_PROMPT_KEY, systemPrompt); } catch (_) { }
+    }
+
+    function loadStreamingSetting() {
+      try {
+        streamingEnabled = localStorage.getItem(LS_STREAMING_KEY) === 'true';
+        if (el.cfgStreaming) el.cfgStreaming.checked = streamingEnabled;
+      } catch (_) { }
+    }
+
+    function saveStreamingSetting() {
+      streamingEnabled = el.cfgStreaming?.checked || false;
+      try { localStorage.setItem(LS_STREAMING_KEY, String(streamingEnabled)); } catch (_) { }
+    }
+
+    el.cfgSystemPrompt?.addEventListener('input', saveSystemPrompt);
+    el.cfgStreaming?.addEventListener('change', saveStreamingSetting);
+
+    /* ============================================================
+       14.55 YER İMİ & OTOMATİK ETİKETLEME (Sprint 3)
+       ============================================================ */
+    function loadBookmarks() {
+      try { bookmarkedMessages = JSON.parse(localStorage.getItem(LS_BOOKMARKS_KEY) || '[]'); } catch (_) { bookmarkedMessages = []; }
+    }
+
+    function saveBookmarks() {
+      try { localStorage.setItem(LS_BOOKMARKS_KEY, JSON.stringify(bookmarkedMessages)); } catch (_) { }
+    }
+
+    function toggleBookmark(msgIndex) {
+      const key = activeConversationId + ':' + msgIndex;
+      const idx = bookmarkedMessages.indexOf(key);
+      if (idx >= 0) {
+        bookmarkedMessages.splice(idx, 1);
+        showToast('Yer imi kaldırıldı.', 'info');
+      } else {
+        bookmarkedMessages.push(key);
+        showToast('Mesaj yer imine eklendi.', 'success');
+      }
+      saveBookmarks();
+      renderMessages();
+    }
+
+    function showBookmarksList() {
+      const items = bookmarkedMessages.filter(k => k.startsWith(activeConversationId + ':'));
+      if (items.length === 0) { showToast('Bu sohbette yer imi yok.', 'info'); return; }
+      const indices = items.map(k => parseInt(k.split(':')[1])).filter(i => !isNaN(i) && chatHistory[i]);
+      if (indices.length === 0) { showToast('Yer imli mesaj bulunamadı.', 'info'); return; }
+      // İlk yer imli mesaja scroll
+      const firstIdx = indices[0];
+      const nodes = el.messagesInner?.children;
+      if (nodes && nodes[firstIdx]) {
+        nodes[firstIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        nodes[firstIdx].classList.remove('message-search-highlight');
+        void nodes[firstIdx].offsetWidth;
+        nodes[firstIdx].classList.add('message-search-highlight');
+        showToast(indices.length + ' yer imli mesaj bulundu. İlkine götürüldü.', 'info');
+      }
+    }
+
+    async function autoTagConversation() {
+      const conv = conversations.find(c => c.id === activeConversationId);
+      if (!conv || conv.messages.length < 2) { showToast('Etiketlemek için en az 2 mesaj olmalı.', 'info'); return; }
+      if (!apiConfig.url) { showToast('API yapılandırılmamış.', 'error'); return; }
+
+      showToast('Etiketler öneriliyor...', 'info');
+      try {
+        const sample = conv.messages.slice(0, 6).map(m => m.role + ': ' + (m.content || '').slice(0, 200)).join('\n');
+        const result = await callApi(
+          'Aşağıdaki sohbetten 2-4 adet kısa (tek kelime veya iki kelime) Türkçe etiket öner. Sadece virgullerle ayrılmış etiketleri yaz, başka bir şey yazma:\n\n' + sample,
+          [{ role: 'user', content: sample }]
+        );
+        const tags = result.reply.split(/[,;\n]/).map(t => t.trim().replace(/^#/, '')).filter(t => t.length > 0 && t.length < 30).slice(0, 4);
+        if (tags.length === 0) { showToast('Etiket önerisi alınamadı.', 'info'); return; }
+        conv.tags = [...new Set([...(conv.tags || []), ...tags])];
+        persistConversationStore();
+        renderConversationList();
+        showToast('Etiketler eklendi: ' + tags.map(t => '#' + t).join(', '), 'success');
+      } catch (err) {
+        showToast('Etiketleme başarısız: ' + (err.message || err), 'error');
+      }
+    }
+
+    function initBookmarks() {
+      loadBookmarks();
+    }
+
+    /* ============================================================
+       14.57 AYAR İÇE/DIŞA AKTARMA & KISAYOLLAR (Sprint 4)
+       ============================================================ */
+    function exportSettings() {
+      const data = {
+        apiConfig: { ...apiConfig },
+        customModels,
+        promptTemplates,
+        systemPrompt,
+        streamingEnabled,
+        ragEnabled,
+        exportedAt: new Date().toISOString(),
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'chat-app-ayarlar.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Ayarlar dışa aktarıldı.', 'success');
+    }
+
+    function importSettings() {
+      const input = document.createElement('input');
+      input.type = 'file'; input.accept = '.json';
+      input.addEventListener('change', async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          if (data.apiConfig) { Object.assign(apiConfig, data.apiConfig); saveConfigToLS(); fillSettingsForm(); }
+          if (data.customModels) { customModels = data.customModels; saveCustomModels(); renderModelControls(); }
+          if (data.promptTemplates) { promptTemplates = data.promptTemplates; savePromptTemplatesToLS(); renderPromptTemplates(); }
+          if (data.systemPrompt !== undefined) { systemPrompt = data.systemPrompt; if (el.cfgSystemPrompt) el.cfgSystemPrompt.value = systemPrompt; saveSystemPrompt(); }
+          if (data.streamingEnabled !== undefined) { streamingEnabled = data.streamingEnabled; if (el.cfgStreaming) el.cfgStreaming.checked = streamingEnabled; saveStreamingSetting(); }
+          if (data.ragEnabled !== undefined) { ragEnabled = data.ragEnabled; if (el.ragToggle) el.ragToggle.checked = ragEnabled; saveRAGSetting(); }
+          showToast('Ayarlar başarıyla içe aktarıldı.', 'success');
+        } catch (err) {
+          showToast('Ayar dosyası okunamadı: ' + (err.message || err), 'error');
+        }
+      });
+      input.click();
+    }
+
+    /* ============================================================
+       14.58 KULLANIM İSTATİSTİKLERİ & SOHBET SENKRONİZASYON (Sprint 5)
+       ============================================================ */
+    function showUsageStats() {
+      let totalTokens = 0, totalMessages = 0, totalConvs = conversations.length;
+      const modelUsage = {};
+      conversations.forEach(conv => {
+        (conv.messages || []).forEach(msg => {
+          totalMessages++;
+          if (msg.usage) {
+            const tokens = (msg.usage.total_tokens || 0) + (msg.usage.prompt_tokens || 0) + (msg.usage.completion_tokens || 0);
+            totalTokens += tokens;
+          }
+          const model = msg.model || 'bilinmeyen';
+          if (msg.role === 'assistant') {
+            modelUsage[model] = (modelUsage[model] || 0) + 1;
+          }
+        });
+      });
+      const modelStats = Object.entries(modelUsage).sort((a, b) => b[1] - a[1]).map(([m, c]) => '  · ' + m + ': ' + c + ' yanıt').join('\n');
+      const stats = [
+        '📊 Kullanım İstatistikleri',
+        '\u2500'.repeat(30),
+        'Toplam sohbet: ' + totalConvs,
+        'Toplam mesaj: ' + totalMessages,
+        'Toplam token: ' + formatTokenCount(totalTokens),
+        '',
+        'Model bazlı yanıtlar:',
+        modelStats || '  (Henüz yanıt yok)',
+      ].join('\n');
+      alert(stats);
+    }
+
+    function shareConversation() {
+      const conv = conversations.find(c => c.id === activeConversationId);
+      if (!conv || conv.messages.length === 0) { showToast('Paylaşılacak mesaj yok.', 'info'); return; }
+      const shareData = {
+        title: conv.title,
+        messages: conv.messages.map(m => ({ role: m.role, content: m.content, createdAt: m.createdAt })),
+        sharedAt: new Date().toISOString(),
+      };
+      const blob = new Blob([JSON.stringify(shareData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = (conv.title || 'sohbet').replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ\s-]/g, '').slice(0, 40) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Sohbet dosyası indirildi.', 'success');
+    }
+
+    function exportConversations() {
+      const data = { conversations, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'chat-app-sohbetler-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Tüm sohbet geçmişi dışa aktarıldı.', 'success');
+    }
+
+    function importConversations() {
+      const input = document.createElement('input');
+      input.type = 'file'; input.accept = '.json';
+      input.addEventListener('change', async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+
+          // Tek sohbet dosyası mı yoksa toplu aktarım mı?
+          if (data.conversations && Array.isArray(data.conversations)) {
+            // Toplu aktarım
+            let imported = 0;
+            data.conversations.forEach(conv => {
+              if (conv.id && conv.messages) {
+                const exists = conversations.find(c => c.id === conv.id);
+                if (!exists) { conversations.push(conv); imported++; }
+              }
+            });
+            persistConversationStore();
+            renderConversationList();
+            showToast(imported + ' yeni sohbet içe aktarıldı.', 'success');
+          } else if (data.messages && Array.isArray(data.messages)) {
+            // Tek sohbet dosyası
+            const newConv = createConversationRecord(data.messages);
+            newConv.title = data.title || 'Yüklenen Sohbet';
+            conversations.unshift(newConv);
+            persistConversationStore();
+            switchConversation(newConv.id);
+            showToast('Sohbet yüklendi: ' + newConv.title, 'success');
+          } else {
+            showToast('Geçersiz sohbet dosyası formatı.', 'error');
+          }
+        } catch (err) {
+          showToast('Dosya okunamadı: ' + (err.message || err), 'error');
+        }
+      });
+      input.click();
+    }
+
+    /* ============================================================
+       14.6 RAG MOTORU (Sprint 2)
+       ============================================================ */
+
+    // --- IndexedDB Helper ---
+    function openRAGDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(RAG_DB_NAME, RAG_DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('documents')) db.createObjectStore('documents', { keyPath: 'id' });
+          if (!db.objectStoreNames.contains('chunks')) {
+            const s = db.createObjectStore('chunks', { keyPath: 'id' });
+            s.createIndex('docId', 'docId', { unique: false });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    // --- Metin Parçalama (Chunking) ---
+    function chunkText(text, size = RAG_CHUNK_SIZE, overlap = RAG_CHUNK_OVERLAP) {
+      const paragraphs = text.split(/\n\s*\n/);
+      const chunks = [];
+      let current = '';
+      for (const para of paragraphs) {
+        if ((current + '\n\n' + para).length > size && current.length > 0) {
+          chunks.push(current.trim());
+          const words = current.split(/\s+/);
+          current = words.slice(-Math.ceil(overlap / 5)).join(' ') + '\n\n' + para;
+        } else {
+          current = current ? current + '\n\n' + para : para;
+        }
+      }
+      if (current.trim()) chunks.push(current.trim());
+
+      // Çok büyük chunk varsa cümlelere böl
+      const result = [];
+      for (const c of chunks) {
+        if (c.length > size * 1.5) {
+          const sentences = c.match(/[^.!?]+[.!?]+/g) || [c];
+          let sub = '';
+          for (const s of sentences) {
+            if ((sub + s).length > size && sub) { result.push(sub.trim()); sub = s; }
+            else sub += s;
+          }
+          if (sub.trim()) result.push(sub.trim());
+        } else result.push(c);
+      }
+      return result;
+    }
+
+    // --- Embedding API ---
+    function getEmbeddingUrl() {
+      if (!apiConfig.url) return '';
+      try {
+        const url = new URL(apiConfig.url, location.href);
+        url.pathname = url.pathname
+          .replace(/\/chat\/completions\/?$/i, '/embeddings')
+          .replace(/\/responses\/?$/i, '/embeddings')
+          .replace(/\/completions\/?$/i, '/embeddings');
+        return url.toString();
+      } catch (_) { return ''; }
+    }
+
+    async function getEmbedding(text) {
+      const url = getEmbeddingUrl();
+      if (!url) throw new Error('Embedding URL türetilemedi.');
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: apiConfig.headers || { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'text-embedding-3-small', input: text.slice(0, 8000) }),
+      });
+      if (!res.ok) throw new Error('Embedding HTTP ' + res.status);
+      const data = await res.json();
+      return data.data?.[0]?.embedding || data.embedding;
+    }
+
+    // --- Cosine Similarity ---
+    function cosineSim(a, b) {
+      if (!a || !b || a.length !== b.length) return 0;
+      let dot = 0, nA = 0, nB = 0;
+      for (let i = 0; i < a.length; i++) { dot += a[i] * b[i]; nA += a[i] * a[i]; nB += b[i] * b[i]; }
+      return dot / (Math.sqrt(nA) * Math.sqrt(nB) + 1e-10);
+    }
+
+    // --- Belge İndeksleme ---
+    async function indexDocument(file, onProgress) {
+      const id = 'doc-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+      let text = '';
+      const ext = file.name.split('.').pop().toLowerCase();
+
+      if (ext === 'pdf' && window.pdfjsLib) {
+        if (onProgress) onProgress('PDF okunuyor...');
+        const ab = await file.arrayBuffer();
+        const pdf = await window.pdfjsLib.getDocument({ data: ab }).promise;
+        const pages = [];
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const pg = await pdf.getPage(i);
+          const tc = await pg.getTextContent();
+          pages.push(tc.items.map(x => x.str).join(' '));
+        }
+        text = pages.join('\n\n');
+      } else if (['xlsx', 'xls'].includes(ext) && window.XLSX) {
+        if (onProgress) onProgress('Excel okunuyor...');
+        const ab = await file.arrayBuffer();
+        const wb = XLSX.read(ab, { type: 'array' });
+        text = wb.SheetNames.map(n => '--- ' + n + ' ---\n' + XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n\n');
+      } else {
+        text = await file.text();
+      }
+
+      if (!text.trim()) throw new Error('Dosyadan metin çıkarılamadı.');
+
+      if (onProgress) onProgress('Parçalanıyor...');
+      const chunks = chunkText(text);
+      const records = [];
+
+      for (let i = 0; i < chunks.length; i++) {
+        if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
+        let emb = null;
+        try { emb = await getEmbedding(chunks[i]); } catch (_) { }
+        records.push({ id: id + '-c' + i, docId: id, index: i, text: chunks[i], embedding: emb });
+      }
+
+      if (onProgress) onProgress('Kaydediliyor...');
+      const db = await openRAGDB();
+      const tx = db.transaction(['documents', 'chunks'], 'readwrite');
+      tx.objectStore('documents').put({
+        id, name: file.name, size: file.size, type: ext,
+        chunkCount: chunks.length, embeddedCount: records.filter(r => r.embedding).length,
+        totalChars: text.length, createdAt: Date.now(),
+      });
+      for (const r of records) tx.objectStore('chunks').put(r);
+      await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+      return { id, name: file.name, chunkCount: chunks.length };
+    }
+
+    // --- RAG Arama ---
+    async function searchRAG(query, topK = RAG_TOP_K) {
+      const db = await openRAGDB();
+      let qEmb;
+      try { qEmb = await getEmbedding(query); } catch (_) { }
+
+      const tx = db.transaction('chunks', 'readonly');
+      const allChunks = await new Promise((res, rej) => {
+        const r = tx.objectStore('chunks').getAll();
+        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+      });
+
+      let scored;
+      if (qEmb) {
+        scored = allChunks.filter(c => c.embedding)
+          .map(c => ({ ...c, score: cosineSim(qEmb, c.embedding) }))
+          .sort((a, b) => b.score - a.score).slice(0, topK);
+      } else {
+        // Keyword fallback
+        const kws = query.toLocaleLowerCase('tr-TR').split(/\s+/).filter(w => w.length > 2);
+        scored = allChunks.map(c => {
+          const tl = c.text.toLocaleLowerCase('tr-TR');
+          let sc = 0; kws.forEach(k => { sc += (tl.match(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length; });
+          return { ...c, score: sc };
+        }).filter(c => c.score > 0).sort((a, b) => b.score - a.score).slice(0, topK);
+      }
+
+      // Belge adlarını al
+      const dtx = db.transaction('documents', 'readonly');
+      const docs = {};
+      for (const c of scored) {
+        if (!docs[c.docId]) {
+          try {
+            const d = await new Promise((res) => { const r = dtx.objectStore('documents').get(c.docId); r.onsuccess = () => res(r.result); r.onerror = () => res(null); });
+            docs[c.docId] = d?.name || 'Belge';
+          } catch (_) { docs[c.docId] = 'Belge'; }
+        }
+      }
+      return scored.map(c => ({ text: c.text, docName: docs[c.docId], score: c.score }));
+    }
+
+    // --- Belge Yönetimi ---
+    async function getRAGDocuments() {
+      const db = await openRAGDB();
+      return new Promise((res, rej) => {
+        const r = db.transaction('documents', 'readonly').objectStore('documents').getAll();
+        r.onsuccess = () => res(r.result.sort((a, b) => b.createdAt - a.createdAt));
+        r.onerror = () => rej(r.error);
+      });
+    }
+
+    async function deleteRAGDocument(docId) {
+      const db = await openRAGDB();
+      const tx = db.transaction(['documents', 'chunks'], 'readwrite');
+      tx.objectStore('documents').delete(docId);
+      const idx = tx.objectStore('chunks').index('docId');
+      const req = idx.openCursor(IDBKeyRange.only(docId));
+      req.onsuccess = (e) => { const c = e.target.result; if (c) { c.delete(); c.continue(); } };
+      return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+    }
+
+    // --- KB Modal UI ---
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    async function renderKBDocuments() {
+      if (!el.kbDocList) return;
+      try {
+        const docs = await getRAGDocuments();
+        el.kbDocCount.textContent = docs.length + ' belge';
+        if (docs.length === 0) {
+          el.kbDocList.innerHTML = '<p class="text-center text-xs text-gray-600 py-6">Henüz belge yüklenmemiş.</p>';
+          return;
+        }
+        el.kbDocList.innerHTML = '';
+        docs.forEach(doc => {
+          const card = document.createElement('div');
+          card.className = 'flex items-center justify-between gap-3 p-3 rounded-xl border border-border bg-panel2/50 hover:border-purple-500/40 transition';
+          const typeIcon = { pdf: '📕', xlsx: '📊', xls: '📊', csv: '📋', json: '📦', md: '📝' }[doc.type] || '📄';
+          card.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="text-lg shrink-0">${typeIcon}</span>
+              <div class="min-w-0">
+                <p class="text-xs font-medium text-gray-200 truncate">${escapeHtml(doc.name)}</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">${doc.chunkCount} parça · ${formatFileSize(doc.size)} · ${doc.embeddedCount}/${doc.chunkCount} embedded</p>
+              </div>
+            </div>
+            <button type="button" class="shrink-0 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition" title="Sil">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>`;
+          card.querySelector('button').addEventListener('click', async () => {
+            if (!confirm(doc.name + ' silinsin mi?')) return;
+            await deleteRAGDocument(doc.id);
+            showToast('Belge silindi.', 'success');
+            renderKBDocuments();
+          });
+          el.kbDocList.appendChild(card);
+        });
+      } catch (e) {
+        console.warn('KB render error:', e);
+        el.kbDocList.innerHTML = '<p class="text-center text-xs text-red-400 py-4">Belgeler yüklenemedi.</p>';
+      }
+    }
+
+    function showKBStatus(msg, show = true) {
+      if (!el.kbUploadStatus) return;
+      el.kbUploadStatus.textContent = msg;
+      el.kbUploadStatus.classList.toggle('hidden', !show);
+    }
+
+    async function handleKBUpload(files) {
+      for (const file of files) {
+        if (file.size > 10 * 1024 * 1024) { showToast(file.name + ' 10 MB sınırını aşıyor.', 'error'); continue; }
+        try {
+          await indexDocument(file, (msg) => showKBStatus('⏳ ' + file.name + ': ' + msg));
+          showToast(file.name + ' başarıyla indekslendi.', 'success');
+        } catch (err) {
+          console.warn('Index error:', err);
+          showToast(file.name + ' indekslenemedi: ' + (err.message || err), 'error');
+        }
+      }
+      showKBStatus('', false);
+      renderKBDocuments();
+    }
+
+    // --- RAG Toggle & Init ---
+    function loadRAGSetting() {
+      ragEnabled = localStorage.getItem(LS_RAG_KEY) === 'true';
+      if (el.ragToggle) el.ragToggle.checked = ragEnabled;
+    }
+
+    function saveRAGSetting() {
+      ragEnabled = el.ragToggle?.checked || false;
+      localStorage.setItem(LS_RAG_KEY, String(ragEnabled));
+    }
+
+    function initRAG() {
+      loadRAGSetting();
+      el.ragToggle?.addEventListener('change', saveRAGSetting);
+
+      // KB modal açma: composer'da RAG butonu veya slash komutundan
+      el.kbDropZone?.addEventListener('click', () => el.kbFileInput?.click());
+      el.kbFileInput?.addEventListener('change', () => {
+        if (el.kbFileInput.files.length) handleKBUpload([...el.kbFileInput.files]);
+        el.kbFileInput.value = '';
+      });
+
+      // Drag & drop
+      el.kbDropZone?.addEventListener('dragover', (e) => { e.preventDefault(); el.kbDropZone.classList.add('border-purple-500', 'bg-purple-500/10'); });
+      el.kbDropZone?.addEventListener('dragleave', () => el.kbDropZone.classList.remove('border-purple-500', 'bg-purple-500/10'));
+      el.kbDropZone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        el.kbDropZone.classList.remove('border-purple-500', 'bg-purple-500/10');
+        if (e.dataTransfer.files.length) handleKBUpload([...e.dataTransfer.files]);
+      });
+
+      renderKBDocuments();
+    }
+
+    // --- RAG Augmented Prompt (sendMessage'a entegre) ---
+    async function augmentWithRAG(userText) {
+      if (!ragEnabled || !userText.trim()) return '';
+      try {
+        const results = await searchRAG(userText);
+        if (results.length === 0) return '';
+        const context = results.map((r, i) =>
+          '[Kaynak ' + (i + 1) + ': ' + r.docName + ']\n' + r.text
+        ).join('\n\n---\n\n');
+        return '\n\n--- Bilgi Tabanından Bulunan Bağlam ---\n' + context + '\n--- Bağlam Sonu ---\n\nYukarıdaki bağlamı kullanarak kullanıcı sorusunu yanıtla.';
+      } catch (err) {
+        console.warn('RAG search error:', err);
+        return '';
+      }
+    }
 
     /* ============================================================
        15. BAŞLATMA
@@ -5643,6 +6713,10 @@ Dokümante edilecek içerik ve bağlam:`
       initVoiceInput();
       initScrollToBottom();
       initExportOptions();
+      loadSystemPrompt();
+      loadStreamingSetting();
+      initRAG();
+      initBookmarks();
       el.userInput.focus();
     })();
   </script>

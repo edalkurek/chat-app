@@ -2495,9 +2495,37 @@ Dokümante edilecek içerik ve bağlam:`
       document.body.removeChild(ta);
     }
 
+    // Excel ve CSV dosyalarını temizleme fonksiyonları
+    function cleanCsvText(rawText) {
+      if (!rawText) return '';
+      const cleanLines = String(rawText)
+        .split(/\r?\n/)
+        .map(line => line.replace(/(?:[,;\t]\s*)+$/, '').trimEnd())
+        .filter(line => line.trim().length > 0);
+      return cleanLines.join('\n');
+    }
+
+    function parseExcelToCleanText(arrayBuffer) {
+      if (!window.XLSX) return { text: '', sheetCount: 0 };
+      const wb = XLSX.read(arrayBuffer, { type: 'array' });
+      const sheetsText = wb.SheetNames.map(name => {
+        const sheet = wb.Sheets[name];
+        if (!sheet) return '';
+        const rawCsv = XLSX.utils.sheet_to_csv(sheet, { blankrows: false });
+        const cleanLines = rawCsv
+          .split(/\r?\n/)
+          .map(line => line.replace(/(?:[,;\t]\s*)+$/, '').trimEnd())
+          .filter(line => line.trim().length > 0);
+        if (cleanLines.length === 0) return '--- Sayfa: ' + name + ' (Boş) ---';
+        return '--- Sayfa: ' + name + ' ---\n' + cleanLines.join('\n');
+      }).filter(Boolean);
+      return { text: sheetsText.join('\n\n'), sheetCount: wb.SheetNames.length };
+    }
+
     // GFM Markdown renderlama. HTML çıktısı, sohbete yazılmadan önce temizlenir.
     function renderContent(text) {
-      const source = String(text ?? '');
+      let source = String(text ?? '');
+      source = source.replace(/\n{3,}/g, '\n\n');
       if (window.marked && window.DOMPurify) {
         try {
           window.marked.setOptions({
@@ -3258,9 +3286,9 @@ Dokümante edilecek içerik ve bağlam:`
             showToast(file.name + ': ' + pdf.numPages + ' sayfa okundu.', 'info');
           } else if (['xlsx', 'xls'].includes(ext) && window.XLSX) {
             const arrayBuffer = await file.arrayBuffer();
-            const wb = XLSX.read(arrayBuffer, { type: 'array' });
-            content = wb.SheetNames.map(name => '--- Sayfa: ' + name + ' ---\n' + XLSX.utils.sheet_to_csv(wb.Sheets[name])).join('\n\n');
-            showToast(file.name + ': ' + wb.SheetNames.length + ' sayfa okundu.', 'info');
+            const excelResult = parseExcelToCleanText(arrayBuffer);
+            content = excelResult.text;
+            showToast(file.name + ': ' + excelResult.sheetCount + ' sayfa okundu.', 'info');
           } else if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
             // Görüntü dosyası: base64 olarak oku (vision modeller için)
             content = await new Promise((resolve, reject) => {
@@ -3272,6 +3300,11 @@ Dokümante edilecek içerik ve bağlam:`
             showToast(file.name + ' görüntü olarak eklendi.', 'info');
           } else {
             content = await file.text();
+            if (ext === 'csv') {
+              content = cleanCsvText(content);
+            } else {
+              content = content.replace(/\n{3,}/g, '\n\n').trim();
+            }
           }
           const estTokens = Math.round((content || '').length / 3.5);
           if (estTokens > 20000) {
@@ -5243,7 +5276,15 @@ Dokümante edilecek içerik ve bağlam:`
       clearTimeout(timeoutId);
       activeRequestController = null;
 
-      const rawText = await res.text();
+      let rawText;
+      try {
+        rawText = await res.text();
+      } catch (textErr) {
+        if (textErr.name === 'AbortError' || requestStoppedByUser) {
+          throw new Error('İstek kullanıcı tarafından durduruldu.');
+        }
+        throw textErr;
+      }
       let data;
       try {
         data = JSON.parse(rawText);
@@ -5347,6 +5388,11 @@ Dokümante edilecek içerik ve bağlam:`
             } catch (_) { }
           }
         }
+      } catch (streamErr) {
+        if (streamErr.name === 'AbortError' || requestStoppedByUser) {
+          throw new Error('İstek kullanıcı tarafından durduruldu.');
+        }
+        throw streamErr;
       } finally {
         activeRequestController = null;
         try { reader.releaseLock(); } catch (_) { }
@@ -5449,7 +5495,7 @@ Dokümante edilecek içerik ve bağlam:`
           if (bubbleEl) bubbleEl.classList.remove('streaming-cursor', 'streaming-message');
         } catch (err) {
           const detail = err && err.message ? err.message : String(err);
-          if (/kullanıcı tarafından durduruldu/i.test(detail)) {
+          if (requestStoppedByUser || err.name === 'AbortError' || /kullanıcı tarafından durduruldu|aborted|abort/i.test(detail)) {
             chatHistory[msgIndex].elapsedMs = Math.round(performance.now() - startedAt);
             if (bubbleEl) bubbleEl.classList.remove('streaming-cursor', 'streaming-message');
             showToast('Yanıt üretimi durduruldu.', 'info');
@@ -5486,7 +5532,7 @@ Dokümante edilecek içerik ve bağlam:`
           });
         } catch (err) {
           const detail = err && err.message ? err.message : String(err);
-          if (/kullanıcı tarafından durduruldu/i.test(detail)) {
+          if (requestStoppedByUser || err.name === 'AbortError' || /kullanıcı tarafından durduruldu|aborted|abort/i.test(detail)) {
             showToast('Yanıt üretimi durduruldu.', 'info');
           } else {
             chatHistory.push({
@@ -5741,6 +5787,7 @@ Dokümante edilecek içerik ve bağlam:`
        14. OLAY DİNLEYİCİLERİ
        ============================================================ */
     el.sendBtn.addEventListener('click', sendMessage);
+    el.stopBtn.addEventListener('click', stopGeneration);
 
     el.userInput.addEventListener('keydown', (e) => {
       // Slash menüsü açıksa klavye navigasyonunu devral
@@ -6768,10 +6815,15 @@ Dokümante edilecek içerik ve bağlam:`
       } else if (['xlsx', 'xls'].includes(ext) && window.XLSX) {
         if (onProgress) onProgress('Excel okunuyor...');
         const ab = await file.arrayBuffer();
-        const wb = XLSX.read(ab, { type: 'array' });
-        text = wb.SheetNames.map(n => '--- ' + n + ' ---\n' + XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n\n');
+        const excelResult = parseExcelToCleanText(ab);
+        text = excelResult.text;
       } else {
         text = await file.text();
+        if (ext === 'csv') {
+          text = cleanCsvText(text);
+        } else {
+          text = text.replace(/\n{3,}/g, '\n\n').trim();
+        }
       }
 
       if (!text.trim()) throw new Error('Dosyadan metin çıkarılamadı.');

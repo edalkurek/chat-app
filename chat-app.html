@@ -2204,6 +2204,8 @@
     /* ============================================================
        1. VARSAYILAN YAPILANDIRMA  (Self-Cloning ile güncellenir)
        ============================================================ */
+    // Sohbet/veri yüklenmeden önceki sayfa; indirilen kopyaya oturum verisi girmez.
+    const pristineDocument = document.documentElement.cloneNode(true);
     /* DEFAULT_CONFIG_START */
     let apiConfig = {
       url: "",
@@ -2290,6 +2292,7 @@
 
     let chatHistory = [];   // { role: 'user' | 'assistant' | 'error', content: string }
     let conversations = [];
+    let historyStoreReadable = true;
     let activeConversationId = null;
     let isBusy = false;
     let editingMessageIndex = null;
@@ -3321,12 +3324,14 @@ Dokümante edilecek içerik ve bağlam:`
       el.attachmentList.classList.toggle('hidden', attachedFiles.length === 0);
       el.attachmentList.classList.toggle('flex', attachedFiles.length > 0);
       el.attachmentList.querySelectorAll('[data-remove-file]').forEach(button => button.addEventListener('click', () => {
+        if (isBusy) return;
         attachedFiles.splice(Number(button.dataset.removeFile), 1);
         renderAttachments();
       }));
     }
 
     async function handleFiles(fileList) {
+      if (isBusy) return;
       const files = [...fileList];
       let addedCount = 0;
       for (const file of files) {
@@ -3447,14 +3452,44 @@ Dokümante edilecek içerik ve bağlam:`
       return content ? templateLabel + '\n\n' + content : templateLabel;
     }
 
+    function getMessageAttachments(message) {
+      const files = Array.isArray(message?.attachments) ? message.attachments : [];
+      // Eski kayıtlarda dosyalar yalnızca apiContent içine gömülüydü.
+      const legacyText = typeof message?.apiContent === 'string' ? message.apiContent : '';
+      return files.map((file, index) => {
+        if (typeof file.content === 'string') return { ...file };
+        const marker = '\n\n--- Dosya: ' + file.name + ' ---\n';
+        const start = legacyText.indexOf(marker);
+        if (start < 0) return { ...file };
+        const contentStart = start + marker.length;
+        const nextMarker = index + 1 < files.length ? '\n\n--- Dosya: ' + files[index + 1].name + ' ---\n' : '';
+        const nextStart = nextMarker ? legacyText.indexOf(nextMarker, contentStart) : -1;
+        const ragStart = legacyText.indexOf('\n\n--- Bilgi Tabanından Bulunan Bağlam ---', contentStart);
+        const ends = [nextStart, ragStart].filter(value => value >= 0);
+        return { ...file, content: legacyText.slice(contentStart, ends.length ? Math.min(...ends) : undefined) };
+      });
+    }
+
     function getApiMessageContent(message) {
-      if (typeof message?.apiContent === 'string' && message.apiContent.trim()) {
-        return message.apiContent;
-      }
       const content = String(message?.content || '').trim();
       const promptText = String(message?.template?.prompt || '').trim();
-      if (!promptText) return content;
-      return content ? promptText + '\n\nKullanıcı bağlamı:\n' + content : promptText;
+      let text = typeof message?.apiContent === 'string' && message.apiContent.trim()
+        ? message.apiContent
+        : promptText ? promptText + (content ? '\n\nKullanıcı bağlamı:\n' + content : '') : content;
+      const files = getMessageAttachments(message);
+      const images = [];
+      files.forEach((file, index) => {
+        if (typeof file.content !== 'string') return;
+        if (typeof message.attachments[index].content !== 'string') {
+          text = text.replace('\n\n--- Dosya: ' + file.name + ' ---\n' + file.content, '');
+        }
+        if (/^data:image\/[\w.+-]+;base64,/i.test(file.content)) {
+          images.push({ type: 'image_url', image_url: { url: file.content } });
+        } else {
+          text += '\n\n--- Dosya: ' + file.name + ' ---\n' + file.content;
+        }
+      });
+      return images.length ? [{ type: 'text', text: text || 'Ekli görselleri analiz et.' }, ...images] : text;
     }
 
     function formatConversationForExport(format = 'markdown') {
@@ -3722,36 +3757,24 @@ Dokümante edilecek içerik ve bağlam:`
       if (isBusy) { showToast('Lütfen mevcut yanıt bitince tekrar deneyin.', 'error'); return; }
       if (chatHistory.length < 2) { showToast('Özetlenecek yeterli mesaj yok.', 'error'); return; }
       const summaryPrompt = 'Lütfen şimdiye kadarki sohbetimizi madde madde, kısa ve öz bir şekilde özetle. Önemli kararları, sorular ve cevapları listele.';
-      // Geçici olarak özetleme isteği gönder
-      const prevHistory = chatHistory.slice();
-      chatHistory.push({ role: 'user', content: summaryPrompt, createdAt: Date.now() });
+      // Özet isteği API geçmişine dahil edilir; başarısızlıkta sohbet değişmez.
+      const summaryHistory = [...chatHistory, { role: 'user', content: summaryPrompt }];
       showTypingIndicator();
       setBusy(true);
       try {
-        const apiMessages = getApiMessages(chatHistory);
-        const body = buildRequestBody(apiConfig.bodyTemplate, summaryPrompt, prevHistory);
-        const res = await fetch(apiConfig.url, {
-          method: apiConfig.method || 'POST',
-          headers: apiConfig.headers,
-          body: JSON.stringify(body),
-          signal: (activeRequestController = new AbortController()).signal,
-        });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        const answer = getByPath(data, apiConfig.responsePath) || '';
-        chatHistory.pop(); // Özet prompt'unu geçmişten çıkar
-        const summaryMsg = { role: 'assistant', content: '📋 **Sohbet Özeti**\n\n' + answer, createdAt: Date.now() };
+        const result = await callApi(summaryPrompt, summaryHistory);
+        const summaryMsg = { role: 'assistant', content: '📋 **Sohbet Özeti**\n\n' + result.reply, usage: result.usage, model: getConfiguredModel(), createdAt: Date.now() };
         chatHistory.push(summaryMsg);
         saveHistory();
         renderMessages();
         showToast('Sohbet özetlendi.', 'success');
       } catch (err) {
-        chatHistory.pop();
-        showToast('Özetleme başarısız: ' + (err.message || err), 'error');
+        showToast(requestStoppedByUser ? 'Özetleme durduruldu.' : 'Özetleme başarısız: ' + (err.message || err), requestStoppedByUser ? 'info' : 'error');
       } finally {
         removeTypingIndicator();
         setBusy(false);
         activeRequestController = null;
+        requestStoppedByUser = false;
       }
     }
 
@@ -4129,8 +4152,21 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     function persistConversationStore() {
-      localStorage.setItem(LS_CONVERSATIONS_KEY, JSON.stringify(conversations));
-      localStorage.setItem(LS_ACTIVE_CONVERSATION_KEY, activeConversationId || '');
+      if (!historyStoreReadable) {
+        showToast('Kayıtlı geçmiş okunamadığı için üzerine yazılmadı. Yeni mesajları dışa aktarın ve sayfayı yeniden açın.', 'error');
+        return false;
+      }
+      try {
+        // Tek asıl kayıt: dosya içeriklerini eski history anahtarında tekrar saklama.
+        localStorage.setItem(LS_CONVERSATIONS_KEY, JSON.stringify(conversations));
+        localStorage.setItem(LS_ACTIVE_CONVERSATION_KEY, activeConversationId || '');
+        localStorage.removeItem(LS_HISTORY_KEY);
+        return true;
+      } catch (error) {
+        console.warn('Geçmiş kaydedilemedi:', error);
+        showToast('Sohbet kaydedilemedi. Depolama dolu veya kullanılamıyor; sayfayı kapatmadan sohbeti dışa aktarın.', 'error');
+        return false;
+      }
     }
 
     function loadHistory() {
@@ -4155,7 +4191,6 @@ Dokümante edilecek içerik ve bağlam:`
           const migratedConversation = createConversationRecord(Array.isArray(legacyHistory) ? legacyHistory : []);
           conversations = [migratedConversation];
           activeConversationId = migratedConversation.id;
-          persistConversationStore();
         }
 
         let activeConversation = conversations.find(item => item.id === activeConversationId);
@@ -4165,15 +4200,17 @@ Dokümante edilecek içerik ve bağlam:`
         }
         chatHistory = activeConversation.messages.slice();
         selectedPromptTemplate = createTemplateSnapshot(activeConversation.activeTemplate);
-        localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
-        persistConversationStore();
+        // Okuma sırasında yazma yapılmaz; dolu depolama geçmişi boşaltmamalı.
+        historyStoreReadable = true;
       } catch (e) {
         console.warn('Sohbet geçmişi yüklenemedi:', e);
+        historyStoreReadable = false;
         const fallbackConversation = createConversationRecord([]);
         conversations = [fallbackConversation];
         activeConversationId = fallbackConversation.id;
         chatHistory = [];
         selectedPromptTemplate = null;
+        showToast('Sohbet geçmişi okunamadı. Kayıtlı verilerin üzerine yazılmayacak.', 'error');
       }
     }
 
@@ -4189,11 +4226,11 @@ Dokümante edilecek içerik ve bağlam:`
         activeConversation.activeTemplate = createTemplateSnapshot(selectedPromptTemplate);
         if (!activeConversation.titleEdited) activeConversation.title = getConversationTitle(chatHistory);
         activeConversation.updatedAt = Date.now();
-        localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
         persistConversationStore();
         renderConversationList();
       } catch (e) {
         console.warn('Geçmiş kaydedilemedi:', e);
+        showToast('Sohbet kaydedilemedi. Sayfayı kapatmadan sohbeti dışa aktarın.', 'error');
       }
     }
 
@@ -4393,8 +4430,7 @@ Dokümante edilecek içerik ve bağlam:`
       activeConversationId = conversation.id;
       chatHistory = conversation.messages.slice();
       selectedPromptTemplate = createTemplateSnapshot(conversation.activeTemplate);
-      localStorage.setItem(LS_ACTIVE_CONVERSATION_KEY, activeConversationId);
-      localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
+      persistConversationStore();
       cancelEditMode(true);
       renderConversationList();
       renderMessages();
@@ -4421,7 +4457,6 @@ Dokümante edilecek içerik ve bağlam:`
       activeConversationId = nextConversation.id;
       chatHistory = nextConversation.messages.slice();
       selectedPromptTemplate = createTemplateSnapshot(nextConversation.activeTemplate);
-      localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(chatHistory));
       persistConversationStore();
       cancelEditMode(true);
       renderConversationList();
@@ -5272,8 +5307,8 @@ Dokümante edilecek içerik ve bağlam:`
 
             card.appendChild(cardHeader);
             card.appendChild(bodyDiv);
-            card.appendChild(pre);
             pre.parentNode.insertBefore(card, pre);
+            card.appendChild(pre);
 
             let renderedSvg = '';
             try {
@@ -5331,8 +5366,8 @@ Dokümante edilecek içerik ve bağlam:`
             pre.classList.add('hidden');
             card.appendChild(cHeader);
             card.appendChild(canvasWrap);
-            card.appendChild(pre);
             pre.parentNode.insertBefore(card, pre);
+            card.appendChild(pre);
             try { new Chart(canvas.getContext('2d'), chartConfig); } catch (ce) { console.warn('Chart render error:', ce); pre.classList.remove('hidden'); }
             return;
           } catch (_) { }
@@ -5731,6 +5766,7 @@ Dokümante edilecek içerik ve bağlam:`
       el.userInput.disabled = state;
       if (el.clearSelectedTemplateBtn) el.clearSelectedTemplateBtn.disabled = state;
       el.testCfgBtn.disabled = state;
+      el.attachFileBtn.disabled = state;
       el.sendBtn.classList.toggle('hidden', state);
       el.stopBtn.classList.toggle('hidden', !state);
       el.stopBtn.classList.toggle('flex', state);
@@ -5756,7 +5792,8 @@ Dokümante edilecek içerik ve bağlam:`
     // Şablondaki $PROMPT mesajını gerçek sohbet geçmişiyle değiştirir.
     // Seçilen model, body içinde tanımlanan model alanına değer olarak verilir.
     function buildRequestBody(template, prompt, history) {
-      const escaped = JSON.stringify(prompt).slice(1, -1);
+      const promptText = Array.isArray(prompt) ? prompt.filter(part => part.type === 'text').map(part => part.text).join('\n') : prompt;
+      const escaped = JSON.stringify(promptText).slice(1, -1);
       let bodyStr = template.split('$PROMPT').join(escaped);
 
       // Seçilen modeli belirle
@@ -5780,7 +5817,10 @@ Dokümante edilecek içerik ve bağlam:`
         body.model = selectedModel;
       }
 
-      if (!Array.isArray(body.messages)) return JSON.stringify(body, null, 2);
+      if (!Array.isArray(body.messages)) {
+        if (Array.isArray(prompt)) throw new Error('Görsel göndermek için istek şablonunda messages dizisi bulunmalıdır.');
+        return JSON.stringify(body, null, 2);
+      }
 
       const messages = getApiMessages(history || []);
       if (messages.length === 0) messages.push({ role: 'user', content: prompt });
@@ -5813,6 +5853,34 @@ Dokümante edilecek içerik ve bağlam:`
       return JSON.stringify(body, null, 2);
     }
 
+    function validateApiReply(reply) {
+      if (typeof reply !== 'string' || !reply.trim()) {
+        throw new Error('API boş yanıt döndürdü. Lütfen yeniden deneyin.');
+      }
+      return reply;
+    }
+
+    async function readApiResponse(res) {
+      const rawText = await res.text();
+      if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + rawText.slice(0, 400));
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch (_) {
+        return { reply: validateApiReply(rawText), usage: null };
+      }
+      if (data?.error) throw new Error(data.error.message || JSON.stringify(data.error));
+      const value = getByPath(data, apiConfig.responsePath);
+      if (value === undefined) {
+        throw new Error('Yanıt yolu "' + apiConfig.responsePath + '" bulunamadı.\nGelen yanıt:\n' +
+          JSON.stringify(data, null, 2).slice(0, 600));
+      }
+      return {
+        reply: validateApiReply(value == null ? '' : typeof value === 'string' ? value : JSON.stringify(value, null, 2)),
+        usage: normalizeUsage(data.usage),
+      };
+    }
+
     async function callApi(prompt, history) {
       if (!apiConfig.url) {
         throw new Error('API URL ayarlanmamış. Lütfen Ayarlar panelinden yapılandırın.');
@@ -5829,63 +5897,36 @@ Dokümante edilecek içerik ve bağlam:`
         signal: controller.signal,
       };
 
-      if (options.method !== 'GET') {
-        let bodyStr;
-        // Üretilen gövdenin geçerli JSON olduğunu doğrula
-        try {
-          bodyStr = buildRequestBody(apiConfig.bodyTemplate || '{"prompt":"$PROMPT"}', prompt, history);
-        } catch (e) {
-          throw new Error('İstek gövdesi geçerli JSON üretmedi. Şablonu kontrol edin.\n' + e.message);
-        }
-        options.body = bodyStr;
-      }
-
-      let res;
       try {
-        res = await fetch(apiConfig.url, options);
+        if (options.method !== 'GET') {
+          let bodyStr;
+          // Üretilen gövdenin geçerli JSON olduğunu doğrula
+          try {
+            bodyStr = buildRequestBody(apiConfig.bodyTemplate || '{"prompt":"$PROMPT"}', prompt, history);
+          } catch (e) {
+            throw new Error('İstek gövdesi geçerli JSON üretmedi. Şablonu kontrol edin.\n' + e.message);
+          }
+          const body = JSON.parse(bodyStr);
+          if (body && typeof body === 'object' && !Array.isArray(body)) {
+            // Bu yol tek JSON yanıt okur; şablondaki streaming ayarını geçersiz kıl.
+            if ('stream' in body) body.stream = false;
+            delete body.stream_options;
+          }
+          options.body = JSON.stringify(body);
+        }
+
+        const res = await fetch(apiConfig.url, options);
+        return await readApiResponse(res);
       } catch (fetchErr) {
-        clearTimeout(timeoutId);
-        activeRequestController = null;
         if (fetchErr.name === 'AbortError') {
           if (requestStoppedByUser) throw new Error('İstek kullanıcı tarafından durduruldu.');
           throw new Error('İstek zaman aşımına uğradı (60 saniye). API yanıt vermedi.');
         }
         throw fetchErr;
+      } finally {
+        clearTimeout(timeoutId);
+        if (activeRequestController === controller) activeRequestController = null;
       }
-      clearTimeout(timeoutId);
-      activeRequestController = null;
-
-      let rawText;
-      try {
-        rawText = await res.text();
-      } catch (textErr) {
-        if (textErr.name === 'AbortError' || requestStoppedByUser) {
-          throw new Error('İstek kullanıcı tarafından durduruldu.');
-        }
-        throw textErr;
-      }
-      let data;
-      try {
-        data = JSON.parse(rawText);
-      } catch {
-        // JSON değilse düz metni döndür
-        if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + rawText.slice(0, 300));
-        return { reply: rawText, usage: null };
-      }
-
-      if (!res.ok) {
-        throw new Error('HTTP ' + res.status + ': ' + (rawText.slice(0, 400)));
-      }
-
-      const value = getByPath(data, apiConfig.responsePath);
-      if (value === undefined) {
-        throw new Error('Yanıt yolu "' + apiConfig.responsePath + '" bulunamadı.\nGelen yanıt:\n' +
-          JSON.stringify(data, null, 2).slice(0, 600));
-      }
-      return {
-        reply: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
-        usage: normalizeUsage(data.usage),
-      };
     }
 
     /* Sprint 1: SSE Streaming destekli API çağrısı */
@@ -5903,81 +5944,97 @@ Dokümante edilecek içerik ve bağlam:`
         signal: controller.signal,
       };
 
-      if (options.method !== 'GET') {
-        let bodyStr;
-        try {
-          bodyStr = buildRequestBody(apiConfig.bodyTemplate || '{"prompt":"$PROMPT"}', prompt, history);
-        } catch (e) {
-          throw new Error('İstek gövdesi geçerli JSON üretmedi.\n' + e.message);
-        }
-        try {
-          const bodyObj = JSON.parse(bodyStr);
-          bodyObj.stream = true;
-          bodyObj.stream_options = { include_usage: true };
-          bodyStr = JSON.stringify(bodyObj);
-        } catch (_) { }
-        options.body = bodyStr;
-      }
-
-      let res;
+      let reader;
       try {
-        res = await fetch(apiConfig.url, options);
-      } catch (fetchErr) {
-        clearTimeout(timeoutId);
-        activeRequestController = null;
-        if (fetchErr.name === 'AbortError') {
-          if (requestStoppedByUser) throw new Error('İstek kullanıcı tarafından durduruldu.');
-          throw new Error('İstek zaman aşımına uğradı.');
+        if (options.method !== 'GET') {
+          let bodyStr;
+          try {
+            bodyStr = buildRequestBody(apiConfig.bodyTemplate || '{"prompt":"$PROMPT"}', prompt, history);
+          } catch (e) {
+            throw new Error('İstek gövdesi geçerli JSON üretmedi.\n' + e.message);
+          }
+          try {
+            const bodyObj = JSON.parse(bodyStr);
+            bodyObj.stream = true;
+            bodyObj.stream_options = { include_usage: true };
+            bodyStr = JSON.stringify(bodyObj);
+          } catch (_) { }
+          options.body = bodyStr;
         }
-        throw fetchErr;
-      }
-      clearTimeout(timeoutId);
 
-      if (!res.ok) {
-        activeRequestController = null;
-        const errText = await res.text();
-        throw new Error('HTTP ' + res.status + ': ' + errText.slice(0, 300));
-      }
+        const res = await fetch(apiConfig.url, options);
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullContent = '';
-      let buffer = '';
-      let lastUsage = null;
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error('HTTP ' + res.status + ': ' + errText.slice(0, 300));
+        }
 
-      try {
-        while (true) {
+        // Bazı uç noktalar stream=true için de normal JSON döndürür.
+        if ((res.headers.get('content-type') || '').includes('application/json')) {
+          const result = await readApiResponse(res);
+          if (onChunk) onChunk(result.reply, result.reply);
+          return result;
+        }
+        if (!res.body) throw new Error('API boş yanıt döndürdü.');
+        reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let fullContent = '';
+        let buffer = '';
+        let lastUsage = null;
+        let completed = false;
+        let finishReason = null;
+
+        function processLine(line) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data:')) return;
+          const payload = trimmed.slice(5).trim();
+          if (!payload) return;
+          if (payload === '[DONE]') { completed = true; return; }
+          let json;
+          try { json = JSON.parse(payload); }
+          catch (_) { throw new Error('API akışında geçersiz JSON alındı. Alınan yanıt korundu.'); }
+          if (json.error) throw new Error(json.error.message || JSON.stringify(json.error));
+          const choice = json.choices?.[0];
+          const delta = choice?.delta?.content || '';
+          if (delta) {
+            fullContent += delta;
+            if (onChunk) onChunk(fullContent, delta);
+          }
+          if (choice?.finish_reason) finishReason = choice.finish_reason;
+          if (json.usage) lastUsage = normalizeUsage(json.usage);
+        }
+
+        while (!completed) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {
+            buffer += decoder.decode();
+            if (buffer.trim()) processLine(buffer);
+            break;
+          }
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
           buffer = lines.pop() || '';
           for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed === 'data: [DONE]') continue;
-            if (!trimmed.startsWith('data: ')) continue;
-            try {
-              const json = JSON.parse(trimmed.slice(6));
-              const delta = json.choices?.[0]?.delta?.content || '';
-              if (delta) {
-                fullContent += delta;
-                if (onChunk) onChunk(fullContent, delta);
-              }
-              if (json.usage) lastUsage = normalizeUsage(json.usage);
-            } catch (_) { }
+            processLine(line);
+            if (completed) break;
           }
         }
+        if (completed) await reader.cancel().catch(() => {});
+        if (finishReason === 'length') throw new Error('API yanıtı token sınırında kesildi. Alınan yanıt korundu.');
+        if (!completed && !finishReason) throw new Error('API akışı tamamlanmadan bağlantı kapandı. Alınan yanıt korundu.');
+        return { reply: validateApiReply(fullContent), usage: lastUsage };
       } catch (streamErr) {
-        if (streamErr.name === 'AbortError' || requestStoppedByUser) {
-          throw new Error('İstek kullanıcı tarafından durduruldu.');
+        if (streamErr.name === 'AbortError') {
+          if (requestStoppedByUser) throw new Error('İstek kullanıcı tarafından durduruldu.');
+          throw new Error('İstek zaman aşımına uğradı. Alınan yanıt korundu.');
         }
         throw streamErr;
       } finally {
-        activeRequestController = null;
-        try { reader.releaseLock(); } catch (_) { }
+        clearTimeout(timeoutId);
+        if (activeRequestController === controller) activeRequestController = null;
+        try { await reader?.cancel(); } catch (_) { }
+        try { reader?.releaseLock(); } catch (_) { }
       }
-
-      return { reply: fullContent, usage: lastUsage };
     }
 
     /* ============================================================
@@ -5987,6 +6044,9 @@ Dokümante edilecek içerik ve bağlam:`
       const detail = error && error.message ? error.message : String(error);
       if (/API URL/i.test(detail)) return 'API bağlantısı henüz yapılandırılmamış.';
       if (/zaman aşımı/i.test(detail)) return 'API zamanında yanıt vermedi.';
+      if (/API boş yanıt/i.test(detail)) return 'API boş yanıt döndürdü. Lütfen yeniden deneyin.';
+      if (/token sınırında kesildi/i.test(detail)) return 'Yanıt token sınırında kesildi. Alınan metin korundu.';
+      if (/akışı tamamlanmadan|akışında geçersiz JSON/i.test(detail)) return 'Yanıt akışı kesildi. Alınan metin korundu.';
       if (/max_tokens must be at least 1|context_length_exceeded|maximum context length/i.test(detail)) {
         return '⚠️ Model Bağlam Sınırı Aşıldı: Eklenen dosya veya mesaj modelin token sınırını aştı. Lütfen büyük dosyaları doğrudan mesaja eklemek yerine sol alttaki mor 📚 RAG (Bilgi Bankası) butonuyla yükleyin.';
       }
@@ -6003,6 +6063,10 @@ Dokümante edilecek içerik ve bağlam:`
       if (clearInput) {
         el.userInput.value = '';
         if (wasEditing) {
+          attachedFiles = [];
+          renderAttachments();
+        }
+        if (wasEditing) {
           const conversation = conversations.find(item => item.id === activeConversationId);
           selectedPromptTemplate = createTemplateSnapshot(conversation?.activeTemplate);
         }
@@ -6013,7 +6077,14 @@ Dokümante edilecek içerik ve bağlam:`
 
     function beginEditMessage(index) {
       if (isBusy || !chatHistory[index] || chatHistory[index].role !== 'user') return;
+      const files = getMessageAttachments(chatHistory[index]);
+      if (files.some(file => typeof file.content !== 'string')) {
+        showToast('Bu mesajın dosya içeriği kayıtlı değil. Dosyayı yeniden yükleyerek yeni bir mesaj gönderin.', 'error');
+        return;
+      }
       editingMessageIndex = index;
+      attachedFiles = files;
+      renderAttachments();
       el.userInput.value = chatHistory[index].content;
       const templateSnapshot = chatHistory[index].template;
       selectedPromptTemplate = templateSnapshot ? { ...templateSnapshot } : null;
@@ -6059,10 +6130,10 @@ Dokümante edilecek içerik ve bağlam:`
             getApiMessageContent(lastUserMessage),
             chatHistory.slice(0, -1),
             (fullText) => {
-              chatHistory[msgIndex].content = fullText;
+              streamMsg.content = fullText;
               if (bubbleEl) {
                 bubbleEl.innerHTML = renderContent(fullText);
-                decorateCodeBlocks(bubbleEl);
+                // Eksik diyagramları her parçada çalıştırma; son render süsler.
                 bubbleEl.classList.add('streaming-cursor');
               }
               scrollToBottom();
@@ -6079,7 +6150,9 @@ Dokümante edilecek içerik ve bağlam:`
             if (bubbleEl) bubbleEl.classList.remove('streaming-cursor', 'streaming-message');
             showToast('Yanıt üretimi durduruldu.', 'info');
           } else {
-            chatHistory.pop();
+            // Bağlantı/render hatasında alınmış yanıtı koru.
+            if (!streamMsg.content.trim()) chatHistory.splice(msgIndex, 1);
+            else streamMsg.elapsedMs = Math.round(performance.now() - startedAt);
             chatHistory.push({
               role: 'error',
               content: getShortErrorMessage(err),
@@ -6138,47 +6211,59 @@ Dokümante edilecek içerik ve bağlam:`
       if (isBusy) return;
       const visibleText = el.userInput.value.trim();
       if (!visibleText && attachedFiles.length === 0 && !selectedPromptTemplate) return;
-
-      let apiText = visibleText;
-      if (attachedFiles.length) {
-        const fileContext = attachedFiles.map(file => '\n\n--- Dosya: ' + file.name + ' ---\n' + file.content).join('');
-        apiText = (apiText || 'Ekli dosyaları analiz et.') + fileContext;
-      }
-      // RAG augmentation
-      if (ragEnabled) {
-        try {
-          const ragContext = await augmentWithRAG(visibleText);
-          if (ragContext) apiText = (apiText || visibleText) + ragContext;
-        } catch (_) { }
-      }
+      const files = attachedFiles.map(file => ({ ...file }));
       const templateSnapshot = selectedPromptTemplate ? { ...selectedPromptTemplate } : null;
-      if (templateSnapshot?.prompt) {
-        apiText = templateSnapshot.prompt.trim() + (apiText ? '\n\nKullanıcı bağlamı:\n' + apiText : '');
-      }
-      const messageMetadata = {
-        role: 'user',
-        content: visibleText || (!templateSnapshot && attachedFiles.length ? 'Ekli dosyaları analiz et.' : ''),
-        apiContent: apiText,
-        template: templateSnapshot,
-        createdAt: Date.now(),
-        attachments: attachedFiles.map(file => ({ name: file.name, size: file.size, type: file.type })),
-      };
+      const conversationId = activeConversationId;
+      const editIndex = editingMessageIndex;
+      const controller = new AbortController();
+      activeRequestController = controller;
+      requestStoppedByUser = false;
+      // RAG dahil tüm gönderimi kilitle; beklerken ikinci mesaj/sohbet değişimi olmasın.
+      setBusy(true);
+      try {
+        let apiText = visibleText || (files.length ? 'Ekli dosyaları analiz et.' : '');
+        if (ragEnabled) {
+          const ragContext = await augmentWithRAG(visibleText, controller.signal);
+          if (ragContext) apiText += ragContext;
+        }
+        if (controller.signal.aborted) throw new DOMException('İstek durduruldu.', 'AbortError');
+        if (conversationId !== activeConversationId) throw new Error('Sohbet değiştiği için mesaj gönderilmedi.');
+        if (templateSnapshot?.prompt) {
+          apiText = templateSnapshot.prompt.trim() + (apiText ? '\n\nKullanıcı bağlamı:\n' + apiText : '');
+        }
+        const messageMetadata = {
+          role: 'user',
+          content: visibleText || (!templateSnapshot && files.length ? 'Ekli dosyaları analiz et.' : ''),
+          apiContent: apiText,
+          template: templateSnapshot,
+          createdAt: Date.now(),
+          attachments: files,
+        };
 
-      if (editingMessageIndex !== null) {
-        chatHistory = chatHistory.slice(0, editingMessageIndex);
-        chatHistory.push(messageMetadata);
-        cancelEditMode(false);
-      } else {
-        chatHistory.push(messageMetadata);
-      }
-      attachedFiles = [];
-      renderAttachments();
-      saveHistory();
-      renderMessages();
+        if (editIndex !== null) {
+          chatHistory = chatHistory.slice(0, editIndex);
+          chatHistory.push(messageMetadata);
+          cancelEditMode(false);
+        } else {
+          chatHistory.push(messageMetadata);
+        }
+        attachedFiles = [];
+        renderAttachments();
+        saveHistory();
+        renderMessages();
 
-      el.userInput.value = '';
-      autoResize();
-      await generateAssistantReply();
+        el.userInput.value = '';
+        autoResize();
+        activeRequestController = null;
+        setBusy(false);
+        await generateAssistantReply();
+      } catch (error) {
+        showToast(error.name === 'AbortError' ? 'Mesaj gönderimi durduruldu.' : error.message, error.name === 'AbortError' ? 'info' : 'error');
+      } finally {
+        if (activeRequestController === controller) activeRequestController = null;
+        requestStoppedByUser = false;
+        setBusy(false);
+      }
     }
 
     async function regenerateMessage(index) {
@@ -6209,8 +6294,8 @@ Dokümante edilecek içerik ve bağlam:`
         'let apiConfig = ' + serializeForInlineScript(apiConfig) + ';\n' +
         'let embeddedCustomModels = ' + serializeForInlineScript(customModels) + ';';
 
-      // Mevcut sayfanın tam HTML'ini al
-      let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      // Başlangıç şablonunu kullan; mesajlar, aramalar ve önizlemeler taşınmaz.
+      let html = '<!DOCTYPE html>\n' + pristineDocument.outerHTML;
 
       // DEFAULT_CONFIG_START ... DEFAULT_CONFIG_END arasını değiştir (Regex)
       const blockRegex = /\/\* DEFAULT_CONFIG_START \*\/[\s\S]*?\/\* DEFAULT_CONFIG_END \*\//;
@@ -6218,7 +6303,7 @@ Dokümante edilecek içerik ve bağlam:`
         '/* DEFAULT_CONFIG_START */\n' + configString + '\n/* DEFAULT_CONFIG_END */';
 
       if (blockRegex.test(html)) {
-        html = html.replace(blockRegex, replacement);
+        html = html.replace(blockRegex, () => replacement);
       } else {
         showStatus('Gömme bloğu bulunamadı, indirme iptal edildi.', 'error');
         return;
@@ -6242,11 +6327,12 @@ Dokümante edilecek içerik ve bağlam:`
        11. AYARLARI TEST ETME
        ============================================================ */
     async function testConnection() {
+      if (isBusy) return;
       if (!readSettingsForm()) return;
       saveConfigToLS();
       updateModelLabel();
       showStatus('Test isteği gönderiliyor...', 'info');
-      el.testCfgBtn.disabled = true;
+      setBusy(true);
       try {
         const testPrompt = 'Merhaba, bu bir bağlantı testidir.';
         const result = await callApi(testPrompt, [{ role: 'user', content: testPrompt }]);
@@ -6254,7 +6340,8 @@ Dokümante edilecek içerik ve bağlam:`
       } catch (err) {
         showStatus('Test başarısız: ' + (err.message || err).slice(0, 120), 'error');
       } finally {
-        el.testCfgBtn.disabled = false;
+        requestStoppedByUser = false;
+        setBusy(false);
       }
     }
 
@@ -7114,17 +7201,17 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     async function autoTagConversation() {
+      if (isBusy) return;
       const conv = conversations.find(c => c.id === activeConversationId);
       if (!conv || conv.messages.length < 2) { showToast('Etiketlemek için en az 2 mesaj olmalı.', 'info'); return; }
       if (!apiConfig.url) { showToast('API yapılandırılmamış.', 'error'); return; }
 
       showToast('Etiketler öneriliyor...', 'info');
+      setBusy(true);
       try {
         const sample = conv.messages.slice(0, 6).map(m => m.role + ': ' + (m.content || '').slice(0, 200)).join('\n');
-        const result = await callApi(
-          'Aşağıdaki sohbetten 2-4 adet kısa (tek kelime veya iki kelime) Türkçe etiket öner. Sadece virgullerle ayrılmış etiketleri yaz, başka bir şey yazma:\n\n' + sample,
-          [{ role: 'user', content: sample }]
-        );
+        const prompt = 'Aşağıdaki sohbetten 2-4 adet kısa (tek kelime veya iki kelime) Türkçe etiket öner. Sadece virgullerle ayrılmış etiketleri yaz, başka bir şey yazma:\n\n' + sample;
+        const result = await callApi(prompt, [{ role: 'user', content: prompt }]);
         const tags = result.reply.split(/[,;\n]/).map(t => t.trim().replace(/^#/, '')).filter(t => t.length > 0 && t.length < 30).slice(0, 4);
         if (tags.length === 0) { showToast('Etiket önerisi alınamadı.', 'info'); return; }
         conv.tags = [...new Set([...(conv.tags || []), ...tags])];
@@ -7133,6 +7220,9 @@ Dokümante edilecek içerik ve bağlam:`
         showToast('Etiketler eklendi: ' + tags.map(t => '#' + t).join(', '), 'success');
       } catch (err) {
         showToast('Etiketleme başarısız: ' + (err.message || err), 'error');
+      } finally {
+        requestStoppedByUser = false;
+        setBusy(false);
       }
     }
 
@@ -7163,6 +7253,7 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     function importSettings() {
+      if (isBusy) return;
       const input = document.createElement('input');
       input.type = 'file'; input.accept = '.json';
       input.addEventListener('change', async () => {
@@ -7171,9 +7262,26 @@ Dokümante edilecek içerik ve bağlam:`
         try {
           const text = await file.text();
           const data = JSON.parse(text);
+          if (isBusy) throw new Error('Yanıt tamamlandıktan sonra ayarları içe aktarın.');
+          if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Geçersiz ayar dosyası.');
+          if (data.apiConfig !== undefined && (!data.apiConfig || typeof data.apiConfig !== 'object' || Array.isArray(data.apiConfig))) throw new Error('Geçersiz API ayarları.');
+          for (const key of ['customModels', 'promptTemplates']) {
+            if (data[key] !== undefined && (!Array.isArray(data[key]) || data[key].some(item => !item || typeof item !== 'object' || Array.isArray(item)))) {
+              throw new Error('Geçersiz ayar listesi: ' + key);
+            }
+          }
+          if (data.systemPrompt !== undefined && typeof data.systemPrompt !== 'string') throw new Error('Sistem promptu metin olmalıdır.');
+          for (const key of ['streamingEnabled', 'ragEnabled']) {
+            if (data[key] !== undefined && typeof data[key] !== 'boolean') throw new Error('Geçersiz ayar: ' + key);
+          }
           if (data.apiConfig) { Object.assign(apiConfig, data.apiConfig); saveConfigToLS(); fillSettingsForm(); }
           if (data.customModels) { customModels = data.customModels; saveCustomModels(); renderModelControls(); }
-          if (data.promptTemplates) { promptTemplates = data.promptTemplates; savePromptTemplatesToLS(); renderPromptTemplates(); }
+          if (data.promptTemplates) {
+            promptTemplates = data.promptTemplates;
+            savePromptTemplates();
+            localStorage.setItem(LS_TEMPLATES_VERSION_KEY, String(DEFAULT_TEMPLATES_VERSION));
+            renderPromptTemplates();
+          }
           if (data.systemPrompt !== undefined) { systemPrompt = data.systemPrompt; if (el.cfgSystemPrompt) el.cfgSystemPrompt.value = systemPrompt; saveSystemPrompt(); }
           if (data.streamingEnabled !== undefined) { streamingEnabled = data.streamingEnabled; if (el.cfgStreaming) el.cfgStreaming.checked = streamingEnabled; saveStreamingSetting(); }
           if (data.ragEnabled !== undefined) { ragEnabled = data.ragEnabled; if (el.ragToggle) el.ragToggle.checked = ragEnabled; saveRAGSetting(); }
@@ -7195,8 +7303,10 @@ Dokümante edilecek içerik ve bağlam:`
         (conv.messages || []).forEach(msg => {
           totalMessages++;
           if (msg.usage) {
-            const tokens = (msg.usage.total_tokens || 0) + (msg.usage.prompt_tokens || 0) + (msg.usage.completion_tokens || 0);
-            totalTokens += tokens;
+            const usage = msg.usage;
+            const tokens = Number(usage.total_tokens ??
+              (Number(usage.prompt_tokens ?? usage.input_tokens ?? 0) + Number(usage.completion_tokens ?? usage.output_tokens ?? 0)));
+            if (Number.isFinite(tokens)) totalTokens += Math.max(0, tokens);
           }
           const model = msg.model || 'bilinmeyen';
           if (msg.role === 'assistant') {
@@ -7353,13 +7463,14 @@ Dokümante edilecek içerik ve bağlam:`
       } catch (_) { return ''; }
     }
 
-    async function getEmbedding(text) {
+    async function getEmbedding(text, signal) {
       const url = getEmbeddingUrl();
       if (!url) throw new Error('Embedding URL türetilemedi.');
       const res = await fetch(url, {
         method: 'POST',
         headers: apiConfig.headers || { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: 'text-embedding-3-small', input: text.slice(0, 8000) }),
+        signal,
       });
       if (!res.ok) throw new Error('Embedding HTTP ' + res.status);
       const data = await res.json();
@@ -7451,10 +7562,11 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     // --- RAG Arama ---
-    async function searchRAG(query, topK = RAG_TOP_K) {
+    async function searchRAG(query, topK = RAG_TOP_K, signal) {
       const db = await openRAGDB();
       let qEmb;
-      try { qEmb = await getEmbedding(query); } catch (_) { }
+      try { qEmb = await getEmbedding(query, signal); }
+      catch (error) { if (signal?.aborted) throw error; }
 
       const tx = db.transaction('chunks', 'readonly');
       const allChunks = await new Promise((res, rej) => {
@@ -7613,16 +7725,17 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     // --- RAG Augmented Prompt (sendMessage'a entegre) ---
-    async function augmentWithRAG(userText) {
+    async function augmentWithRAG(userText, signal) {
       if (!ragEnabled || !userText.trim()) return '';
       try {
-        const results = await searchRAG(userText);
+        const results = await searchRAG(userText, RAG_TOP_K, signal);
         if (results.length === 0) return '';
         const context = results.map((r, i) =>
           '[Kaynak ' + (i + 1) + ': ' + r.docName + ']\n' + r.text
         ).join('\n\n---\n\n');
         return '\n\n--- Bilgi Tabanından Bulunan Bağlam ---\n' + context + '\n--- Bağlam Sonu ---\n\nYukarıdaki bağlamı kullanarak kullanıcı sorusunu yanıtla.';
       } catch (err) {
+        if (signal?.aborted) throw err;
         console.warn('RAG search error:', err);
         return '';
       }

@@ -11,8 +11,8 @@
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
@@ -1565,6 +1565,14 @@
           </button>
         </div>
 
+        <div role="tablist" aria-label="API türü" class="grid grid-cols-2 gap-1 rounded-xl bg-base p-1 border border-border">
+          <button id="apiChatTab" type="button" role="tab" aria-selected="true" aria-controls="apiChatPanel"
+            data-api-settings-tab="chat" class="rounded-lg px-3 py-2 text-xs font-semibold bg-panel3 text-gray-100 transition">Sohbet</button>
+          <button id="apiEmbeddingTab" type="button" role="tab" aria-selected="false" aria-controls="apiEmbeddingPanel" tabindex="-1"
+            data-api-settings-tab="embedding" class="rounded-lg px-3 py-2 text-xs font-semibold text-gray-400 transition">Embedding</button>
+        </div>
+
+        <section id="apiChatPanel" role="tabpanel" aria-labelledby="apiChatTab" class="space-y-4">
         <!-- API URL -->
         <div>
           <label class="block text-xs font-medium text-gray-400 mb-1.5">URL</label>
@@ -1638,6 +1646,62 @@
             class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg transition">
             Bağlantıyı Test Et
           </button>
+        </div>
+        <div id="cfgStatus" role="status" class="text-xs text-center min-h-[18px]"></div>
+        </section>
+
+        <section id="apiEmbeddingPanel" role="tabpanel" aria-labelledby="apiEmbeddingTab" class="hidden space-y-4">
+          <p class="text-xs leading-5 text-gray-400">Bilgi tabanındaki belgeleri ve sorularınızı anlamlarına göre eşleştiren modeli ayarlayın.</p>
+          <div>
+            <label for="cfgEmbeddingModel" class="block text-xs font-medium text-gray-400 mb-1.5">Embedding model adı</label>
+            <input id="cfgEmbeddingModel" type="text" spellcheck="false" placeholder="text-embedding-3-small"
+              class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200" />
+          </div>
+          <label class="flex items-start gap-2.5 rounded-xl border border-border bg-panel2/50 p-3 cursor-pointer">
+            <input id="cfgEmbeddingUseChatApi" type="checkbox" checked aria-controls="embeddingCustomConnection" class="mt-0.5 w-4 h-4 accent-blue-600 shrink-0" />
+            <span><span class="block text-xs font-medium text-gray-200">Sohbet API ayarlarını kullan</span>
+              <span class="block mt-1 text-[11px] leading-4 text-gray-500">Adres ve yetkilendirme sohbet ayarlarından alınır. Embedding modeli bağımsızdır.</span></span>
+          </label>
+          <div id="embeddingSharedConnection" class="rounded-lg bg-base p-3 border border-border">
+            <p class="text-[10px] text-gray-500 mb-1">Embedding adresi</p>
+            <p id="embeddingResolvedUrl" class="text-[11px] leading-5 font-mono text-gray-400 break-all"></p>
+          </div>
+          <div id="embeddingCustomConnection" class="hidden space-y-4">
+            <div>
+              <label for="cfgEmbeddingUrl" class="block text-xs font-medium text-gray-400 mb-1.5">Embedding API URL’si</label>
+              <input id="cfgEmbeddingUrl" type="url" spellcheck="false" placeholder="https://api.ornek.com/v1/embeddings"
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition text-gray-200" />
+              <p class="text-[11px] text-gray-500 mt-1">Servisin tam embedding adresini girin.</p>
+            </div>
+            <div>
+              <label for="cfgEmbeddingApiKey" class="block text-xs font-medium text-gray-400 mb-1.5">API anahtarı <span class="font-normal text-gray-500">(isteğe bağlı)</span></label>
+              <input id="cfgEmbeddingApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="API anahtarınız"
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition text-gray-200" />
+            </div>
+            <details class="rounded-lg border border-border p-3">
+              <summary class="text-xs text-gray-400 cursor-pointer">Özel header’lar</summary>
+              <label for="cfgEmbeddingHeaders" class="block text-[11px] text-gray-500 mt-3 mb-2">Ek HTTP header’ları · JSON</label>
+              <textarea id="cfgEmbeddingHeaders" rows="4" spellcheck="false" placeholder='{"api-key": "..."}'
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200">{}</textarea>
+              <p class="text-[11px] leading-4 text-gray-500 mt-1">API anahtarı alanı doluysa Authorization: Bearer olarak gönderilir.</p>
+            </details>
+          </div>
+          <p class="text-[11px] leading-4 text-gray-500">OpenAI uyumlu embedding istek ve yanıt biçimini destekleyen servisler içindir.</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="saveEmbeddingCfgBtn" type="button" class="rounded-lg bg-accent hover:bg-blue-500 px-3 py-2.5 text-xs font-medium text-white transition disabled:opacity-50">Ayarları kaydet</button>
+            <button id="testEmbeddingCfgBtn" type="button" class="rounded-lg border border-border bg-panel2 hover:bg-panel3 px-3 py-2.5 text-xs font-medium text-gray-200 transition disabled:opacity-50">Bağlantıyı test et</button>
+          </div>
+          <div id="embeddingCfgStatus" role="status" aria-live="polite" class="text-xs leading-5 min-h-[18px]"></div>
+          <div class="rounded-xl border border-border bg-base p-3 space-y-2">
+            <p class="text-xs font-medium text-gray-300">Bilgi tabanı uyumu</p>
+            <p class="text-[11px] leading-5 text-gray-500">Model veya servis değiştiğinde belgeleri yeniden indeksleyin. Kayıtlı metinler kullanılır; dosyaları tekrar yüklemeniz gerekmez.</p>
+            <p id="embeddingIndexStatus" role="status" class="text-[11px] leading-5 text-gray-400"></p>
+            <button id="reindexEmbeddingBtn" type="button" class="w-full rounded-lg border border-border bg-panel2 hover:bg-panel3 px-3 py-2 text-xs font-medium text-gray-200 transition disabled:opacity-50">Belgeleri yeniden indeksle</button>
+            <p id="embeddingReindexStatus" role="status" aria-live="polite" class="text-[11px] leading-5 text-gray-400"></p>
+          </div>
+        </section>
+
+        <div class="border-t border-border pt-4">
           <button id="downloadCloneBtn"
             class="w-full bg-panel2 hover:bg-border border border-border text-gray-200 text-sm font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1650,7 +1714,6 @@
           </button>
         </div>
 
-        <div id="cfgStatus" class="text-xs text-center min-h-[18px]"></div>
       </div>
     </aside>
   </div>
@@ -2103,6 +2166,11 @@
         </div>
       </div>
       <div class="p-4 pb-2 shrink-0">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <button id="kbEmbeddingSettingsBtn" type="button" class="text-xs text-blue-400 hover:text-blue-300">Embedding ayarları</button>
+          <button id="reindexKBBtn" type="button" class="rounded-lg border border-border bg-panel2 px-3 py-1.5 text-xs text-gray-300 hover:bg-panel3 disabled:opacity-50">Yeniden indeksle</button>
+        </div>
+        <p id="kbReindexStatus" role="status" aria-live="polite" class="text-xs text-gray-400 mb-2"></p>
         <div id="kbDropZone"
           class="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed border-border hover:border-purple-500 bg-panel2/50 hover:bg-purple-500/5 transition cursor-pointer">
           <span class="text-2xl">📄</span>
@@ -2213,7 +2281,14 @@
       bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": "cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit"\n}',
       responsePath: "choices.0.message.content",
       transcriptionUrl: "",
-      transcriptionModel: "whisper-1"
+      transcriptionModel: "whisper-1",
+      embedding: {
+        model: "text-embedding-3-small",
+        useChatApi: true,
+        url: "",
+        apiKey: "",
+        headers: {}
+      }
     };
     let embeddedCustomModels = [
       {
@@ -2405,6 +2480,14 @@ Dokümante edilecek içerik ve bağlam:`
       testCfgBtn: document.getElementById('testCfgBtn'),
       downloadCloneBtn: document.getElementById('downloadCloneBtn'),
       cfgStatus: document.getElementById('cfgStatus'),
+      cfgEmbeddingModel: document.getElementById('cfgEmbeddingModel'),
+      cfgEmbeddingUseChatApi: document.getElementById('cfgEmbeddingUseChatApi'),
+      cfgEmbeddingUrl: document.getElementById('cfgEmbeddingUrl'),
+      cfgEmbeddingApiKey: document.getElementById('cfgEmbeddingApiKey'),
+      cfgEmbeddingHeaders: document.getElementById('cfgEmbeddingHeaders'),
+      embeddingCfgStatus: document.getElementById('embeddingCfgStatus'),
+      saveEmbeddingCfgBtn: document.getElementById('saveEmbeddingCfgBtn'),
+      testEmbeddingCfgBtn: document.getElementById('testEmbeddingCfgBtn'),
       modelLabel: document.getElementById('modelLabel'),
       modelSelect: document.getElementById('modelSelect'),
       modelDropdownBtn: document.getElementById('modelDropdownBtn'),
@@ -3895,7 +3978,7 @@ Dokümante edilecek içerik ve bağlam:`
       return getAccentLuminance(hex) > 0.35 ? '#1e293b' : '#ffffff';
     }
 
-    function applyAccentColor(hex) {
+    function applyAccentColor(hex, showNotification = true) {
       // Mevcut override style'u kaldır veya oluştur
       let styleEl = document.getElementById('accent-color-override');
       if (!styleEl) {
@@ -3938,7 +4021,7 @@ Dokümante edilecek içerik ve bağlam:`
       localStorage.setItem(LS_ACCENT_COLOR_KEY, hex);
       // Seçili model kartı renklerini yeniden oluştur
       renderModelControls();
-      showToast('Tema rengi uygulandı.', 'success');
+      if (showNotification) showToast('Tema rengi uygulandı.', 'success');
     }
 
     function initThemeColorPicker() {
@@ -3980,7 +4063,7 @@ Dokümante edilecek içerik ve bağlam:`
 
       // Kayıtlı rengi yükle
       const saved = localStorage.getItem(LS_ACCENT_COLOR_KEY);
-      if (saved) applyAccentColor(saved);
+      if (saved) applyAccentColor(saved, false);
     }
 
     function exportText() {
@@ -4161,8 +4244,10 @@ Dokümante edilecek içerik ve bağlam:`
     function saveConfigToLS() {
       try {
         localStorage.setItem(LS_CONFIG_KEY, JSON.stringify(apiConfig));
+        return true;
       } catch (e) {
         console.warn('Config kaydedilemedi:', e);
+        return false;
       }
     }
 
@@ -4284,7 +4369,174 @@ Dokümante edilecek içerik ve bağlam:`
         : '{\n  "Content-Type": "application/json"\n}';
       el.cfgBody.value = apiConfig.bodyTemplate || '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": ""\n}';
       el.cfgResponsePath.value = apiConfig.responsePath || 'choices.0.message.content';
+      fillEmbeddingSettingsForm();
       updateModelLabel();
+    }
+
+    let embeddingSettingsDirty = false;
+    let embeddingTestRunning = false;
+    let embeddingReindexRunning = false;
+    let embeddingIndexRequest = 0;
+
+    function setApiSettingsTab(name) {
+      document.querySelectorAll('[data-api-settings-tab]').forEach(button => {
+        const active = button.dataset.apiSettingsTab === name;
+        button.setAttribute('aria-selected', String(active));
+        button.tabIndex = active ? 0 : -1;
+        button.classList.toggle('bg-panel3', active);
+        button.classList.toggle('text-gray-100', active);
+        button.classList.toggle('text-gray-400', !active);
+      });
+      document.getElementById('apiChatPanel').classList.toggle('hidden', name !== 'chat');
+      document.getElementById('apiEmbeddingPanel').classList.toggle('hidden', name !== 'embedding');
+      if (name === 'embedding') {
+        updateEmbeddingConnectionFields();
+        refreshEmbeddingIndexStatus();
+      }
+    }
+
+    function showEmbeddingStatus(message, type = 'info') {
+      el.embeddingCfgStatus.textContent = message;
+      el.embeddingCfgStatus.className = 'text-xs leading-5 min-h-[18px] ' +
+        (type === 'error' ? 'text-red-400' : type === 'success' ? 'text-emerald-400' : 'text-gray-400');
+    }
+
+    function fillEmbeddingSettingsForm() {
+      const settings = getEmbeddingSettings();
+      el.cfgEmbeddingModel.value = settings.model;
+      el.cfgEmbeddingUseChatApi.checked = settings.useChatApi;
+      el.cfgEmbeddingUrl.value = settings.url;
+      el.cfgEmbeddingApiKey.value = settings.apiKey;
+      el.cfgEmbeddingHeaders.value = JSON.stringify(settings.headers, null, 2);
+      embeddingSettingsDirty = false;
+      showEmbeddingStatus('');
+      updateEmbeddingConnectionFields();
+    }
+
+    function updateEmbeddingConnectionFields() {
+      const shared = el.cfgEmbeddingUseChatApi.checked;
+      document.getElementById('embeddingCustomConnection').classList.toggle('hidden', shared);
+      document.getElementById('embeddingSharedConnection').classList.toggle('hidden', !shared);
+      if (shared) {
+        const target = document.getElementById('embeddingResolvedUrl');
+        try {
+          const config = resolveEmbeddingConfig({ ...getEmbeddingSettings(), useChatApi: true });
+          const display = new URL(config.url);
+          display.search = ''; display.hash = ''; display.username = ''; display.password = '';
+          target.textContent = display.toString();
+        } catch (_) {
+          target.textContent = 'Sohbet sekmesinde geçerli bir API adresi ayarlayın veya ayrı bir bağlantı kullanın.';
+        }
+      }
+    }
+
+    function readEmbeddingSettingsForm({ reportErrors = true } = {}) {
+      try {
+        const useChatApi = el.cfgEmbeddingUseChatApi.checked;
+        const settings = {
+          model: el.cfgEmbeddingModel.value.trim(),
+          useChatApi,
+          url: el.cfgEmbeddingUrl.value.trim(),
+          apiKey: el.cfgEmbeddingApiKey.value.trim(),
+          headers: useChatApi ? getEmbeddingSettings().headers : JSON.parse(el.cfgEmbeddingHeaders.value.trim() || '{}'),
+        };
+        if (!settings.model) throw new Error('Embedding model adı zorunludur.');
+        if (!settings.headers || typeof settings.headers !== 'object' || Array.isArray(settings.headers) ||
+          Object.values(settings.headers).some(value => typeof value !== 'string')) {
+          throw new Error('Header’lar metin değerleri içeren bir JSON nesnesi olmalıdır.');
+        }
+        if (!useChatApi || apiConfig.url) resolveEmbeddingConfig(settings);
+        const previous = apiConfig.embedding;
+        apiConfig.embedding = settings;
+        if (!saveConfigToLS()) {
+          apiConfig.embedding = previous;
+          throw new Error('Ayarlar kaydedilemedi. Tarayıcı depolama alanını kontrol edin.');
+        }
+        embeddingSettingsDirty = false;
+        if (reportErrors) showEmbeddingStatus('Embedding ayarları kaydedildi.', 'success');
+        updateEmbeddingConnectionFields();
+        refreshEmbeddingIndexStatus();
+        return true;
+      } catch (error) {
+        if (reportErrors) showEmbeddingStatus(error instanceof SyntaxError ? 'Özel header’lar geçerli JSON olmalıdır.' : error.message, 'error');
+        return false;
+      }
+    }
+
+    async function testEmbeddingConnection() {
+      if (embeddingTestRunning || embeddingReindexRunning) return;
+      if (!readEmbeddingSettingsForm()) return;
+      embeddingTestRunning = true;
+      el.testEmbeddingCfgBtn.disabled = true;
+      el.testEmbeddingCfgBtn.textContent = 'Test ediliyor…';
+      showEmbeddingStatus('Embedding bağlantısı test ediliyor…');
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      try {
+        const config = resolveEmbeddingConfig();
+        const vector = await getEmbedding('Bu bir embedding bağlantı testidir.', controller.signal, config);
+        showEmbeddingStatus('Bağlantı başarılı · ' + config.model + ' · ' + vector.length + ' boyut.', 'success');
+      } catch (error) {
+        showEmbeddingStatus(controller.signal.aborted ? 'Bağlantı testi zaman aşımına uğradı.' : 'Test başarısız: ' + error.message, 'error');
+      } finally {
+        clearTimeout(timeout);
+        embeddingTestRunning = false;
+        el.testEmbeddingCfgBtn.disabled = false;
+        el.testEmbeddingCfgBtn.textContent = 'Bağlantıyı test et';
+      }
+    }
+
+    async function refreshEmbeddingIndexStatus() {
+      const request = ++embeddingIndexRequest;
+      const target = document.getElementById('embeddingIndexStatus');
+      try {
+        const status = await getRAGIndexStatus();
+        if (request !== embeddingIndexRequest) return;
+        target.textContent = !status.total ? 'Henüz belge yüklenmedi.' :
+          status.compatible + '/' + status.total + ' parça seçili modelle uyumlu.' +
+          (status.needsReindex ? ' Eksik veya eski parçalar için yeniden indeksleme gerekli.' : ' Belgeler hazır.');
+        target.classList.toggle('text-amber-400', !!status.needsReindex);
+        document.getElementById('reindexEmbeddingBtn').disabled = !status.total || embeddingReindexRunning;
+      } catch (_) {
+        if (request !== embeddingIndexRequest) return;
+        target.textContent = 'Uyumluluğu görmek için geçerli bir embedding bağlantısı ayarlayın.';
+      }
+    }
+
+    async function reindexKnowledgeBase() {
+      if (embeddingReindexRunning || embeddingTestRunning || isRAGIndexing()) {
+        showToast('Devam eden embedding işleminin tamamlanmasını bekleyin.', 'info');
+        return;
+      }
+      if (embeddingSettingsDirty && !readEmbeddingSettingsForm()) {
+        closeModal('kbModal');
+        el.settingsPanel.classList.remove('settings-hidden');
+        setApiSettingsTab('embedding');
+        return;
+      }
+      embeddingReindexRunning = true;
+      const controls = ['reindexEmbeddingBtn', 'reindexKBBtn', 'saveEmbeddingCfgBtn', 'testEmbeddingCfgBtn'];
+      controls.forEach(id => { document.getElementById(id).disabled = true; });
+      const progress = message => {
+        document.getElementById('embeddingReindexStatus').textContent = message;
+        document.getElementById('kbReindexStatus').textContent = message;
+      };
+      progress('Belgeler yeniden indeksleniyor…');
+      try {
+        const result = await reindexRAGDocuments(progress);
+        const message = !result.total ? 'İndekslenecek belge bulunamadı.' :
+          result.embedded + '/' + result.total + ' parça indekslendi.' +
+          (result.failed ? ' ' + result.failed + ' parça tamamlanamadı; mevcut veriler korundu. Bağlantıyı kontrol edip tekrar deneyin.' : ' Belgeler hazır.');
+        progress(message);
+        showToast(message, result.failed ? 'error' : 'success');
+      } catch (error) {
+        progress('Yeniden indeksleme başarısız: ' + error.message);
+      } finally {
+        embeddingReindexRunning = false;
+        controls.forEach(id => { document.getElementById(id).disabled = false; });
+        await refreshEmbeddingIndexStatus();
+        await renderKBDocuments();
+      }
     }
 
     function updateModelLabel() {
@@ -5295,6 +5547,66 @@ Dokümante edilecek içerik ve bağlam:`
       updateInChatCurrentMatch();
     }
 
+    // Only retry flowcharts: quoting labels in other diagram grammars changes their meaning.
+    function repairMermaidFlowchartLabels(source) {
+      const diagram = source
+        .replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '')
+        .replace(/%%\{[\s\S]*?\}%%/g, '')
+        .replace(/%%[^\n]*/g, '').trim();
+      if (!/^(?:graph|flowchart)\s+(?:TB|TD|BT|RL|LR)\b/.test(diagram)) return source;
+
+      const shapes = {
+        '[[': ']]', '[(': ')]', '([': '])', '(((': ')))', '((': '))', '{{': '}}',
+        '[/': '/]', '[\\': '\\]', '[': ']', '(': ')', '{': '}'
+      };
+      // Skip directives, comments, quoted strings and styling statements as complete tokens.
+      const tokens = /^---\s*\n[\s\S]*?\n---\s*\n|%%\{[\s\S]*?\}%%|%%[^\n]*|"(?:[^"\\]|\\.)*"|\|[^|\n]*\||^[ \t]*(?:style|classDef|class|linkStyle|click|direction)\b[^\n]*|([\p{L}\p{N}_][\p{L}\p{N}_-]*[ \t]*)(\[\[|\[\(|\(\[|\(\(\(|\(\(|\{\{|\[\/|\[\\|\[|\(|\{)/gmu;
+      let result = '', cursor = 0, match;
+      while ((match = tokens.exec(source))) {
+        if (!match[1]) continue;
+        const open = match[2], close = shapes[open];
+        const start = tokens.lastIndex;
+        let end = start, quoted = false, depth = 0;
+        for (; end < source.length; end++) {
+          const char = source[end];
+          if (char === '"' && source[end - 1] !== '\\') quoted = !quoted;
+          if (quoted) continue;
+          // A nested pair inside a label is text, e.g. A[SDK (Android)].
+          if (depth === 0 && source.startsWith(close, end)) break;
+          if (char === open[0]) depth++;
+          else if (char === close[close.length - 1] && depth > 0) depth--;
+          if (char === '\n' && depth === 0) break; // Leave incomplete labels untouched.
+        }
+        if (!source.startsWith(close, end)) continue;
+        const label = source.slice(start, end);
+        tokens.lastIndex = end + close.length;
+        if (!label.trim() || label.trim().startsWith('"')) continue;
+        // Trapezoids can end with either slash; do not reinterpret an unsupported shape.
+        if (open === '[' && /^[\/\\]/.test(label)) continue;
+        result += source.slice(cursor, start) + '"' + label.replace(/"/g, '#quot;') + '"';
+        cursor = end;
+      }
+      return result + source.slice(cursor);
+    }
+
+    async function renderMermaidDiagram(source, id) {
+      // Measure labels with the final fonts so opening the SVG larger does not clip text.
+      if (document.fonts?.ready) await document.fonts.ready;
+      // Mermaid 10 leaves its error SVG in the render container on rejection.
+      // Give every attempt its own measurable, offscreen host and always remove it.
+      const host = document.createElement('div');
+      host.className = 'mermaid-render-host';
+      host.setAttribute('aria-hidden', 'true');
+      host.style.cssText = 'position:absolute;left:-100000px;top:0;visibility:hidden;pointer-events:none;';
+      document.body.appendChild(host);
+      try {
+        return await window.mermaid.render(id, source, host);
+      } finally {
+        host.replaceChildren();
+        host.remove();
+      }
+    }
+
     /* Kod bloklarını sohbet içinde zenginleştir. */
     function decorateCodeBlocks(container) {
       container.querySelectorAll('a').forEach(link => {
@@ -5369,89 +5681,63 @@ Dokümante edilecek içerik ve bağlam:`
               return src.replace(/^%%\{[\s\S]*?\}%%\s*/m, '').trim();
             }
 
-            // Stale DOM düğümünü temizle (aynı id tekrar render edilirse hata olur)
-            function cleanStaleMermaidNode(id) {
-              const stale = document.getElementById(id);
-              if (stale) stale.remove();
-            }
-
-            function doMermaidRender(code, svgId, onSuccess, onFail) {
-              cleanStaleMermaidNode(svgId);
-              return window.mermaid.render(svgId, code)
-                .then(result => onSuccess(result.svg))
-                .catch(err => onFail(err));
-            }
-
             let renderedSvg = '';
-            const sanitized = sanitizeMermaidCode(rawMermaid);
-            const svgRenderId = uniqueId + '-svg';
+            let showingCode = false;
+            let renderFailed = false;
+            const toggleBtn = cardHeader.querySelector('.mermaid-toggle-btn');
+            const copyBtn = cardHeader.querySelector('.mermaid-copy-btn');
+            const zoomBtn = cardHeader.querySelector('.mermaid-zoom-btn');
+            copyBtn.disabled = true;
+            zoomBtn.disabled = true;
 
-            try {
-              doMermaidRender(
-                sanitized,
-                svgRenderId,
-                // Başarı
-                (svg) => {
-                  renderedSvg = svg;
-                  bodyDiv.innerHTML = renderedSvg;
-                  cardHeader.querySelector('.mermaid-zoom-btn')?.addEventListener('click', () => {
-                    openMermaidModal(renderedSvg);
-                  });
-                  const copyBtn = cardHeader.querySelector('.mermaid-copy-btn');
-                  copyBtn?.addEventListener('click', () => {
-                    copyWithFeedback(copyBtn, renderedSvg, 'SVG Kopyala', 'Kopyalandı ✓');
-                  });
-                },
-                // İlk deneme başarısız → %%{init} bloğunu kaldırıp tekrar dene
-                (firstErr) => {
-                  console.warn('Mermaid ilk render hatası, init direktifi kaldırılıp tekrar deneniyor:', firstErr);
-                  const stripped = stripInitDirective(sanitized);
-                  if (stripped !== sanitized) {
-                    doMermaidRender(
-                      stripped,
-                      svgRenderId + 'b',
-                      (svg) => {
-                        renderedSvg = svg;
-                        bodyDiv.innerHTML = renderedSvg;
-                        cardHeader.querySelector('.mermaid-zoom-btn')?.addEventListener('click', () => {
-                          openMermaidModal(renderedSvg);
-                        });
-                        const copyBtn = cardHeader.querySelector('.mermaid-copy-btn');
-                        copyBtn?.addEventListener('click', () => {
-                          copyWithFeedback(copyBtn, renderedSvg, 'SVG Kopyala', 'Kopyalandı ✓');
-                        });
-                      },
-                      (secondErr) => {
-                        console.warn('Mermaid ikinci render hatası:', secondErr);
-                        const errMsg = (secondErr && secondErr.message) ? secondErr.message : String(secondErr);
-                        bodyDiv.innerHTML = `<div class="p-3 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg"><strong>Diyagram oluşturulamadı.</strong><br/><span class="opacity-70">${errMsg.slice(0, 200)}</span></div>`;
-                        pre.classList.remove('hidden');
-                        // Kod görünümünü otomatik aç
-                        const toggleBtn = cardHeader.querySelector('.mermaid-toggle-btn');
-                        if (toggleBtn) { toggleBtn.textContent = 'Diyagram Görünümü'; bodyDiv.classList.add('hidden'); pre.classList.remove('hidden'); }
-                      }
-                    );
-                  } else {
-                    const errMsg = (firstErr && firstErr.message) ? firstErr.message : String(firstErr);
-                    bodyDiv.innerHTML = `<div class="p-3 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg"><strong>Diyagram oluşturulamadı.</strong><br/><span class="opacity-70">${errMsg.slice(0, 200)}</span></div>`;
-                    pre.classList.remove('hidden');
-                    const toggleBtn = cardHeader.querySelector('.mermaid-toggle-btn');
-                    if (toggleBtn) { toggleBtn.textContent = 'Diyagram Görünümü'; bodyDiv.classList.add('hidden'); }
-                  }
-                }
-              );
-            } catch (e) {
-              console.warn('Mermaid synchronous error:', e);
-              pre.classList.remove('hidden');
+            function updateMermaidView() {
+              toggleBtn.textContent = showingCode ? 'Diyagram Görünümü' : 'Kod Görünümü';
+              pre.classList.toggle('hidden', !showingCode);
+              // Keep the explanation visible alongside the original source after a failure.
+              bodyDiv.classList.toggle('hidden', showingCode && !renderFailed);
             }
 
-            let showingCode = false;
-            cardHeader.querySelector('.mermaid-toggle-btn')?.addEventListener('click', (e) => {
+            toggleBtn.addEventListener('click', () => {
               showingCode = !showingCode;
-              e.target.textContent = showingCode ? 'Diyagram Görünümü' : 'Kod Görünümü';
-              pre.classList.toggle('hidden', !showingCode);
-              bodyDiv.classList.toggle('hidden', showingCode);
+              updateMermaidView();
             });
+            zoomBtn.addEventListener('click', () => {
+              if (renderedSvg) openMermaidModal(renderedSvg);
+            });
+            copyBtn.addEventListener('click', () => {
+              if (renderedSvg) copyWithFeedback(copyBtn, renderedSvg, 'SVG Kopyala', 'Kopyalandı ✓');
+            });
+
+            const sanitized = sanitizeMermaidCode(rawMermaid);
+            const stripped = stripInitDirective(sanitized);
+            const candidates = [...new Set([
+              sanitized, repairMermaidFlowchartLabels(sanitized),
+              stripped, repairMermaidFlowchartLabels(stripped)
+            ])];
+
+            async function renderDiagram() {
+              let lastError;
+              for (let attempt = 0; attempt < candidates.length; attempt++) {
+                try {
+                  const result = await renderMermaidDiagram(candidates[attempt], uniqueId + '-svg-' + attempt);
+                  renderedSvg = result.svg;
+                  bodyDiv.innerHTML = renderedSvg;
+                  copyBtn.disabled = false;
+                  zoomBtn.disabled = false;
+                  updateMermaidView();
+                  return;
+                } catch (error) {
+                  lastError = error;
+                }
+              }
+              console.warn('Mermaid diyagramı oluşturulamadı:', lastError);
+              const errMsg = lastError?.message || String(lastError);
+              bodyDiv.innerHTML = `<div role="alert" class="p-3 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg"><strong>Diyagram oluşturulamadı.</strong><br/><span class="opacity-70">${escapeHtml(errMsg.slice(0, 200))}</span></div>`;
+              renderFailed = true;
+              showingCode = true;
+              updateMermaidView();
+            }
+            void renderDiagram();
 
             return;
           }
@@ -6399,6 +6685,7 @@ Dokümante edilecek içerik ve bağlam:`
 
     function downloadClone() {
       if (!readSettingsForm()) return;
+      if (embeddingSettingsDirty && !readEmbeddingSettingsForm()) return;
       setHeadersVisibility(false);
 
       // Güncel API ayarlarını ve özel model listesini kaynak koda göm.
@@ -6433,6 +6720,9 @@ Dokümante edilecek içerik ve bağlam:`
       URL.revokeObjectURL(url);
 
       showStatus('Ayarlar ve ' + customModels.length + ' özel model gömüldü; dosya indirildi ✓', 'success');
+      if (!document.getElementById('apiEmbeddingPanel').classList.contains('hidden')) {
+        showEmbeddingStatus('Sohbet ve embedding ayarlarını içeren HTML indirildi.', 'success');
+      }
     }
 
     /* ============================================================
@@ -6883,10 +7173,44 @@ Dokümante edilecek içerik ve bağlam:`
     el.testCfgBtn.addEventListener('click', testConnection);
     el.downloadCloneBtn.addEventListener('click', downloadClone);
 
+    document.querySelectorAll('[data-api-settings-tab]').forEach(button => {
+      button.addEventListener('click', () => setApiSettingsTab(button.dataset.apiSettingsTab));
+      button.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const name = event.key === 'Home' ? 'chat' : event.key === 'End' ? 'embedding' :
+          button.dataset.apiSettingsTab === 'chat' ? 'embedding' : 'chat';
+        setApiSettingsTab(name);
+        document.querySelector('[data-api-settings-tab="' + name + '"]').focus();
+      });
+    });
+    [el.cfgEmbeddingModel, el.cfgEmbeddingUrl, el.cfgEmbeddingApiKey, el.cfgEmbeddingHeaders].forEach(input => {
+      input.addEventListener('input', () => {
+        embeddingSettingsDirty = true;
+        showEmbeddingStatus('Kaydedilmemiş değişiklikler var.');
+      });
+    });
+    el.cfgEmbeddingUseChatApi.addEventListener('change', () => {
+      embeddingSettingsDirty = true;
+      updateEmbeddingConnectionFields();
+      showEmbeddingStatus('Kaydedilmemiş değişiklikler var.');
+    });
+    el.saveEmbeddingCfgBtn.addEventListener('click', () => readEmbeddingSettingsForm());
+    el.testEmbeddingCfgBtn.addEventListener('click', testEmbeddingConnection);
+    document.getElementById('reindexEmbeddingBtn').addEventListener('click', reindexKnowledgeBase);
+    document.getElementById('reindexKBBtn').addEventListener('click', reindexKnowledgeBase);
+    document.getElementById('kbEmbeddingSettingsBtn').addEventListener('click', () => {
+      closeModal('kbModal');
+      el.settingsPanel.classList.remove('settings-hidden');
+      setApiSettingsTab('embedding');
+      document.getElementById('apiEmbeddingTab').focus();
+    });
+
     // Ayarlar formundaki değişiklikleri otomatik kaydet ve iki yönlü senkronize et
     el.cfgUrl?.addEventListener('input', () => {
       readSettingsForm();
       saveConfigToLS();
+      updateEmbeddingConnectionFields();
     });
 
     el.cfgMethod?.addEventListener('change', () => {
@@ -7346,6 +7670,7 @@ Dokümante edilecek içerik ve bağlam:`
        14.57 AYAR İÇE/DIŞA AKTARMA & KISAYOLLAR (Sprint 4)
        ============================================================ */
     function exportSettings() {
+      if (embeddingSettingsDirty && !readEmbeddingSettingsForm()) return;
       const data = {
         apiConfig: { ...apiConfig },
         customModels,
@@ -7377,6 +7702,16 @@ Dokümante edilecek içerik ve bağlam:`
           if (isBusy) throw new Error('Yanıt tamamlandıktan sonra ayarları içe aktarın.');
           if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Geçersiz ayar dosyası.');
           if (data.apiConfig !== undefined && (!data.apiConfig || typeof data.apiConfig !== 'object' || Array.isArray(data.apiConfig))) throw new Error('Geçersiz API ayarları.');
+          if (data.apiConfig?.embedding !== undefined) {
+            const settings = data.apiConfig.embedding;
+            if (!settings || typeof settings !== 'object' || Array.isArray(settings) ||
+              (settings.useChatApi !== undefined && typeof settings.useChatApi !== 'boolean') ||
+              ['model', 'url', 'apiKey'].some(key => settings[key] !== undefined && typeof settings[key] !== 'string') ||
+              (settings.headers !== undefined && (!settings.headers || typeof settings.headers !== 'object' || Array.isArray(settings.headers) ||
+                Object.values(settings.headers).some(value => typeof value !== 'string')))) {
+              throw new Error('Geçersiz embedding ayarları.');
+            }
+          }
           for (const key of ['customModels', 'promptTemplates']) {
             if (data[key] !== undefined && (!Array.isArray(data[key]) || data[key].some(item => !item || typeof item !== 'object' || Array.isArray(item)))) {
               throw new Error('Geçersiz ayar listesi: ' + key);
@@ -7563,30 +7898,108 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     // --- Embedding API ---
-    function getEmbeddingUrl() {
-      if (!apiConfig.url) return '';
-      try {
-        const url = new URL(apiConfig.url, location.href);
-        url.pathname = url.pathname
-          .replace(/\/chat\/completions\/?$/i, '/embeddings')
-          .replace(/\/responses\/?$/i, '/embeddings')
-          .replace(/\/completions\/?$/i, '/embeddings');
-        return url.toString();
-      } catch (_) { return ''; }
+    const embeddingDimensionsByProfile = new Map();
+    let ragIndexOperation = false;
+
+    function getEmbeddingSettings() {
+      const raw = apiConfig.embedding || {};
+      return {
+        model: typeof raw.model === 'string' && raw.model.trim() ? raw.model.trim() : 'text-embedding-3-small',
+        useChatApi: raw.useChatApi !== false,
+        url: typeof raw.url === 'string' ? raw.url.trim() : '',
+        apiKey: typeof raw.apiKey === 'string' ? raw.apiKey.trim() : '',
+        headers: raw.headers && typeof raw.headers === 'object' && !Array.isArray(raw.headers) ? { ...raw.headers } : {},
+      };
     }
 
-    async function getEmbedding(text, signal) {
-      const url = getEmbeddingUrl();
-      if (!url) throw new Error('Embedding URL türetilemedi.');
-      const res = await fetch(url, {
+    function resolveEmbeddingConfig(settings = getEmbeddingSettings()) {
+      const model = typeof settings.model === 'string' ? settings.model.trim() : '';
+      if (!model) throw new Error('Embedding model adını girin.');
+      const useChatApi = settings.useChatApi !== false;
+      const rawUrl = useChatApi ? apiConfig.url : settings.url;
+      if (!rawUrl || !String(rawUrl).trim()) throw new Error('Embedding API URL adresini girin.');
+      let url;
+      try { url = new URL(String(rawUrl).trim(), location.href); }
+      catch (_) { throw new Error('Embedding API URL adresi geçersiz.'); }
+      if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Embedding API URL adresi HTTP veya HTTPS olmalıdır.');
+      if (useChatApi) {
+        const path = url.pathname.replace(/\/+$/, '');
+        if (/\/(chat\/completions|responses|completions)$/i.test(path)) {
+          url.pathname = path.replace(/\/(chat\/completions|responses|completions)$/i, '/embeddings');
+        } else if (/\/embeddings$/i.test(path)) {
+          url.pathname = path;
+        } else if (/\/v1$/i.test(path)) {
+          url.pathname = path + '/embeddings';
+        } else if (!path) {
+          url.pathname = '/v1/embeddings';
+        } else {
+          throw new Error('Sohbet URL adresinden embedding endpoint’i türetilemedi. Ayrı embedding API URL adresi tanımlayın.');
+        }
+      }
+      url.hash = '';
+      const sourceHeaders = (useChatApi ? apiConfig.headers : settings.headers) || {};
+      if (typeof sourceHeaders !== 'object' || Array.isArray(sourceHeaders)) throw new Error('Embedding header ayarı bir JSON nesnesi olmalıdır.');
+      const headers = {};
+      for (const [name, value] of Object.entries(sourceHeaders)) {
+        if (typeof value !== 'string') throw new Error('Embedding header değerleri metin olmalıdır.');
+        if (name.toLowerCase() !== 'content-type' && !(!useChatApi && settings.apiKey && name.toLowerCase() === 'authorization')) {
+          headers[name] = value;
+        }
+      }
+      headers['Content-Type'] = 'application/json';
+      if (!useChatApi && settings.apiKey?.trim()) headers.Authorization = 'Bearer ' + settings.apiKey.trim();
+      const profileUrl = new URL(url.toString());
+      profileUrl.username = '';
+      profileUrl.password = '';
+      for (const name of [...profileUrl.searchParams.keys()]) {
+        if (/(key|token|secret|signature|authorization|credential)/i.test(name)) profileUrl.searchParams.delete(name);
+      }
+      profileUrl.searchParams.sort();
+      const profile = JSON.stringify({ model, url: profileUrl.toString() });
+      return { url: url.toString(), headers, model, profile };
+    }
+
+    function getEmbeddingUrl() {
+      return resolveEmbeddingConfig().url;
+    }
+
+    function isEmbeddingVector(value) {
+      return Array.isArray(value) && value.length > 0 && value.every(n => typeof n === 'number' && Number.isFinite(n)) && value.some(n => n !== 0);
+    }
+
+    async function getEmbedding(text, signal, config = resolveEmbeddingConfig()) {
+      const res = await fetch(config.url, {
         method: 'POST',
-        headers: apiConfig.headers || { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'text-embedding-3-small', input: text.slice(0, 8000) }),
+        headers: config.headers,
+        body: JSON.stringify({ model: config.model, input: text.slice(0, 8000) }),
         signal,
       });
       if (!res.ok) throw new Error('Embedding HTTP ' + res.status);
       const data = await res.json();
-      return data.data?.[0]?.embedding || data.embedding;
+      const embedding = data?.data?.[0]?.embedding ?? data?.embedding;
+      if (!isEmbeddingVector(embedding)) throw new Error('Embedding API geçerli, sonlu sayılardan oluşan bir vektör döndürmedi.');
+      embeddingDimensionsByProfile.set(config.profile, embedding.length);
+      return embedding;
+    }
+
+    function isEmbeddingCompatible(chunk, config, dimensions = embeddingDimensionsByProfile.get(config?.profile)) {
+      return !!config && chunk.embeddingProfile === config.profile && isEmbeddingVector(chunk.embedding) &&
+        chunk.embeddingDimensions === chunk.embedding.length && (!dimensions || chunk.embeddingDimensions === dimensions);
+    }
+
+    function isRAGIndexing() {
+      return ragIndexOperation;
+    }
+
+    async function runRAGIndexing(task) {
+      if (ragIndexOperation) throw new Error('Bilgi tabanında indeksleme sürüyor. Tamamlanmasını bekleyin.');
+      ragIndexOperation = true;
+      if (el.kbFileInput) el.kbFileInput.disabled = true;
+      try { return await task(); }
+      finally {
+        ragIndexOperation = false;
+        if (el.kbFileInput) el.kbFileInput.disabled = false;
+      }
     }
 
     // --- Cosine Similarity ---
@@ -7598,7 +8011,7 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     function rankSemanticChunks(chunks, queryEmbedding, minScore = RAG_MIN_SIMILARITY, maxResults = RAG_MAX_RESULTS) {
-      return chunks.filter(c => c.embedding)
+      return chunks.filter(c => isEmbeddingVector(c.embedding) && c.embedding.length === queryEmbedding.length)
         .map(c => ({ ...c, score: cosineSim(queryEmbedding, c.embedding) }))
         .filter(c => c.score >= minScore)
         .sort((a, b) => b.score - a.score)
@@ -7607,6 +8020,10 @@ Dokümante edilecek içerik ve bağlam:`
 
     // --- Belge İndeksleme ---
     async function indexDocument(file, onProgress) {
+      return runRAGIndexing(() => indexDocumentWithConfig(file, onProgress, resolveEmbeddingConfig()));
+    }
+
+    async function indexDocumentWithConfig(file, onProgress, config) {
       const id = 'doc-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
       let text = '';
       const ext = file.name.split('.').pop().toLowerCase();
@@ -7660,13 +8077,25 @@ Dokümante edilecek içerik ve bağlam:`
       if (onProgress) onProgress('Parçalanıyor...');
       const chunks = chunkText(text);
       const records = [];
+      let dimensions = null;
 
       for (let i = 0; i < chunks.length; i++) {
         if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
         let emb = null;
-        try { emb = await getEmbedding(chunks[i]); } catch (_) { }
-        records.push({ id: id + '-c' + i, docId: id, index: i, text: chunks[i], embedding: emb });
+        try {
+          const candidate = await getEmbedding(chunks[i], undefined, config);
+          if (dimensions && candidate.length !== dimensions) throw new Error('Embedding vektör boyutu işlem sırasında değişti.');
+          dimensions = candidate.length;
+          emb = candidate;
+        } catch (_) { /* Metin korunur; eksik embedding sayısı arayüzde gösterilir. */ }
+        records.push({
+          id: id + '-c' + i, docId: id, index: i, text: chunks[i], embedding: emb,
+          embeddingProfile: emb ? config.profile : null,
+          embeddingModel: emb ? config.model : null,
+          embeddingDimensions: emb ? emb.length : null,
+        });
       }
+      if (dimensions) embeddingDimensionsByProfile.set(config.profile, dimensions);
 
       if (onProgress) onProgress('Kaydediliyor...');
       const db = await openRAGDB();
@@ -7678,14 +8107,99 @@ Dokümante edilecek içerik ve bağlam:`
       });
       for (const r of records) tx.objectStore('chunks').put(r);
       await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
-      return { id, name: file.name, chunkCount: chunks.length };
+      const embedded = records.filter(r => r.embedding).length;
+      return { id, name: file.name, chunkCount: chunks.length, embedded, total: chunks.length, failed: chunks.length - embedded };
+    }
+
+    async function getRAGSnapshot() {
+      const db = await openRAGDB();
+      const tx = db.transaction(['documents', 'chunks'], 'readonly');
+      const readAll = store => new Promise((resolve, reject) => {
+        const request = tx.objectStore(store).getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const [documents, chunks] = await Promise.all([readAll('documents'), readAll('chunks')]);
+      return { documents, chunks };
+    }
+
+    async function getRAGIndexStatus(config) {
+      let configError = '';
+      if (!config) {
+        try { config = resolveEmbeddingConfig(); }
+        catch (error) { configError = error.message; }
+      }
+      const snapshot = await getRAGSnapshot();
+      const counts = chunks => {
+        const compatible = chunks.filter(chunk => isEmbeddingCompatible(chunk, config)).length;
+        const missing = chunks.filter(chunk => !isEmbeddingVector(chunk.embedding)).length;
+        const incompatible = chunks.length - compatible - missing;
+        return { total: chunks.length, compatible, missing, incompatible, needsReindex: compatible < chunks.length };
+      };
+      const documents = snapshot.documents.sort((a, b) => b.createdAt - a.createdAt).map(doc => ({
+        ...doc, ...counts(snapshot.chunks.filter(chunk => chunk.docId === doc.id)),
+      }));
+      return { ...counts(snapshot.chunks), documents, configError };
+    }
+
+    async function reindexRAGDocuments(onProgress) {
+      return runRAGIndexing(async () => {
+        const config = resolveEmbeddingConfig();
+        const { documents, chunks } = await getRAGSnapshot();
+        const updates = [];
+        let dimensions = null;
+        let failed = 0;
+        for (let i = 0; i < chunks.length; i++) {
+          if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
+          try {
+            const embedding = await getEmbedding(chunks[i].text, undefined, config);
+            if (dimensions && embedding.length !== dimensions) throw new Error('Embedding vektör boyutu işlem sırasında değişti.');
+            dimensions = embedding.length;
+            updates.push({
+              ...chunks[i], embedding, embeddingProfile: config.profile,
+              embeddingModel: config.model, embeddingDimensions: embedding.length,
+            });
+          } catch (_) { failed++; }
+        }
+        if (dimensions) embeddingDimensionsByProfile.set(config.profile, dimensions);
+        if (updates.length) {
+          if (onProgress) onProgress('Kaydediliyor...');
+          const replacements = new Map(updates.map(chunk => [chunk.id, chunk]));
+          const finalChunks = chunks.map(chunk => replacements.get(chunk.id) || chunk);
+          const db = await openRAGDB();
+          const tx = db.transaction(['documents', 'chunks'], 'readwrite');
+          for (const chunk of updates) tx.objectStore('chunks').put(chunk);
+          for (const doc of documents) {
+            tx.objectStore('documents').put({
+              ...doc, embeddedCount: finalChunks.filter(chunk => chunk.docId === doc.id && isEmbeddingVector(chunk.embedding)).length,
+              updatedAt: Date.now(),
+            });
+          }
+          await new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error || new Error('İndeks kaydı iptal edildi.')); });
+        }
+        return { embedded: updates.length, total: chunks.length, failed };
+      });
+    }
+
+    function rankKeywordChunks(chunks, query, maxResults) {
+      const keywords = query.toLocaleLowerCase('tr-TR').split(/\s+/).filter(word => word.length > 2);
+      return chunks.map(chunk => {
+        const text = chunk.text.toLocaleLowerCase('tr-TR');
+        let score = 0;
+        for (const keyword of keywords) score += text.split(keyword).length - 1;
+        return { ...chunk, score };
+      }).filter(chunk => chunk.score > 0).sort((a, b) => b.score - a.score).slice(0, maxResults);
     }
 
     // --- RAG Arama ---
     async function searchRAG(query, maxResults = RAG_MAX_RESULTS, signal) {
       const db = await openRAGDB();
       let qEmb;
-      try { qEmb = await getEmbedding(query, signal); }
+      let config;
+      try {
+        config = resolveEmbeddingConfig();
+        qEmb = await getEmbedding(query, signal, config);
+      }
       catch (error) { if (signal?.aborted) throw error; }
 
       const tx = db.transaction('chunks', 'readonly');
@@ -7696,28 +8210,22 @@ Dokümante edilecek içerik ve bağlam:`
 
       let scored;
       if (qEmb) {
-        scored = rankSemanticChunks(allChunks, qEmb, RAG_MIN_SIMILARITY, maxResults);
+        const compatible = allChunks.filter(chunk => isEmbeddingCompatible(chunk, config, qEmb.length));
+        const fallback = allChunks.filter(chunk => !isEmbeddingCompatible(chunk, config, qEmb.length));
+        const semanticResults = rankSemanticChunks(compatible, qEmb, RAG_MIN_SIMILARITY, maxResults);
+        scored = semanticResults.concat(rankKeywordChunks(fallback, query, maxResults - semanticResults.length));
       } else {
-        // Keyword fallback
-        const kws = query.toLocaleLowerCase('tr-TR').split(/\s+/).filter(w => w.length > 2);
-        scored = allChunks.map(c => {
-          const tl = c.text.toLocaleLowerCase('tr-TR');
-          let sc = 0; kws.forEach(k => { sc += (tl.match(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length; });
-          return { ...c, score: sc };
-        }).filter(c => c.score > 0).sort((a, b) => b.score - a.score).slice(0, maxResults);
+        scored = rankKeywordChunks(allChunks, query, maxResults);
       }
 
       // Belge adlarını al
       const dtx = db.transaction('documents', 'readonly');
       const docs = {};
-      for (const c of scored) {
-        if (!docs[c.docId]) {
-          try {
-            const d = await new Promise((res) => { const r = dtx.objectStore('documents').get(c.docId); r.onsuccess = () => res(r.result); r.onerror = () => res(null); });
-            docs[c.docId] = d?.name || 'Belge';
-          } catch (_) { docs[c.docId] = 'Belge'; }
-        }
-      }
+      await Promise.all([...new Set(scored.map(chunk => chunk.docId))].map(docId => new Promise(resolve => {
+        const request = dtx.objectStore('documents').get(docId);
+        request.onsuccess = () => { docs[docId] = request.result?.name || 'Belge'; resolve(); };
+        request.onerror = () => { docs[docId] = 'Belge'; resolve(); };
+      })));
       return scored.map(c => ({ text: c.text, docName: docs[c.docId], score: c.score }));
     }
 
@@ -7732,6 +8240,7 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     async function deleteRAGDocument(docId) {
+      if (isRAGIndexing()) throw new Error('Belgeyi silmek için indekslemenin tamamlanmasını bekleyin.');
       const db = await openRAGDB();
       const tx = db.transaction(['documents', 'chunks'], 'readwrite');
       tx.objectStore('documents').delete(docId);
@@ -7751,7 +8260,7 @@ Dokümante edilecek içerik ve bağlam:`
     async function renderKBDocuments() {
       if (!el.kbDocList) return;
       try {
-        const docs = await getRAGDocuments();
+        const { documents: docs } = await getRAGIndexStatus();
         el.kbDocCount.textContent = docs.length + ' belge';
         if (docs.length === 0) {
           el.kbDocList.innerHTML = '<p class="text-center text-xs text-gray-600 py-6">Henüz belge yüklenmemiş.</p>';
@@ -7767,17 +8276,22 @@ Dokümante edilecek içerik ve bağlam:`
               <span class="text-lg shrink-0">${typeIcon}</span>
               <div class="min-w-0">
                 <p class="text-xs font-medium text-gray-200 truncate">${escapeHtml(doc.name)}</p>
-                <p class="text-[10px] text-gray-500 mt-0.5">${doc.chunkCount} parça · ${formatFileSize(doc.size)} · ${doc.embeddedCount}/${doc.chunkCount} embedded</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">${doc.total} parça · ${formatFileSize(doc.size)} · Güncel model: ${doc.compatible}/${doc.total} hazır</p>
+                <p class="text-[10px] ${doc.needsReindex ? 'text-amber-400' : 'text-gray-500'} mt-0.5">${doc.missing} eksik · ${doc.incompatible} uyumsuz${doc.needsReindex ? ' · Yeniden indeksleme gerekli' : ''}</p>
               </div>
             </div>
             <button type="button" class="shrink-0 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition" title="Sil">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             </button>`;
           card.querySelector('button').addEventListener('click', async () => {
+            if (isRAGIndexing()) { showToast('Belgeyi silmek için indekslemenin tamamlanmasını bekleyin.', 'info'); return; }
             if (!confirm(doc.name + ' silinsin mi?')) return;
-            await deleteRAGDocument(doc.id);
-            showToast('Belge silindi.', 'success');
-            renderKBDocuments();
+            try {
+              await deleteRAGDocument(doc.id);
+              showToast('Belge silindi.', 'success');
+              await renderKBDocuments();
+              if (typeof refreshEmbeddingIndexStatus === 'function') refreshEmbeddingIndexStatus();
+            } catch (error) { showToast(error.message || 'Belge silinemedi.', 'error'); }
           });
           el.kbDocList.appendChild(card);
         });
@@ -7787,6 +8301,10 @@ Dokümante edilecek içerik ve bağlam:`
       }
     }
 
+    function refreshKBList() {
+      return renderKBDocuments();
+    }
+
     function showKBStatus(msg, show = true) {
       if (!el.kbUploadStatus) return;
       el.kbUploadStatus.textContent = msg;
@@ -7794,18 +8312,32 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     async function handleKBUpload(files) {
-      for (const file of files) {
-        if (file.size > 10 * 1024 * 1024) { showToast(file.name + ' 10 MB sınırını aşıyor.', 'error'); continue; }
-        try {
-          await indexDocument(file, (msg) => showKBStatus('⏳ ' + file.name + ': ' + msg));
-          showToast(file.name + ' başarıyla indekslendi.', 'success');
-        } catch (err) {
-          console.warn('Index error:', err);
-          showToast(file.name + ' indekslenemedi: ' + (err.message || err), 'error');
-        }
+      if (isRAGIndexing()) { showToast('Bilgi tabanında indeksleme sürüyor. Tamamlanmasını bekleyin.', 'info'); return; }
+      try {
+        await runRAGIndexing(async () => {
+          const config = resolveEmbeddingConfig();
+          for (const file of files) {
+            if (file.size > 10 * 1024 * 1024) { showToast(file.name + ' 10 MB sınırını aşıyor.', 'error'); continue; }
+            try {
+              const result = await indexDocumentWithConfig(file, msg => showKBStatus('⏳ ' + file.name + ': ' + msg), config);
+              if (result.failed) {
+                showToast(file.name + ': ' + result.embedded + '/' + result.total + ' parça hazır. ' + result.failed + ' parça için embedding alınamadı; metinler korundu. Yeniden indeksleyebilirsiniz.', 'info');
+              } else {
+                showToast(file.name + ' başarıyla indekslendi.', 'success');
+              }
+            } catch (err) {
+              console.warn('Index error:', err);
+              showToast(file.name + ' indekslenemedi: ' + (err.message || err), 'error');
+            }
+          }
+        });
+      } catch (error) {
+        showToast(error.message || 'İndeksleme başlatılamadı.', 'error');
+      } finally {
+        showKBStatus('', false);
+        await renderKBDocuments();
+        if (typeof refreshEmbeddingIndexStatus === 'function') refreshEmbeddingIndexStatus();
       }
-      showKBStatus('', false);
-      renderKBDocuments();
     }
 
     // --- RAG Toggle & Init ---
@@ -7824,7 +8356,7 @@ Dokümante edilecek içerik ve bağlam:`
       el.ragToggle?.addEventListener('change', saveRAGSetting);
 
       // KB modal açma: composer'da RAG butonu veya slash komutundan
-      el.kbDropZone?.addEventListener('click', () => el.kbFileInput?.click());
+      el.kbDropZone?.addEventListener('click', () => { if (!isRAGIndexing()) el.kbFileInput?.click(); });
       el.kbFileInput?.addEventListener('change', () => {
         if (el.kbFileInput.files.length) handleKBUpload([...el.kbFileInput.files]);
         el.kbFileInput.value = '';

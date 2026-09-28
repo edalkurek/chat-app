@@ -1157,14 +1157,11 @@
               <div class="relative">
                 <button id="modelDropdownBtn" type="button" aria-haspopup="listbox" aria-expanded="false"
                   class="group flex items-center gap-2 max-w-[170px] sm:max-w-[270px] bg-panel2 hover:bg-panel3 border border-border hover:border-accent/50 rounded-xl px-2.5 py-1 text-left outline-none focus:border-accent focus:ring-1 focus:ring-accent/40 text-gray-200 transition shadow-sm">
-                  <div
-                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent group-hover:scale-105 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path
-                        d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                    </svg>
-                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="shrink-0 text-accent">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                  </svg>
                   <div class="min-w-0 flex-1 leading-tight py-0.5">
                     <div id="modelDropdownCurrentName" class="text-xs font-semibold text-gray-100 truncate">Qwen Custom
                     </div>
@@ -2266,7 +2263,8 @@
     const RAG_DB_VERSION = 1;
     const RAG_CHUNK_SIZE = 800;
     const RAG_CHUNK_OVERLAP = 100;
-    const RAG_TOP_K = 5;
+    const RAG_MAX_RESULTS = 8;
+    const RAG_MIN_SIMILARITY = 0.35;
 
     /* Sprint 3: Mesaj Yer İmi & Dallanma */
     const LS_BOOKMARKS_KEY = 'aiChat.bookmarks.v1';
@@ -2854,21 +2852,36 @@ Dokümante edilecek içerik ve bağlam:`
 
       // Custom Dropdown Listesi
       if (el.modelDropdownList) {
+        // Mevcut accent rengini al ve buna göre kontrast/okunabilirlik hesapla
+        const savedAccent = localStorage.getItem(LS_ACCENT_COLOR_KEY);
+        const accentHex = savedAccent || '#2563eb';
+        const luminance = getAccentLuminance(accentHex);
+        // Seçili kart: solid accent arka plan + daima okunabilir beyaz metin
+        const accentR2 = parseInt(accentHex.slice(1,3),16);
+        const accentG2 = parseInt(accentHex.slice(3,5),16);
+        const accentB2 = parseInt(accentHex.slice(5,7),16);
+        // Solid accent arka plan üzerinde kontrast metin: açık renkler için koyu, koyu renkler için beyaz
+        const cardTextColor = luminance > 0.35 ? '#1a2033' : '#ffffff';
+        const cardSubTextColor = luminance > 0.35 ? 'rgba(20,30,60,0.72)' : 'rgba(255,255,255,0.72)';
+        const cardMonoColor = luminance > 0.35 ? 'rgba(20,30,60,0.55)' : 'rgba(255,255,255,0.50)';
+        const cardBgStyle = `background-color: rgba(${accentR2},${accentG2},${accentB2},0.88);`;
+        const cardBorderStyle = `border-color: rgba(${accentR2},${accentG2},${accentB2},0.6);`;
         el.modelDropdownList.innerHTML = models.length
           ? models.map(model => {
             const isSelected = model.id === activeModelId;
             return `
             <button type="button" data-dropdown-model="${escapeHtml(model.id)}"
-              class="w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2.5 ${isSelected ? 'border-accent/40 bg-accent/15 shadow-sm' : 'border-transparent hover:bg-panel2 hover:border-border'}">
+              class="w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2.5 ${isSelected ? 'shadow-sm' : 'border-transparent hover:bg-panel2 hover:border-border'}"
+              style="${isSelected ? cardBgStyle + cardBorderStyle : ''}">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <span class="text-xs font-semibold ${isSelected ? 'text-accent' : 'text-gray-100'} truncate">${escapeHtml(model.name)}</span>
+                  <span class="text-sm font-bold truncate ${!isSelected ? 'text-gray-100' : ''}" style="${isSelected ? 'color:' + cardTextColor + ';' : ''}">${escapeHtml(model.name)}</span>
                   ${model.context ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-panel3 text-gray-400 border border-border/60">${escapeHtml(model.context)}</span>` : ''}
                 </div>
-                <div class="text-[11px] text-gray-400 mt-0.5 leading-snug line-clamp-1">${escapeHtml(model.ability)}</div>
-                <div class="text-[9px] font-mono text-gray-500 mt-0.5 truncate">${escapeHtml(model.id)}</div>
+                <div class="text-xs mt-0.5 leading-snug line-clamp-1 ${!isSelected ? 'text-gray-400' : ''}" style="${isSelected ? 'color:' + cardSubTextColor + ';' : ''}">${escapeHtml(model.ability)}</div>
+                <div class="text-[9px] font-mono mt-0.5 truncate ${!isSelected ? 'text-gray-500' : ''}" style="${isSelected ? 'color:' + cardMonoColor + ';' : ''}">${escapeHtml(model.id)}</div>
               </div>
-              ${isSelected ? '<span class="text-accent shrink-0 text-sm font-bold">✓</span>' : ''}
+              ${isSelected ? `<span class="shrink-0 text-sm font-bold" style="color:${cardTextColor};">✓</span>` : ''}
             </button>`;
           }).join('')
           : '<div class="p-3 text-center text-xs text-gray-500">Tanımlı model bulunamadı.</div>';
@@ -3867,6 +3880,21 @@ Dokümante edilecek içerik ve bağlam:`
 
     /** Vurgu rengini CSS <style> injection ile uygula, localStorage'a kaydet. */
     const LS_ACCENT_COLOR_KEY = 'aiChat.accentColor.v1';
+
+    /** Hex rengin göreli luminansını döndürür (0–1). */
+    function getAccentLuminance(hex) {
+      const r = parseInt(hex.slice(1, 3), 16) / 255;
+      const g = parseInt(hex.slice(3, 5), 16) / 255;
+      const b = parseInt(hex.slice(5, 7), 16) / 255;
+      const lin = c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    }
+
+    /** Accent üzerine okunabilir kontrast renk: açık accent → koyu metin, koyu accent → açık metin */
+    function getAccentContrastColor(hex) {
+      return getAccentLuminance(hex) > 0.35 ? '#1e293b' : '#ffffff';
+    }
+
     function applyAccentColor(hex) {
       // Mevcut override style'u kaldır veya oluştur
       let styleEl = document.getElementById('accent-color-override');
@@ -3881,24 +3909,35 @@ Dokümante edilecek içerik ve bağlam:`
       const b = parseInt(hex.slice(5, 7), 16);
       styleEl.textContent = `
         :root { --accent-color: ${hex}; }
-        .bg-accent, [class*="bg-accent"] { background-color: ${hex} !important; }
-        .text-accent, [class*="text-accent"] { color: ${hex} !important; }
-        .border-accent, [class*="border-accent"] { border-color: ${hex} !important; }
+        /* Solid accent kullanımları */
+        .bg-accent { background-color: ${hex} !important; }
+        /* Opacity varyantları — [class*] yerine açık selektörler */
+        .bg-accent\/15 { background-color: rgba(${r},${g},${b},0.15) !important; }
+        .bg-accent\/10 { background-color: rgba(${r},${g},${b},0.10) !important; }
+        .bg-accent\/20 { background-color: rgba(${r},${g},${b},0.20) !important; }
+        /* Metin rengi */
+        .text-accent { color: ${hex} !important; }
+        /* Kenarlık rengi */
+        .border-accent { border-color: ${hex} !important; }
+        .border-accent\/40 { border-color: rgba(${r},${g},${b},0.40) !important; }
+        .border-accent\/50 { border-color: rgba(${r},${g},${b},0.50) !important; }
+        /* Ring */
         .ring-accent\/30, .focus\:ring-accent\/30, .focus-within\:ring-accent\/30 {
           --tw-ring-color: rgba(${r},${g},${b},0.3) !important;
         }
+        /* Hover */
         .hover\:bg-accent:hover { background-color: ${hex} !important; }
         .hover\:text-accent:hover { color: ${hex} !important; }
         .hover\:border-accent:hover { border-color: ${hex} !important; }
         .focus-within\:border-accent:focus-within { border-color: ${hex} !important; }
         .focus\:border-accent:focus { border-color: ${hex} !important; }
+        /* Gradient & shadow */
         .from-blue-600 { --tw-gradient-from: ${hex} !important; }
         .shadow-blue-900\/25 { --tw-shadow-color: rgba(${r},${g},${b},0.25) !important; }
-        .bg-accent\/15 { background-color: rgba(${r},${g},${b},0.15) !important; }
-        .bg-accent\/10 { background-color: rgba(${r},${g},${b},0.10) !important; }
-        .border-accent\/40 { border-color: rgba(${r},${g},${b},0.40) !important; }
       `;
       localStorage.setItem(LS_ACCENT_COLOR_KEY, hex);
+      // Seçili model kartı renklerini yeniden oluştur
+      renderModelControls();
       showToast('Tema rengi uygulandı.', 'success');
     }
 
@@ -5310,27 +5349,97 @@ Dokümante edilecek içerik ve bağlam:`
             pre.parentNode.insertBefore(card, pre);
             card.appendChild(pre);
 
-            let renderedSvg = '';
-            try {
-              window.mermaid.render(uniqueId + '-svg', rawMermaid)
-                .then(result => {
-                  renderedSvg = result.svg;
-                  bodyDiv.innerHTML = renderedSvg;
+            // --- Mermaid kodu temizleme (sanitize) ---
+            function sanitizeMermaidCode(src) {
+              return src
+                // Her satırın başındaki/sonundaki boşlukları temizle
+                .split('\n')
+                .map(line => line.trimEnd())
+                .join('\n')
+                // Node etiketlerindeki <br/> ve <br> HTML etiketlerini
+                // Mermaid'in desteklediği <br/> formatına normalize et
+                // (securityLevel:'loose' gerektirir, zaten ayarlı)
+                .replace(/<br\s*\/?>/gi, '<br/>')
+                // Bazen LLM boş subgraph kapanışı unutur, temel temizlik
+                .trim();
+            }
 
+            // %%{init:...}%% bloğunu ayır (varsa)
+            function stripInitDirective(src) {
+              return src.replace(/^%%\{[\s\S]*?\}%%\s*/m, '').trim();
+            }
+
+            // Stale DOM düğümünü temizle (aynı id tekrar render edilirse hata olur)
+            function cleanStaleMermaidNode(id) {
+              const stale = document.getElementById(id);
+              if (stale) stale.remove();
+            }
+
+            function doMermaidRender(code, svgId, onSuccess, onFail) {
+              cleanStaleMermaidNode(svgId);
+              return window.mermaid.render(svgId, code)
+                .then(result => onSuccess(result.svg))
+                .catch(err => onFail(err));
+            }
+
+            let renderedSvg = '';
+            const sanitized = sanitizeMermaidCode(rawMermaid);
+            const svgRenderId = uniqueId + '-svg';
+
+            try {
+              doMermaidRender(
+                sanitized,
+                svgRenderId,
+                // Başarı
+                (svg) => {
+                  renderedSvg = svg;
+                  bodyDiv.innerHTML = renderedSvg;
                   cardHeader.querySelector('.mermaid-zoom-btn')?.addEventListener('click', () => {
                     openMermaidModal(renderedSvg);
                   });
-
                   const copyBtn = cardHeader.querySelector('.mermaid-copy-btn');
                   copyBtn?.addEventListener('click', () => {
                     copyWithFeedback(copyBtn, renderedSvg, 'SVG Kopyala', 'Kopyalandı ✓');
                   });
-                })
-                .catch(err => {
-                  console.warn('Mermaid render error:', err);
-                  bodyDiv.innerHTML = '<div class="p-3 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg">Diyagram oluşturulamadı (Sözdizimi kontrolü yapın).</div>';
-                  pre.classList.remove('hidden');
-                });
+                },
+                // İlk deneme başarısız → %%{init} bloğunu kaldırıp tekrar dene
+                (firstErr) => {
+                  console.warn('Mermaid ilk render hatası, init direktifi kaldırılıp tekrar deneniyor:', firstErr);
+                  const stripped = stripInitDirective(sanitized);
+                  if (stripped !== sanitized) {
+                    doMermaidRender(
+                      stripped,
+                      svgRenderId + 'b',
+                      (svg) => {
+                        renderedSvg = svg;
+                        bodyDiv.innerHTML = renderedSvg;
+                        cardHeader.querySelector('.mermaid-zoom-btn')?.addEventListener('click', () => {
+                          openMermaidModal(renderedSvg);
+                        });
+                        const copyBtn = cardHeader.querySelector('.mermaid-copy-btn');
+                        copyBtn?.addEventListener('click', () => {
+                          copyWithFeedback(copyBtn, renderedSvg, 'SVG Kopyala', 'Kopyalandı ✓');
+                        });
+                      },
+                      (secondErr) => {
+                        console.warn('Mermaid ikinci render hatası:', secondErr);
+                        const errMsg = (secondErr && secondErr.message) ? secondErr.message : String(secondErr);
+                        bodyDiv.innerHTML = `<div class="p-3 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg"><strong>Diyagram oluşturulamadı.</strong><br/><span class="opacity-70">${errMsg.slice(0, 200)}</span></div>`;
+                        pre.classList.remove('hidden');
+                        // Kod görünümünü otomatik aç
+                        const toggleBtn = cardHeader.querySelector('.mermaid-toggle-btn');
+                        if (toggleBtn) { toggleBtn.textContent = 'Diyagram Görünümü'; bodyDiv.classList.add('hidden'); pre.classList.remove('hidden'); }
+                      }
+                    );
+                  } else {
+                    const errMsg = (firstErr && firstErr.message) ? firstErr.message : String(firstErr);
+                    bodyDiv.innerHTML = `<div class="p-3 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg"><strong>Diyagram oluşturulamadı.</strong><br/><span class="opacity-70">${errMsg.slice(0, 200)}</span></div>`;
+                    pre.classList.remove('hidden');
+                    const toggleBtn = cardHeader.querySelector('.mermaid-toggle-btn');
+                    if (toggleBtn) { toggleBtn.textContent = 'Diyagram Görünümü'; bodyDiv.classList.add('hidden'); }
+                  }
+                }
+              );
             } catch (e) {
               console.warn('Mermaid synchronous error:', e);
               pre.classList.remove('hidden');
@@ -5784,7 +5893,10 @@ Dokümante edilecek içerik ve bağlam:`
 
     // Sohbet geçmişini API'nin beklediği OpenAI messages formatına dönüştürür.
     function getApiMessages(history) {
-      return history
+      const MAX_HISTORY = 20; // Sadece son 20 mesajı (10 soru-cevap) gönderir
+      const recentHistory = history.length > MAX_HISTORY ? history.slice(-MAX_HISTORY) : history;
+      
+      return recentHistory
         .filter(msg => msg && (msg.role === 'user' || msg.role === 'assistant'))
         .map(msg => ({ role: msg.role, content: getApiMessageContent(msg) }));
     }
@@ -7485,6 +7597,14 @@ Dokümante edilecek içerik ve bağlam:`
       return dot / (Math.sqrt(nA) * Math.sqrt(nB) + 1e-10);
     }
 
+    function rankSemanticChunks(chunks, queryEmbedding, minScore = RAG_MIN_SIMILARITY, maxResults = RAG_MAX_RESULTS) {
+      return chunks.filter(c => c.embedding)
+        .map(c => ({ ...c, score: cosineSim(queryEmbedding, c.embedding) }))
+        .filter(c => c.score >= minScore)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, maxResults);
+    }
+
     // --- Belge İndeksleme ---
     async function indexDocument(file, onProgress) {
       const id = 'doc-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
@@ -7562,7 +7682,7 @@ Dokümante edilecek içerik ve bağlam:`
     }
 
     // --- RAG Arama ---
-    async function searchRAG(query, topK = RAG_TOP_K, signal) {
+    async function searchRAG(query, maxResults = RAG_MAX_RESULTS, signal) {
       const db = await openRAGDB();
       let qEmb;
       try { qEmb = await getEmbedding(query, signal); }
@@ -7576,9 +7696,7 @@ Dokümante edilecek içerik ve bağlam:`
 
       let scored;
       if (qEmb) {
-        scored = allChunks.filter(c => c.embedding)
-          .map(c => ({ ...c, score: cosineSim(qEmb, c.embedding) }))
-          .sort((a, b) => b.score - a.score).slice(0, topK);
+        scored = rankSemanticChunks(allChunks, qEmb, RAG_MIN_SIMILARITY, maxResults);
       } else {
         // Keyword fallback
         const kws = query.toLocaleLowerCase('tr-TR').split(/\s+/).filter(w => w.length > 2);
@@ -7586,7 +7704,7 @@ Dokümante edilecek içerik ve bağlam:`
           const tl = c.text.toLocaleLowerCase('tr-TR');
           let sc = 0; kws.forEach(k => { sc += (tl.match(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length; });
           return { ...c, score: sc };
-        }).filter(c => c.score > 0).sort((a, b) => b.score - a.score).slice(0, topK);
+        }).filter(c => c.score > 0).sort((a, b) => b.score - a.score).slice(0, maxResults);
       }
 
       // Belge adlarını al
@@ -7728,7 +7846,7 @@ Dokümante edilecek içerik ve bağlam:`
     async function augmentWithRAG(userText, signal) {
       if (!ragEnabled || !userText.trim()) return '';
       try {
-        const results = await searchRAG(userText, RAG_TOP_K, signal);
+        const results = await searchRAG(userText, RAG_MAX_RESULTS, signal);
         if (results.length === 0) return '';
         const context = results.map((r, i) =>
           '[Kaynak ' + (i + 1) + ': ' + r.docName + ']\n' + r.text

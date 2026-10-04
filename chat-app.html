@@ -1597,7 +1597,7 @@
           <p class="text-xs leading-5 text-gray-400">Bilgi tabanındaki belgeleri ve sorularınızı anlamlarına göre eşleştiren modeli ayarlayın.</p>
           <div>
             <label for="cfgEmbeddingModel" class="block text-xs font-medium text-gray-400 mb-1.5">Embedding model adı</label>
-            <input id="cfgEmbeddingModel" type="text" spellcheck="false" placeholder="text-embedding-3-small"
+            <input id="cfgEmbeddingModel" type="text" spellcheck="false" placeholder="Embedding model adı"
               class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200" />
           </div>
           <label class="flex items-start gap-2.5 rounded-xl border border-border bg-panel2/50 p-3 cursor-pointer">
@@ -2226,7 +2226,7 @@
       transcriptionUrl: "",
       transcriptionModel: "whisper-1",
       embedding: {
-        model: "text-embedding-3-small",
+        model: "",
         useChatApi: true,
         url: "",
         apiKey: "",
@@ -2411,6 +2411,7 @@ Log veya Hata Çıktısı:`
 Hedefler:
 - İçeriğe en uygun diyagram türünü seç (flowchart, sequenceDiagram, classDiagram, erDiagram, stateDiagram-v2, gantt vb.) ve seçim gerekçesini tek cümleyle belirt.
 - Diyagramı yalnızca geçerli Mermaid sözdizimiyle, tek bir mermaid kod bloğu içinde ver.
+- Kod bloğundaki bölüm başlıklarını ve açıklamaları %% ile başlayan yorum satırları olarak yaz; "-- Başlık --" kullanma. Durum diyagramında tek başına -- yalnızca eşzamanlı durumları ayırmak içindir.
 - Düğüm etiketlerini kısa tut; özel karakter içeren etiketleri çift tırnak içine al.
 - Karar noktalarını, hata/alternatif akışları ve aktörleri eksiksiz göster.
 - Bilgi eksikse makul varsayımlar yap ve bunları diyagramın altında listele.
@@ -2871,6 +2872,7 @@ Hedefler:
         name: model.name.trim().slice(0, 80) || model.id.trim().slice(0, 100),
         ability: String(model.ability || 'Özel model').slice(0, 160),
         context: String(model.context || 'API’ye bağlı').slice(0, 40),
+        ...(typeof model.vision === 'boolean' ? { vision: model.vision } : {}),
         custom: true,
       })) : [];
     }
@@ -2893,6 +2895,9 @@ Hedefler:
           } else {
             existing.name = def.name;
             existing.ability = def.ability;
+            if (typeof existing.vision !== 'boolean' && typeof def.vision === 'boolean') {
+              existing.vision = def.vision;
+            }
             if (def.context && (!existing.context || existing.context === 'API’ye bağlı')) {
               existing.context = def.context;
             }
@@ -3084,7 +3089,7 @@ Hedefler:
         custom: true,
       };
       const existingIndex = customModels.findIndex(model => model.id === definition.id);
-      if (existingIndex >= 0) customModels[existingIndex] = definition;
+      if (existingIndex >= 0) customModels[existingIndex] = { ...customModels[existingIndex], ...definition };
       else customModels.push(definition);
       saveCustomModels();
       el.modelDefinitionForm.reset();
@@ -3641,7 +3646,9 @@ Hedefler:
         ? el.modelSelect.value
         : getConfiguredModel();
       const modelDef = (typeof customModels !== 'undefined' ? customModels : []).find(m => m.id === selectedModelId);
-      const isVisionModel = modelDef && modelDef.vision === true;
+      // Missing capability metadata is unknown, not a declaration of text-only support.
+      // Custom API models can accept images without a local model definition.
+      const supportsImages = modelDef?.vision !== false;
 
       files.forEach((file, index) => {
         if (typeof file.content !== 'string') return;
@@ -3649,7 +3656,7 @@ Hedefler:
           text = text.replace('\n\n--- Dosya: ' + file.name + ' ---\n' + file.content, '');
         }
         if (/^data:image\/[\w.+-]+;base64,/i.test(file.content)) {
-          if (isVisionModel) {
+          if (supportsImages) {
             images.push({ type: 'image_url', image_url: { url: file.content } });
           } else {
             text += '\n\n[Kullanıcı "' + file.name + '" adlı bir görsel ekledi, ancak mevcut model görsel analizini desteklemediği için bu görsel API\'ye gönderilmedi.]';
@@ -5662,6 +5669,20 @@ Hedefler:
       return result + source.slice(cursor);
     }
 
+    function repairMermaidStateComments(source) {
+      const diagram = source
+        .replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '')
+        .replace(/%%\{[\s\S]*?\}%%/g, '')
+        .replace(/%%[^\n]*/g, '').trim();
+      if (!/^stateDiagram(?:-v2)?(?=\s|$)/.test(diagram)) return source;
+
+      // LLMs sometimes use "-- Section title --" as a comment. In state diagrams
+      // only a bare -- is valid (concurrent regions), so repair titled lines only.
+      // Consume metadata, notes and multiline strings first to preserve their text.
+      const tokens = /^---\s*\n[\s\S]*?\n---\s*\n|%%\{[\s\S]*?\}%%|%%[^\n]*|^[ \t]*note[ \t]+(?:left|right)[ \t]+of[ \t]+[^\s:]+[ \t]*(?:%%[^\n]*)?\r?\n[\s\S]*?^[ \t]*end[ \t]+note\b[^\n]*|^[ \t]*accDescr[ \t]*\{[^}]*\}|"(?:[^"\\]|\\.)*"|^([ \t]*)(-{2,}[ \t]+[^\r\n]+?[ \t]+-{2,})[ \t]*$/gim;
+      return source.replace(tokens, (match, indent, heading) => heading ? indent + '%% ' + heading : match);
+    }
+
     async function renderMermaidDiagram(source, id) {
       // Measure labels with the final fonts so opening the SVG larger does not clip text.
       if (document.fonts?.ready) await document.fonts.ready;
@@ -5785,8 +5806,8 @@ Hedefler:
             const sanitized = sanitizeMermaidCode(rawMermaid);
             const stripped = stripInitDirective(sanitized);
             const candidates = [...new Set([
-              sanitized, repairMermaidFlowchartLabels(sanitized),
-              stripped, repairMermaidFlowchartLabels(stripped)
+              sanitized, repairMermaidStateComments(repairMermaidFlowchartLabels(sanitized)),
+              stripped, repairMermaidStateComments(repairMermaidFlowchartLabels(stripped))
             ])];
 
             async function renderDiagram() {
@@ -7987,11 +8008,12 @@ Hedefler:
     function getEmbeddingSettings() {
       const raw = apiConfig.embedding || {};
       return {
-        model: typeof raw.model === 'string' && raw.model.trim() ? raw.model.trim() : 'text-embedding-3-small',
+        // Defaults apply to omitted legacy settings, never to explicitly invalid values.
+        model: raw.model === undefined ? '' : typeof raw.model === 'string' ? raw.model.trim() : raw.model,
         useChatApi: raw.useChatApi !== false,
         url: typeof raw.url === 'string' ? raw.url.trim() : '',
         apiKey: typeof raw.apiKey === 'string' ? raw.apiKey.trim() : '',
-        headers: raw.headers && typeof raw.headers === 'object' && !Array.isArray(raw.headers) ? { ...raw.headers } : {},
+        headers: raw.headers === undefined ? {} : raw.headers && typeof raw.headers === 'object' && !Array.isArray(raw.headers) ? { ...raw.headers } : raw.headers,
       };
     }
 
@@ -8000,9 +8022,9 @@ Hedefler:
       if (!model) throw new Error('Embedding model adını girin.');
       const useChatApi = settings.useChatApi !== false;
       const rawUrl = useChatApi ? apiConfig.url : settings.url;
-      if (!rawUrl || !String(rawUrl).trim()) throw new Error('Embedding API URL adresini girin.');
+      if (typeof rawUrl !== 'string' || !rawUrl.trim()) throw new Error('Embedding API URL adresini girin.');
       let url;
-      try { url = new URL(String(rawUrl).trim(), location.href); }
+      try { url = new URL(rawUrl.trim(), useChatApi ? location.href : undefined); }
       catch (_) { throw new Error('Embedding API URL adresi geçersiz.'); }
       if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Embedding API URL adresi HTTP veya HTTPS olmalıdır.');
       if (useChatApi) {
@@ -8020,8 +8042,9 @@ Hedefler:
         }
       }
       url.hash = '';
-      const sourceHeaders = (useChatApi ? apiConfig.headers : settings.headers) || {};
-      if (typeof sourceHeaders !== 'object' || Array.isArray(sourceHeaders)) throw new Error('Embedding header ayarı bir JSON nesnesi olmalıdır.');
+      const configuredHeaders = useChatApi ? apiConfig.headers : settings.headers;
+      const sourceHeaders = configuredHeaders === undefined ? {} : configuredHeaders;
+      if (!sourceHeaders || typeof sourceHeaders !== 'object' || Array.isArray(sourceHeaders)) throw new Error('Embedding header ayarı bir JSON nesnesi olmalıdır.');
       const headers = {};
       for (const [name, value] of Object.entries(sourceHeaders)) {
         if (typeof value !== 'string') throw new Error('Embedding header değerleri metin olmalıdır.');
@@ -8044,6 +8067,13 @@ Hedefler:
 
     function getEmbeddingUrl() {
       return resolveEmbeddingConfig().url;
+    }
+
+    // Embedding modeli tanımlı değilse null döner: belge yalnızca metin olarak indekslenir (anahtar kelime araması).
+    function resolveEmbeddingConfigForIndexing() {
+      const model = getEmbeddingSettings().model;
+      if (model === '' ) return null;
+      return resolveEmbeddingConfig();
     }
 
     function isEmbeddingVector(value) {
@@ -8103,7 +8133,7 @@ Hedefler:
 
     // --- Belge İndeksleme ---
     async function indexDocument(file, onProgress) {
-      return runRAGIndexing(() => indexDocumentWithConfig(file, onProgress, resolveEmbeddingConfig()));
+      return runRAGIndexing(() => indexDocumentWithConfig(file, onProgress, resolveEmbeddingConfigForIndexing()));
     }
 
     async function indexDocumentWithConfig(file, onProgress, config) {
@@ -8163,14 +8193,16 @@ Hedefler:
       let dimensions = null;
 
       for (let i = 0; i < chunks.length; i++) {
-        if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
         let emb = null;
-        try {
-          const candidate = await getEmbedding(chunks[i], undefined, config);
-          if (dimensions && candidate.length !== dimensions) throw new Error('Embedding vektör boyutu işlem sırasında değişti.');
-          dimensions = candidate.length;
-          emb = candidate;
-        } catch (_) { /* Metin korunur; eksik embedding sayısı arayüzde gösterilir. */ }
+        if (config) {
+          if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
+          try {
+            const candidate = await getEmbedding(chunks[i], undefined, config);
+            if (dimensions && candidate.length !== dimensions) throw new Error('Embedding vektör boyutu işlem sırasında değişti.');
+            dimensions = candidate.length;
+            emb = candidate;
+          } catch (_) { /* Metin korunur; eksik embedding sayısı arayüzde gösterilir. */ }
+        }
         records.push({
           id: id + '-c' + i, docId: id, index: i, text: chunks[i], embedding: emb,
           embeddingProfile: emb ? config.profile : null,
@@ -8178,7 +8210,7 @@ Hedefler:
           embeddingDimensions: emb ? emb.length : null,
         });
       }
-      if (dimensions) embeddingDimensionsByProfile.set(config.profile, dimensions);
+      if (config && dimensions) embeddingDimensionsByProfile.set(config.profile, dimensions);
 
       if (onProgress) onProgress('Kaydediliyor...');
       const db = await openRAGDB();
@@ -8191,7 +8223,7 @@ Hedefler:
       for (const r of records) tx.objectStore('chunks').put(r);
       await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
       const embedded = records.filter(r => r.embedding).length;
-      return { id, name: file.name, chunkCount: chunks.length, embedded, total: chunks.length, failed: chunks.length - embedded };
+      return { id, name: file.name, chunkCount: chunks.length, embedded, total: chunks.length, failed: config ? chunks.length - embedded : 0, keywordOnly: !config };
     }
 
     async function getRAGSnapshot() {
@@ -8398,7 +8430,7 @@ Hedefler:
       if (isRAGIndexing()) { showToast('Bilgi tabanında indeksleme sürüyor. Tamamlanmasını bekleyin.', 'info'); return; }
       try {
         await runRAGIndexing(async () => {
-          const config = resolveEmbeddingConfig();
+          const config = resolveEmbeddingConfigForIndexing();
           for (const file of files) {
             if (file.size > 10 * 1024 * 1024) { showToast(file.name + ' 10 MB sınırını aşıyor.', 'error'); continue; }
             try {
@@ -8406,7 +8438,7 @@ Hedefler:
               if (result.failed) {
                 showToast(file.name + ': ' + result.embedded + '/' + result.total + ' parça hazır. ' + result.failed + ' parça için embedding alınamadı; metinler korundu. Yeniden indeksleyebilirsiniz.', 'info');
               } else {
-                showToast(file.name + ' başarıyla indekslendi.', 'success');
+                showToast(file.name + (result.keywordOnly ? ' yalnızca metin olarak kaydedildi (embedding modeli tanımlı değil; anahtar kelime araması kullanılır).' : ' başarıyla indekslendi.'), result.keywordOnly ? 'info' : 'success');
               }
             } catch (err) {
               console.warn('Index error:', err);

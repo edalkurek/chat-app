@@ -8296,12 +8296,39 @@ Hedefler:
       });
     }
 
-    function rankKeywordChunks(chunks, query, maxResults) {
-      const keywords = query.toLocaleLowerCase('tr-TR').split(/\s+/).filter(word => word.length > 2);
+    // Kelime araması: tam kelime sınırı + basit Türkçe kök kırpma (ilk 4 harf) + BM25 puanlama.
+    function keywordTokens(text) {
+      return (text.toLocaleLowerCase('tr-TR').match(/[\p{L}\p{N}]+/gu) || [])
+        .filter(word => word.length > 2)
+        .map(word => word.length > 4 ? word.slice(0, 4) : word);
+    }
+
+    // corpus: IDF ve ortalama uzunluk için kullanılan tüm parçalar (verilmezse chunks kullanılır).
+    function rankKeywordChunks(chunks, query, maxResults, corpus = chunks) {
+      const terms = [...new Set(keywordTokens(query))];
+      if (!terms.length || maxResults <= 0) return [];
+      const tokenize = chunk => keywordTokens(chunk.text);
+      const corpusTokens = corpus.map(tokenize);
+      const N = corpusTokens.length || 1;
+      const avgLen = corpusTokens.reduce((sum, tokens) => sum + tokens.length, 0) / N || 1;
+      const docFreq = new Map(terms.map(term => [term, 0]));
+      for (const tokens of corpusTokens) {
+        const present = new Set(tokens);
+        for (const term of terms) if (present.has(term)) docFreq.set(term, docFreq.get(term) + 1);
+      }
+      const k1 = 1.5, b = 0.75;
       return chunks.map(chunk => {
-        const text = chunk.text.toLocaleLowerCase('tr-TR');
+        const tokens = tokenize(chunk);
+        const counts = new Map();
+        for (const token of tokens) counts.set(token, (counts.get(token) || 0) + 1);
         let score = 0;
-        for (const keyword of keywords) score += text.split(keyword).length - 1;
+        for (const term of terms) {
+          const tf = counts.get(term) || 0;
+          if (!tf) continue;
+          const n = docFreq.get(term);
+          const idf = Math.log(1 + (N - n + 0.5) / (n + 0.5));
+          score += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * tokens.length / avgLen));
+        }
         return { ...chunk, score };
       }).filter(chunk => chunk.score > 0).sort((a, b) => b.score - a.score).slice(0, maxResults);
     }
@@ -8328,7 +8355,7 @@ Hedefler:
         const compatible = allChunks.filter(chunk => isEmbeddingCompatible(chunk, config, qEmb.length));
         const fallback = allChunks.filter(chunk => !isEmbeddingCompatible(chunk, config, qEmb.length));
         const semanticResults = rankSemanticChunks(compatible, qEmb, RAG_MIN_SIMILARITY, maxResults);
-        scored = semanticResults.concat(rankKeywordChunks(fallback, query, maxResults - semanticResults.length));
+        scored = semanticResults.concat(rankKeywordChunks(fallback, query, maxResults - semanticResults.length, allChunks));
       } else {
         scored = rankKeywordChunks(allChunks, query, maxResults);
       }

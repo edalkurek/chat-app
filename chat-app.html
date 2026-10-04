@@ -1063,7 +1063,7 @@
 
 <body class="text-gray-200 antialiased">
 
-  <div class="flex h-screen overflow-hidden relative">
+  <div class="flex h-screen h-[100dvh] overflow-hidden relative">
 
     <!-- Mobil Kenar Çubuğu Arka Planı (Backdrop) -->
     <div id="sidebarBackdrop"
@@ -1119,7 +1119,7 @@
     </aside>
 
     <!-- ================= ANA SOHBET ALANI ================= -->
-    <div class="flex flex-col flex-1 min-w-0">
+    <div class="flex flex-col flex-1 min-w-0 min-h-0">
 
       <!-- Üst Bar -->
       <header
@@ -1383,7 +1383,7 @@
       </header>
 
       <!-- Mesaj Listesi -->
-      <main id="messages" class="flex-1 overflow-y-auto px-4 sm:px-0 relative">
+      <main id="messages" class="flex-1 overflow-y-auto px-4 sm:px-0 relative min-h-0">
         <!-- Sohbet İçi Arama Çubuğu (Ctrl+F) -->
         <div id="inChatSearchBar"
           class="hidden sticky top-3 z-30 mx-auto w-full max-w-xl items-center gap-2 rounded-xl border border-border bg-panel/95 backdrop-blur-md px-3 py-2 shadow-xl animate-fadeIn text-xs mb-3">
@@ -2396,54 +2396,53 @@ Hedefler:
 İncelenecek kod, diff veya bağlam:`
       },
       {
-        id: 'tpl-meeting-minutes', title: 'Toplantı Tutanağı', icon: '◷', isCustom: false,
-        description: 'Dağınık notlardan karar, aksiyon ve açık konu çıkarır',
-        placeholder: 'Toplantı notlarını veya görüşme dökümünü ekleyin…',
-        prompt: `Paylaşılan toplantı notlarını karar vermeyi ve takibi kolaylaştıran profesyonel bir tutanağa dönüştür.
+        id: 'tpl-analysis-doc', title: 'Analiz İnceleme', icon: '📝', isCustom: false,
+        description: 'İş analizi ve gereksinim dokümanlarını değerlendirir, boşlukları bulur',
+        placeholder: 'Analiz dokümanını veya gereksinimleri paylaşın…',
+        prompt: `Kıdemli bir İş/Sistem Analisti gibi davran. Paylaşılan analiz dokümanını veya gereksinimleri detaylıca incele.
 
-Kurallar:
-- Yalnızca notlarda bulunan bilgileri kullan; isim, tarih, karar veya sorumlu uydurma.
-- Belirsiz ifadeleri "Netleştirilmeli" olarak işaretle ve gerekli takip sorusunu yaz.
-- Tekrarları birleştir, konu dışı ayrıntıları ayıkla, anlamı değiştirme.
-- Aksiyonları tablo halinde; aksiyon, sorumlu, hedef tarih, öncelik ve durum sütunlarıyla ver.
+Hedefler:
+- Mantıksal boşlukları, birbiriyle çelişen gereksinimleri ve eksik bırakılmış uç durumları (edge cases) tespit et.
+- "Happy path" (ideal senaryo) dışındaki alternatif, hata ve istisna senaryolarının eksikliklerini vurgula.
+- Geliştirme ekibi için net olmayan, yoruma açık veya ölçülemeyen (non-functional) gereksinimleri belirle.
+- Dokümanın daha anlaşılır ve uygulanabilir olması için yapısal öneriler sun.
 
-Çıktıyı Markdown başlıklarıyla düzenle: Toplantı Bilgileri, Yönetici Özeti, Görüşülen Konular, Alınan Kararlar, Aksiyonlar, Açık Konular ve Takip Soruları. Aksiyonları tablo halinde sun; karar ile öneriyi birbirinden ayır.
+Çıktıyı Markdown olarak; Yönetici Özeti, Eksik/Çelişkili Gereksinimler, Uç Durum (Edge Case) Senaryoları ve Geliştirici İçin Netleştirilmesi Gerekenler başlıklarıyla sun.
 
-Toplantı notları:`
+Analiz dokümanı veya gereksinimler:`
       },
       {
-        id: 'tpl-risk-analysis', title: 'Risk Analizi', icon: '△', isCustom: false,
-        description: 'Olasılık, etki, kontrol ve aksiyon bazlı önceliklendirme',
-        placeholder: 'Analiz etmek istediğiniz konu, proje veya değişikliği açıklayın…',
-        prompt: `Verilen konu için karar almayı destekleyen, izlenebilir bir kurumsal risk analizi hazırla.
+        id: 'tpl-test-case', title: 'Test Case Üretimi', icon: '🧪', isCustom: false,
+        description: 'Gereksinimlere veya koda dayalı kapsamlı test senaryoları oluşturur',
+        placeholder: 'Kod, gereksinim veya analiz dokümanını paylaşın…',
+        prompt: `Kıdemli bir Yazılım Test Mühendisi (QA Engineer) gibi davran. Paylaşılan kod veya gereksinimler için kapsamlı test senaryoları oluştur veya mevcut olanları incele.
 
-Yöntem:
-- Riskleri stratejik, operasyonel, teknik, siber güvenlik, uyum, finansal ve itibar boyutlarında değerlendir.
-- Her risk için neden, olay ve etki zincirini netleştir.
-- Olasılık ve etkiyi 1-5 arasında puanla; skoru olasılık × etki olarak hesapla.
-- Mevcut kontrol, kontrol sonrası kalan risk, erken uyarı göstergesi, azaltıcı aksiyon, sorumlu ve hedef tarih alanlarını kullan.
-- Veri yetersizse varsayımı açıkça etiketle; kesinlik izlenimi verme.
+Hedefler:
+- Pozitif (happy path), negatif ve sınır değer (boundary) test senaryolarını detaylandır.
+- Güvenlik, performans ve veri bütünlüğü için kritik test senaryosu önerileri ekle.
+- Her test senaryosu için şu formatı kullan: ID, Başlık, Önkoşullar, Test Adımları, Beklenen Sonuç.
+- Mevcut test senaryoları paylaşıldıysa, eksik senaryoları bul ve kalitelerini artıracak öneriler ver.
 
-Çıktıyı Markdown olarak; Yönetici Özeti, Risk Tablosu, Öncelikli Aksiyon Planı ve Netleştirilecek Sorular başlıklarıyla sun. Risk ve aksiyonları tablolarda göster; kritik riskleri ilk sıraya yerleştir.
+Çıktıyı Markdown tablo formatında 'Test Senaryoları' başlığı altında sun. Ayrıca otomasyon için uygun araç, framework veya strateji tavsiyelerinde bulun.
 
-Analiz edilecek konu ve mevcut bağlam:`
+Test edilecek içerik:`
       },
       {
-        id: 'tpl-tech-doc', title: 'Teknik Dokümantasyon', icon: '📄', isCustom: false,
-        description: 'Geliştirici ve operasyon ekipleri için uygulanabilir sistem dokümanı',
-        placeholder: 'Dokümante etmek istediğiniz kodu veya süreci açıklayın…',
-        prompt: `Paylaşılan sistem, servis veya kod için güncel tutulabilir ve uygulamaya dönük teknik dokümantasyon oluştur.
+        id: 'tpl-log-analysis', title: 'Log & Hata İnceleme', icon: '🐛', isCustom: false,
+        description: 'Karmaşık uygulama loglarını, stack trace ve hata mesajlarını analiz eder',
+        placeholder: 'Stack trace, hata mesajı veya log kayıtlarını yapıştırın…',
+        prompt: `Kıdemli bir Sistem Mimarı ve Yazılım Mühendisi gibi davran. Paylaşılan log kayıtlarını, hata mesajlarını (stack trace) detaylı bir şekilde analiz et.
 
-Yazım ilkeleri:
-- Hedef kitleyi geliştirici ve operasyon ekipleri olarak kabul et.
-- Verilmeyen ayrıntıları uydurma; varsayımları, bilinmeyenleri ve doğrulama gereken noktaları ayrıca belirt.
-- Komut, yapılandırma ve API örneklerini çalıştırılabilir biçimde ver; gizli bilgi veya gerçek kimlik bilgisi kullanma.
-- Mimari bileşenleri, sorumlulukları ve veri akışını net ilişkilerle açıkla.
+Hedefler:
+- Hatanın temel nedenini (root cause) adım adım ve net bir şekilde açıkla.
+- Hatanın hangi sistem bileşeninden, servisten veya kod bloğundan kaynaklandığını tespit et.
+- Sorunu çözmek için hemen uygulanabilir çözüm önerileri, workaround (geçici çözüm) ve kod düzeltmeleri sun.
+- Gelecekte benzer hataların yaşanmaması için mimari, konfigürasyon veya operasyonel iyileştirmeler tavsiye et.
 
-Çıktıyı tutarlı Markdown başlıklarıyla düzenle: Amaç ve Kapsam, Önkoşullar, Mimari, Bileşenler, Veri Akışı, Kurulum, Yapılandırma, Kullanım/API Örnekleri, Hata Senaryoları, Güvenlik, Gözlemlenebilirlik, Operasyon/Runbook, Test ve Sorun Giderme. Komut ve kod örneklerinde dil etiketli kod blokları, yapısal verilerde tablo kullan. Uygunsa Mermaid diyagramı ekle.
+Çıktıyı Markdown olarak; Hatanın Kök Nedeni, Çözüm Adımları, Kod Düzeltme (varsa) ve Önleyici Aksiyonlar başlıklarıyla düzenle.
 
-Dokümante edilecek içerik ve bağlam:`
-      },
+Log veya Hata Çıktısı:`
+      }
     ];
     const PROMPT_TEMPLATES = promptTemplates;
 

@@ -13,8 +13,8 @@
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>if (window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
@@ -38,6 +38,7 @@
     }
 
     code,
+    code *,
     pre,
     .font-mono {
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace !important;
@@ -153,8 +154,7 @@
 
     /* Kullanıcı Mesaj Balonu - Metin Beyaz Kalır */
     html:not(.dark) .msg-content.rounded-tr-xs,
-    html:not(.dark) .msg-content.rounded-tr-xs p,
-    html:not(.dark) .msg-content.rounded-tr-xs span {
+    html:not(.dark) .msg-content.rounded-tr-xs p {
       color: #ffffff !important;
     }
 
@@ -459,10 +459,16 @@
     /* Markdown içerik stilleri */
     .msg-content pre {
       background: #0b1120;
+      color: #e6edf3;
       border: 1px solid #1e293b;
       border-radius: 12px;
       padding: 14px;
       overflow-x: auto;
+      max-width: 100%;
+      white-space: pre;
+      overflow-wrap: normal;
+      word-break: normal;
+      tab-size: 4;
       margin: 10px 0;
       font-size: 13px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -478,10 +484,15 @@
     }
 
     .msg-content pre code {
+      display: block;
       background: transparent;
       padding: 0;
       border: none;
-      color: inherit;
+      color: #e6edf3;
+      white-space: pre;
+      overflow-wrap: normal;
+      word-break: normal;
+      overflow: visible;
     }
 
     .msg-content> :first-child {
@@ -663,6 +674,8 @@
 
     /* Kod bloğu sarmalayıcısı */
     .code-block-wrapper {
+      min-width: 0;
+      max-width: 100%;
       margin: 12px 0;
       overflow: hidden;
       border: 1px solid #1e293b;
@@ -688,6 +701,10 @@
       background: #111827;
       color: #94a3b8;
       font-size: 11px;
+    }
+
+    html:not(.dark) .code-toolbar .text-gray-400 {
+      color: #94a3b8 !important;
     }
 
     .code-copy-btn {
@@ -2204,7 +2221,7 @@
       headers: {
         "Content-Type": "application/json"
       },
-      bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": "cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit"\n}',
+      bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": "Qwen/Qwen3.5-27B"\n}',
       responsePath: "choices.0.message.content",
       transcriptionUrl: "",
       transcriptionModel: "whisper-1",
@@ -2217,6 +2234,14 @@
       }
     };
     let embeddedCustomModels = [
+      {
+        id: "Qwen/Qwen3.5-27B",
+        name: "Qwen 3.5 27B",
+        ability: "Kodlama, genel amaç ve vision yeteneği var",
+        context: "128K",
+        vision: true,
+        custom: true
+      },
       {
         id: "cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit",
         name: "Qwen Custom",
@@ -2235,6 +2260,14 @@
     /* DEFAULT_CONFIG_END */
 
     const DEFAULT_CUSTOM_MODELS = [
+      {
+        id: 'Qwen/Qwen3.5-27B',
+        name: 'Qwen 3.5 27B',
+        ability: 'Kodlama, genel amaç ve vision yeteneği var',
+        context: '128K',
+        vision: true,
+        custom: true
+      },
       {
         id: 'cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit',
         name: 'Qwen Custom',
@@ -2282,7 +2315,7 @@
     const LS_CUSTOM_MODELS_KEY = 'aiChat.customModels.v1';
     const LS_TEMPLATES_KEY = 'aiChat.promptTemplates.v1';
     const LS_TEMPLATES_VERSION_KEY = 'aiChat.promptTemplates.version';
-    const DEFAULT_TEMPLATES_VERSION = 3;
+    const DEFAULT_TEMPLATES_VERSION = 4;
     const LS_EXPORT_ONLY_MESSAGES_KEY = 'aiChat.exportOnlyMessages.v1';
     const LS_EXPORT_INCLUDE_ROLES_KEY = 'aiChat.exportIncludeRoles.v1';
     const CONTEXT_TOKEN_LIMIT = 132000;
@@ -2368,6 +2401,23 @@ Hedefler:
 Çıktıyı Markdown olarak; Hatanın Kök Nedeni, Çözüm Adımları, Kod Düzeltme (varsa) ve Önleyici Aksiyonlar başlıklarıyla düzenle.
 
 Log veya Hata Çıktısı:`
+      },
+      {
+        id: 'tpl-diagram', title: 'Diyagram Çizimi', icon: '📊', isCustom: false,
+        description: 'Akış, sıralama, ER, sınıf veya mimari diyagramını Mermaid ile çizer',
+        placeholder: 'Çizilmesini istediğiniz süreci, sistemi veya veri modelini anlatın…',
+        prompt: `Kıdemli bir Sistem Analisti ve Yazılım Mimarı gibi davran. Aşağıda anlatılan süreci, sistemi veya veri modelini Mermaid sözdizimi ile diyagrama dönüştür.
+
+Hedefler:
+- İçeriğe en uygun diyagram türünü seç (flowchart, sequenceDiagram, classDiagram, erDiagram, stateDiagram-v2, gantt vb.) ve seçim gerekçesini tek cümleyle belirt.
+- Diyagramı yalnızca geçerli Mermaid sözdizimiyle, tek bir mermaid kod bloğu içinde ver.
+- Düğüm etiketlerini kısa tut; özel karakter içeren etiketleri çift tırnak içine al.
+- Karar noktalarını, hata/alternatif akışları ve aktörleri eksiksiz göster.
+- Bilgi eksikse makul varsayımlar yap ve bunları diyagramın altında listele.
+
+Çıktıyı; Diyagram Türü ve Gerekçe, Mermaid Diyagramı, Varsayımlar ve Açıklama ile Geliştirme Önerileri başlıklarıyla düzenle.
+
+Çizilecek süreç, sistem veya veri modeli:`
       }
     ];
     const PROMPT_TEMPLATES = promptTemplates;
@@ -2595,47 +2645,134 @@ Log veya Hata Çıktısı:`
       return { text: sheetsText.join('\n\n'), sheetCount: wb.SheetNames.length };
     }
 
-    // GFM Markdown renderlama. HTML çıktısı, sohbete yazılmadan önce temizlenir.
+    // Read a complete OR still-streaming fence. Only a matching marker on its own
+    // line closes it; backticks/Markdown/HTML inside the payload remain literal.
+    function readCodeFence(source) {
+      const opening = /^( {0,3})(`{3,}|~{3,})([^\r\n]*)(?:\r\n|\r|\n|$)/.exec(source);
+      if (!opening || (opening[2][0] === '`' && opening[3].includes('`'))) return null;
+      const closing = new RegExp('^ {0,3}' + opening[2][0] + '{' + opening[2].length + ',}[\\t ]*(?:\\r\\n|\\r|\\n|$)', 'gm');
+      closing.lastIndex = opening[0].length;
+      const end = closing.exec(source);
+      return {
+        raw: source.slice(0, end ? end.index + end[0].length : source.length),
+        code: source.slice(opening[0].length, end ? end.index : source.length),
+        language: opening[3].trim().split(/\s+/)[0] || 'code',
+      };
+    }
+
+    function splitCodeFences(source) {
+      const parts = [];
+      const openings = /^ {0,3}(?:`{3,}|~{3,})[^\r\n]*(?:\r\n|\r|\n|$)/gm;
+      let cursor = 0, match;
+      while ((match = openings.exec(source))) {
+        const fence = readCodeFence(source.slice(match.index));
+        if (!fence) continue;
+        if (match.index > cursor) parts.push({ text: source.slice(cursor, match.index) });
+        parts.push(fence);
+        cursor = match.index + fence.raw.length;
+        openings.lastIndex = cursor;
+      }
+      if (cursor < source.length) parts.push({ text: source.slice(cursor) });
+      return parts;
+    }
+
+    function renderCodeSource(source, language) {
+      // Never interpolate arbitrary fence metadata into class names/attributes.
+      const label = /^[\w#+.-]+$/.test(language || '') ? language.toLowerCase() : 'code';
+      // HTML parsing normalizes literal CRLF; character references retain the
+      // original line endings for textContent and clipboard copies.
+      return '<pre data-language="' + label + '"><code class="language-' + label + '">' +
+        escapeHtml(source).replace(/\r/g, '&#13;') + '</code></pre>';
+    }
+
+    function readJavaCode(source) {
+      // A pasted method has no Markdown fence. Recognize a declaration at the
+      // start, not individual indented lines (which split methods into blocks).
+      let offset = 0;
+      while (offset < source.length) {
+        const prefix = /^(?:\s+|\/\/[^\r\n]*(?:\r\n|\r|\n|$)|\/\*[\s\S]*?\*\/)/.exec(source.slice(offset));
+        if (prefix) { offset += prefix[0].length; continue; }
+        const annotation = /^@[\w.]+\s*/.exec(source.slice(offset));
+        if (!annotation) break;
+        offset += annotation[0].length;
+        if (source[offset] === '(') {
+          const args = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|[()]/g;
+          args.lastIndex = offset;
+          let nesting = 0, arg, closed = false;
+          while ((arg = args.exec(source))) {
+            if (arg[0] === '(') nesting++;
+            if (arg[0] === ')' && --nesting === 0) { offset = args.lastIndex; closed = true; break; }
+          }
+          if (!closed) return null;
+        }
+      }
+      const declaration = source.slice(offset);
+      const signature = /^(?:(?:public|protected|private|static|final|abstract|synchronized|native|default)\s+)*(?:<[^;{}\n]+>\s+)?[\w$.]+(?:<[^;{}\n]+>)?(?:\[\])*\s+[\w$]+\s*\([^;{}]*\)\s*(?:throws\s+[\w.,\s]+)?\s*\{/.exec(declaration)
+        || /^(?:(?:public|protected|private|abstract|final|static)\s+)*(?:class|interface|enum|record)\s+[\w$]+[^;{]*\{/.exec(declaration);
+      if (!signature) return null;
+      // Ignore braces in comments, character/string literals and Java text
+      // blocks. Stop at the declaration's end so later prose stays Markdown.
+      const tokens = /"""[\s\S]*?"""|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|[{}]/g;
+      tokens.lastIndex = source.length - declaration.length + signature[0].length - 1;
+      let depth = 0, token;
+      while ((token = tokens.exec(source))) {
+        if (token[0] === '{') depth++;
+        if (token[0] === '}' && --depth === 0) {
+          const rest = source.slice(tokens.lastIndex);
+          const end = !rest.trim() ? source.length : tokens.lastIndex + (/^[\t ]*(?:\r\n|\r|\n)/.exec(rest)?.[0].length || 0);
+          return { code: source.slice(0, end), rest: source.slice(end) };
+        }
+      }
+      // An unfinished declaration is still a single code block while streaming.
+      return { code: source, rest: '' };
+    }
+
+    function renderBasicProse(source) {
+      // Format inline tokens separately, never run replacements over code HTML.
+      return source.split(/(`+[^`\r\n]+`+)/g).map(part => {
+        const inline = /^(`+)([^`\r\n]+)\1$/.exec(part);
+        if (inline) return '<code>' + escapeHtml(inline[2]) + '</code>';
+        return escapeHtml(part).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+          .replace(/\r\n|\r|\n/g, '<br>');
+      }).join('');
+    }
+
+    // Both roles and every streaming update use the same source-first renderer.
     function renderContent(text) {
-      let source = String(text ?? '');
-      source = source.replace(/\n{3,}/g, '\n\n');
+      const source = String(text ?? '');
+      const java = readJavaCode(source);
+      if (java) return renderCodeSource(java.code, 'java') + (java.rest ? renderContent(java.rest) : '');
+      const parts = splitCodeFences(source);
       if (window.marked && window.DOMPurify) {
         try {
-          window.marked.setOptions({
-            gfm: true,
-            breaks: true,
-          });
-          const rendered = window.marked.parse(source);
+          const renderer = new window.marked.Renderer();
+          const originals = parts.filter(part => part.raw);
+          const normalized = value => value.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
+          renderer.code = token => {
+            const fence = readCodeFence(token.raw);
+            if (fence) {
+              // Marked normalizes newlines and drops the final code newline in
+              // token.text. Recover the original payload instead of that text.
+              const index = originals.findIndex(part => normalized(part.raw) === normalized(token.raw));
+              const original = index < 0 ? fence : originals.splice(index, 1)[0];
+              return renderCodeSource(original.code, original.language);
+            }
+            return renderCodeSource(token.text, token.lang?.split(/\s+/)[0] || 'code');
+          };
+          // Raw HTML in prose is text. Only generated Markdown HTML is allowed.
+          renderer.html = token => escapeHtml(token.text);
+          const rendered = window.marked.parse(source, { gfm: true, breaks: true, async: false, renderer });
           return window.DOMPurify.sanitize(rendered, {
             USE_PROFILES: { html: true },
             ADD_ATTR: ['target', 'rel'],
-          });
+          }).replace(/\r/g, '&#13;');
         } catch (error) {
           console.warn('Markdown renderlanamadı, güvenli basit görünüm kullanılıyor:', error);
         }
       }
 
-      // CDN kullanılamazsa güvenli temel biçimlendirme.
-      let safe = escapeHtml(source);
-      // ```kod blokları```
-      safe = safe.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
-        const language = (lang || 'code').toLowerCase();
-        return '<pre data-language="' + language + '"><code class="language-' + language + '">' +
-          code.replace(/\n$/, '') + '</code></pre>';
-      });
-      // `inline kod`
-      safe = safe.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-      // **kalın**
-      safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      // satır sonları (pre dışındakiler)
-      safe = safe.replace(/\n/g, '<br>');
-      // pre içindeki <br>'leri geri al
-      safe = safe.replace(/<pre data-language="([^"]+)"><code class="([^"]+)">([\s\S]*?)<\/code><\/pre>/g,
-        (m, language, className, code) => {
-          return '<pre data-language="' + language + '"><code class="' + className + '">' +
-            code.replace(/<br>/g, '\n') + '</code></pre>';
-        });
-      return safe;
+      // Missing CDN libraries must not change code or require a closing fence.
+      return parts.map(part => part.raw ? renderCodeSource(part.code, part.language) : renderBasicProse(part.text)).join('');
     }
 
     // İç içe JSON'dan nokta patikasıyla değer ayıklama
@@ -3031,7 +3168,7 @@ Log veya Hata Çıktısı:`
     }
 
     function resetPromptTemplates() {
-      if (!confirm('Tüm prompt şablonları sıfırlanıp orijinal 4 varsayılan şablona dönülecektir. Devam edilsin mi?')) return;
+      if (!confirm('Tüm prompt şablonları sıfırlanıp orijinal 5 varsayılan şablona dönülecektir. Devam edilsin mi?')) return;
       promptTemplates = DEFAULT_PROMPT_TEMPLATES.map(t => ({ ...t }));
       savePromptTemplates();
       localStorage.setItem(LS_TEMPLATES_VERSION_KEY, String(DEFAULT_TEMPLATES_VERSION));
@@ -3467,10 +3604,10 @@ Log veya Hata Çıktısı:`
     }
 
     function getVisibleMessageContent(message) {
-      const content = String(message?.content || '').trim();
+      const content = String(message?.content || '');
       if (!message?.template) return content;
       const templateLabel = String(message.template.title || 'Şablon') + ' şablonuyla';
-      return content ? templateLabel + '\n\n' + content : templateLabel;
+      return content.trim() ? templateLabel + '\n\n' + content : templateLabel;
     }
 
     function getMessageAttachments(message) {
@@ -3492,20 +3629,31 @@ Log veya Hata Çıktısı:`
     }
 
     function getApiMessageContent(message) {
-      const content = String(message?.content || '').trim();
+      const content = String(message?.content || '');
       const promptText = String(message?.template?.prompt || '').trim();
       let text = typeof message?.apiContent === 'string' && message.apiContent.trim()
         ? message.apiContent
-        : promptText ? promptText + (content ? '\n\nKullanıcı bağlamı:\n' + content : '') : content;
+        : promptText ? promptText + (content.trim() ? '\n\nKullanıcı bağlamı:\n' + content : '') : content;
       const files = getMessageAttachments(message);
       const images = [];
+
+      const selectedModelId = (el.modelSelect && el.modelSelect.value && el.modelSelect.value !== '__define__')
+        ? el.modelSelect.value
+        : getConfiguredModel();
+      const modelDef = (typeof customModels !== 'undefined' ? customModels : []).find(m => m.id === selectedModelId);
+      const isVisionModel = modelDef && modelDef.vision === true;
+
       files.forEach((file, index) => {
         if (typeof file.content !== 'string') return;
         if (typeof message.attachments[index].content !== 'string') {
           text = text.replace('\n\n--- Dosya: ' + file.name + ' ---\n' + file.content, '');
         }
         if (/^data:image\/[\w.+-]+;base64,/i.test(file.content)) {
-          images.push({ type: 'image_url', image_url: { url: file.content } });
+          if (isVisionModel) {
+            images.push({ type: 'image_url', image_url: { url: file.content } });
+          } else {
+            text += '\n\n[Kullanıcı "' + file.name + '" adlı bir görsel ekledi, ancak mevcut model görsel analizini desteklemediği için bu görsel API\'ye gönderilmedi.]';
+          }
         } else {
           text += '\n\n--- Dosya: ' + file.name + ' ---\n' + file.content;
         }
@@ -4155,7 +4303,7 @@ Log veya Hata Çıktısı:`
             const b = JSON.parse(apiConfig.bodyTemplate.split('$PROMPT').join(marker));
             if (b && typeof b === 'object' && !Array.isArray(b)) {
               if (!b.model || b.model.trim() === '') {
-                b.model = 'cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit';
+                b.model = 'Qwen/Qwen3.5-27B';
                 apiConfig.bodyTemplate = JSON.stringify(b, null, 2).split(marker).join('$PROMPT');
               }
             }
@@ -5551,6 +5699,7 @@ Log veya Hata Çıktısı:`
 
         const languageClass = [...code.classList].find(className => className.startsWith('language-'));
         const language = (pre.dataset.language || (languageClass ? languageClass.slice(9) : 'code')).toLowerCase();
+        const originalCode = code.textContent;
 
         // 1. Mermaid Diyagramı Desteği
         if (language === 'mermaid' && window.mermaid) {
@@ -5713,7 +5862,7 @@ Log veya Hata Çıktısı:`
           previewBtn.innerHTML = '<span>👁️ Canlı Önizle</span>';
           previewBtn.title = 'HTML / SVG Önizleme Alanında Çalıştır';
           previewBtn.addEventListener('click', () => {
-            openArtifactPreview(code.textContent, language, 'Canlı Önizleme (' + language.toUpperCase() + ')');
+            openArtifactPreview(originalCode, language, 'Canlı Önizleme (' + language.toUpperCase() + ')');
           });
           rightBtns.appendChild(previewBtn);
         }
@@ -5726,7 +5875,7 @@ Log veya Hata Çıktısı:`
           runBtn.innerHTML = '<span>▶ Çalıştır</span>';
           runBtn.title = 'JavaScript kodunu tarayıcıda çalıştır';
           runBtn.addEventListener('click', () => {
-            runJsInSandbox(code.textContent, wrapper);
+            runJsInSandbox(originalCode, wrapper);
           });
           rightBtns.appendChild(runBtn);
         }
@@ -5738,7 +5887,7 @@ Log veya Hata Çıktısı:`
         const copyIdle = svgCopy + '<span>Kopyala</span>';
         const copyDone = svgCheck + '<span>Kopyalandı</span>';
         copyButton.innerHTML = copyIdle;
-        copyButton.addEventListener('click', () => copyWithFeedback(copyButton, code.textContent, copyIdle, copyDone));
+        copyButton.addEventListener('click', () => copyWithFeedback(copyButton, originalCode, copyIdle, copyDone));
         rightBtns.appendChild(copyButton);
 
         toolbar.appendChild(languageLabel);
@@ -5747,8 +5896,15 @@ Log veya Hata Çıktısı:`
         wrapper.appendChild(toolbar);
         wrapper.appendChild(pre);
 
-        if (window.hljs) {
-          try { window.hljs.highlightElement(code); } catch (_) { }
+        if (window.hljs?.getLanguage(language)) {
+          try {
+            const highlighted = window.hljs.highlight(originalCode, { language, ignoreIllegals: true });
+            code.innerHTML = highlighted.value.replace(/\r/g, '&#13;');
+            code.classList.add('hljs');
+            // Highlighting is presentation only; retain literal text even if a
+            // grammar or a browser cannot round-trip it without modification.
+            if (code.textContent !== originalCode) code.textContent = originalCode;
+          } catch (_) { code.textContent = originalCode; }
         }
       });
     }
@@ -5804,7 +5960,7 @@ Log veya Hata Çıktısı:`
 
       // Balon ve mesaj aksiyonları
       const bubbleWrap = document.createElement('div');
-      bubbleWrap.className = 'group max-w-[88%] sm:max-w-[80%]';
+      bubbleWrap.className = 'group min-w-0 max-w-[88%] sm:max-w-[80%]';
 
       const copyBtn = document.createElement('button');
       copyBtn.title = role === 'assistant' ? 'Özgün Markdown metnini kopyala' : 'Kopyala';
@@ -6532,8 +6688,9 @@ Log veya Hata Çıktısı:`
 
     async function sendMessage() {
       if (isBusy) return;
-      const visibleText = el.userInput.value.trim();
-      if (!visibleText && attachedFiles.length === 0 && !selectedPromptTemplate) return;
+      const visibleText = el.userInput.value;
+      const hasVisibleText = !!visibleText.trim();
+      if (!hasVisibleText && attachedFiles.length === 0 && !selectedPromptTemplate) return;
       const files = attachedFiles.map(file => ({ ...file }));
       const templateSnapshot = selectedPromptTemplate ? { ...selectedPromptTemplate } : null;
       const conversationId = activeConversationId;
@@ -6544,7 +6701,7 @@ Log veya Hata Çıktısı:`
       // RAG dahil tüm gönderimi kilitle; beklerken ikinci mesaj/sohbet değişimi olmasın.
       setBusy(true);
       try {
-        let apiText = visibleText || (files.length ? 'Ekli dosyaları analiz et.' : '');
+        let apiText = hasVisibleText ? visibleText : (files.length ? 'Ekli dosyaları analiz et.' : '');
         if (ragEnabled) {
           const ragContext = await augmentWithRAG(visibleText, controller.signal);
           if (ragContext) apiText += ragContext;
@@ -6556,7 +6713,7 @@ Log veya Hata Çıktısı:`
         }
         const messageMetadata = {
           role: 'user',
-          content: visibleText || (!templateSnapshot && files.length ? 'Ekli dosyaları analiz et.' : ''),
+          content: hasVisibleText ? visibleText : (!templateSnapshot && files.length ? 'Ekli dosyaları analiz et.' : ''),
           apiContent: apiText,
           template: templateSnapshot,
           createdAt: Date.now(),
@@ -7506,7 +7663,8 @@ Log veya Hata Çıktısı:`
 
     function loadStreamingSetting() {
       try {
-        streamingEnabled = localStorage.getItem(LS_STREAMING_KEY) === 'true';
+        const val = localStorage.getItem(LS_STREAMING_KEY);
+        streamingEnabled = val !== null ? val === 'true' : true;
         if (el.cfgStreaming) el.cfgStreaming.checked = streamingEnabled;
       } catch (_) { }
     }
@@ -8327,7 +8485,7 @@ Log veya Hata Çıktısı:`
       loadCustomModels();
       const currentConfigured = getConfiguredModel();
       if (!currentConfigured || currentConfigured === 'asd' || !customModels.some(m => m.id === currentConfigured)) {
-        selectModel('cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit');
+        selectModel('Qwen/Qwen3.5-27B');
       }
       loadPromptTemplates();
       if (selectedPromptTemplate) {

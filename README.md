@@ -1,382 +1,261 @@
-# Projedeki RAG Mimarisi
+# 🧠 RAG (Retrieval-Augmented Generation) Mimarisi
 
-Bu belge, `chat-app.html` içindeki RAG (Retrieval-Augmented Generation / Getirim Destekli Üretim) sisteminin nasıl çalıştığını sade bir dille anlatır.
-
-## Kısa özet
-
-Bu projede RAG şu işi yapar:
-
-1. Kullanıcının yüklediği belgeyi metne çevirir.
-2. Metni küçük parçalara (`chunk`) böler.
-3. Her parçanın anlamını temsil eden bir embedding üretir.
-4. Parçaları ve embedding'leri tarayıcının IndexedDB veritabanında saklar.
-5. Kullanıcı soru sorduğunda sorunun da embedding'ini üretir.
-6. Soruyla anlam bakımından yeterince benzer belge parçalarını bulur.
-7. Bulunan parçaları kullanıcı sorusunun yanına ekler.
-8. Sohbet modeli, soruyu bu ek bilgilerle birlikte yanıtlar.
-
-Sistem yalnızca aynı kelimeleri aramaz. Embedding servisi çalışıyorsa metinlerin anlam bakımından birbirine ne kadar yakın olduğuna bakar.
-
-## Basit bir benzetme
-
-RAG sistemini bir kütüphane görevlisi gibi düşünebiliriz:
-
-- Embedding modeli kitabı cevaplamaz; yalnızca kitabın bölümlerini anlamlarına göre sınıflandırır.
-- Kullanıcı bir soru sorunca embedding modeli sorunun hangi konuyla ilgili olduğunu belirler.
-- Arama sistemi en alakalı bölümleri raftan çıkarır.
-- Sohbet modeli bu bölümleri okuyarak son cevabı oluşturur.
-
-Embedding modeli ile sohbet modeli bu nedenle iki farklı göreve sahiptir.
-
-## Genel mimari
-
-```mermaid
-flowchart TD
-    A[Belge yüklenir] --> B[Belgeden metin çıkarılır]
-    B --> C[Metin yaklaşık 800 karakterlik parçalara bölünür]
-    C --> D[Her parça embedding API'sine gönderilir]
-    D --> E[Parça metni ve embedding IndexedDB'ye kaydedilir]
-
-    Q[Kullanıcı soru sorar] --> R[Sorunun embedding'i üretilir]
-    E --> S[Cosine similarity ile karşılaştırma]
-    R --> S
-    S --> T{Skor en az 0.35 mi?}
-    T -- Hayır --> U[Parça kullanılmaz]
-    T -- Evet --> V[En yüksek skorlu en fazla 8 parça seçilir]
-    V --> W[Parçalar soruya bağlam olarak eklenir]
-    W --> X[Sohbet modeli cevabı üretir]
-```
-
-## Sistemin önemli ayarları
-
-RAG ayarları `chat-app.html` içinde sabit olarak tanımlanmıştır:
-
-| Ayar | Güncel değer | Anlamı |
-|---|---:|---|
-| `RAG_CHUNK_SIZE` | `800` | Bir belge parçasının hedef karakter uzunluğu |
-| `RAG_CHUNK_OVERLAP` | `100` | Komşu parçalar arasında korunmaya çalışılan örtüşme |
-| `RAG_MIN_SIMILARITY` | `0.35` | Anlamsal aramada kabul edilen minimum benzerlik skoru |
-| `RAG_MAX_RESULTS` | `8` | Prompt'a eklenebilecek en fazla belge parçası |
-| Embedding modeli | `text-embedding-3-small` | Metinleri sayısal anlam vektörlerine dönüştüren model |
-| Veritabanı | `aiChat_RAG_v1` | Tarayıcıdaki IndexedDB veritabanının adı |
-
-`8` değeri sistemin her soruda mutlaka sekiz parça kullanacağı anlamına gelmez. Yalnızca `0.35` eşiğini geçen parçalar kullanılır. İki uygun parça varsa iki parça, on uygun parça varsa en yüksek skorlu sekiz parça gönderilir.
-
-## 1. Belge yükleme ve indeksleme
-
-### 1.1. Belgeden metin çıkarılması
-
-Kullanıcı Bilgi Tabanı ekranından bir dosya yüklediğinde `indexDocument()` fonksiyonu çalışır. Dosya türüne göre metin farklı şekilde çıkarılır:
-
-- PDF dosyaları `pdfjsLib` ile okunur.
-- DOCX dosyaları `mammoth` ile okunur.
-- XLS ve XLSX dosyaları `XLSX` yardımıyla temiz metne çevrilir.
-- CSV içeriği temizlenir.
-- TXT, Markdown, JSON ve benzeri metin dosyaları doğrudan okunur.
-- Eski `.doc` dosyalarında okunabilir karakterleri ayıklayan sınırlı bir yöntem kullanılır.
-
-Dosya başına üst sınır 10 MB'dir. Dosyadan kullanılabilir metin çıkarılamazsa indeksleme durur.
-
-### 1.2. Metnin parçalara bölünmesi
-
-Çıkarılan metin doğrudan tek parça hâlinde embedding modeline gönderilmez. Önce `chunkText()` ile küçük parçalara ayrılır.
-
-Sistem öncelikle paragraf sınırlarını kullanır. Hedef parça büyüklüğü yaklaşık 800 karakterdir. Önceki parçanın son bölümünden yaklaşık 100 karakterlik bir örtüşme hedeflenir. Bu örtüşme, bir cümlenin iki parça sınırında kopması durumunda anlam kaybını azaltır.
-
-Çok büyük paragraflar ayrıca cümle sonlarından bölünmeye çalışılır.
-
-Örnek:
-
-```text
-Uzun belge
-   ├── Chunk 1: Giriş ve ilk konu
-   ├── Chunk 2: İlk konunun sonu + ikinci konu
-   ├── Chunk 3: İkinci konunun sonu + üçüncü konu
-   └── Chunk 4: Sonuç
-```
-
-### 1.3. Embedding oluşturulması
-
-Her chunk ayrı bir HTTP isteğiyle embedding API'sine gönderilir. Gövde şu yapıdadır:
-
-```json
-{
-  "model": "text-embedding-3-small",
-  "input": "Belgeden alınan chunk metni"
-}
-```
-
-Buradaki `text-embedding-3-small` seçili sohbet modeli değildir. Kodda sabitlenmiş ayrı bir embedding modeli adıdır.
-
-Örneğin kullanıcı sohbet için Qwen veya GPT-OSS seçmiş olsa bile embedding isteğinin `model` alanında yine `text-embedding-3-small` gönderilir. Ayarlanmış API sağlayıcısının hem `/embeddings` endpoint'ini hem de bu model adını desteklemesi gerekir.
-
-### 1.4. Embedding URL'sinin oluşturulması
-
-Uygulama embedding için ayrı bir URL ayarı istemez. Sohbet API URL'sinin sonunu otomatik değiştirir:
-
-```text
-/chat/completions  -> /embeddings
-/responses         -> /embeddings
-/completions       -> /embeddings
-```
-
-Örnek:
-
-```text
-Sohbet URL'si:    https://api.example.com/v1/chat/completions
-Embedding URL'si: https://api.example.com/v1/embeddings
-```
-
-Sohbet isteğinde kullanılan header ve yetkilendirme bilgileri embedding isteğinde de kullanılır.
-
-Önemli bir ayrıntı: Ayarlanan URL yukarıdaki üç kalıptan biriyle bitmiyorsa yol değişmeyebilir. Böyle bir durumda embedding isteği yanlış endpoint'e gidebilir.
-
-### 1.5. Verilerin saklanması
-
-Veriler uzak bir Pinecone, Qdrant, Weaviate veya PostgreSQL/pgvector sunucusunda tutulmaz. Tarayıcının yerel IndexedDB veritabanında saklanır.
-
-İki kayıt grubu vardır:
-
-#### `documents`
-
-Belgenin genel bilgilerini saklar:
-
-- Belge kimliği
-- Dosya adı
-- Dosya boyutu ve türü
-- Chunk sayısı
-- Embedding üretilebilen chunk sayısı
-- Toplam karakter sayısı
-- Oluşturulma zamanı
-
-#### `chunks`
-
-Her belge parçasını saklar:
-
-- Chunk kimliği
-- Ait olduğu belge kimliği
-- Belgedeki sıra numarası
-- Chunk'ın asıl metni
-- Chunk embedding'i
-
-Bu yaklaşım kurulumu kolaylaştırır; ancak veriler yalnızca aynı tarayıcı profili ve aynı site kaynağında kullanılabilir. Tarayıcı verileri temizlenirse bilgi tabanı da silinebilir.
-
-## 2. Kullanıcı soru sorduğunda gerçekleşen arama
-
-### 2.1. Sorunun embedding'i oluşturulur
-
-RAG aktifse kullanıcının yazdığı soru `getEmbedding()` fonksiyonuna gönderilir. Belge parçalarında kullanılan modelle aynı model adı kullanılır:
-
-```json
-{
-  "model": "text-embedding-3-small",
-  "input": "Kullanıcının sorusu"
-}
-```
-
-Belge ve soru aynı embedding uzayında temsil edildiği için birbirleriyle karşılaştırılabilir.
-
-### 2.2. Cosine similarity hesaplanır
-
-Sistem sorunun embedding'i ile veritabanındaki her chunk embedding'ini karşılaştırır. Bunun için cosine similarity kullanılır.
-
-Basit anlamıyla cosine similarity iki metnin anlam yönlerinin ne kadar benzer olduğunu ölçer:
-
-- `1.00` değerine yaklaştıkça benzerlik çok yüksektir.
-- Değer küçüldükçe ilişki zayıflar.
-- Bu projede `0.35` altındaki sonuçlar kullanılmaz.
-
-Örnek sonuçlar:
-
-| Chunk | Örnek skor | Sonuç |
-|---|---:|---|
-| İade prosedürü | `0.82` | Kullanılır |
-| Ödeme iptali | `0.67` | Kullanılır |
-| Teslimat bilgisi | `0.31` | Eşik altında olduğu için kullanılmaz |
-| Personel izinleri | `0.08` | Kullanılmaz |
-
-Gerçek skorlar kullanılan embedding modeline ve metne göre değişir. `0.35`, bu proje için başlangıç eşiğidir; evrensel ve her veri kümesi için kusursuz bir değer değildir.
-
-### 2.3. Skor eşiği ve sonuç sınırı uygulanır
-
-`rankSemanticChunks()` şu sırayla çalışır:
-
-1. Embedding'i olmayan chunk'ları çıkarır.
-2. Her chunk için cosine similarity skorunu hesaplar.
-3. Skoru `0.35` altında olanları çıkarır.
-4. Kalanları en yüksek skordan en düşük skora sıralar.
-5. En fazla 8 sonucu bırakır.
-
-Bu yöntem, önceki “skoru ne olursa olsun ilk 5 sonucu getir” davranışına göre daha güvenlidir. Alakasız sonuçların sırf listeyi doldurmak için prompt'a eklenmesini önler.
-
-## 3. Embedding çalışmazsa kelime araması
-
-Kullanıcı sorusunun embedding isteği başarısız olursa sistem tamamen durmaz. `searchRAG()` basit kelime eşleşmesine geçer.
-
-Bu yedek yöntemde:
-
-1. Soru Türkçe küçük harfe çevrilir.
-2. Üç karakterden uzun kelimeler alınır.
-3. Bu kelimelerin her chunk içinde kaç kez geçtiği sayılır.
-4. En çok eşleşen en fazla 8 chunk seçilir.
-
-Örneğin kullanıcı “ödeme iadesi” yazarsa bu iki ifadenin geçtiği parçalar öne çıkar. Ancak “paramı geri almak istiyorum” şeklindeki anlamsal olarak benzer fakat farklı kelimeler içeren bir soru aynı başarıyla bulunamayabilir.
-
-Bu nedenle:
-
-- Embedding başarılıysa anlamsal arama yapılır.
-- Soru embedding'i üretilemezse kelime tabanlı yedek arama yapılır.
-
-Önemli mevcut davranış: Belge yüklenirken bir chunk'ın embedding isteği başarısız olursa hata sessizce yakalanır ve chunk `embedding: null` olarak kaydedilir. Bilgi Tabanı ekranındaki `embedded/toplam` göstergesi bu nedenle kontrol edilmelidir. Örneğin `8/8 embedded` başarılı, `0/8 embedded` başarısız anlamına gelir.
-
-## 4. Bulunan bağlamın sohbet modeline verilmesi
-
-Arama sonuçları aşağıdakine benzer bir metne dönüştürülür:
-
-```text
---- Bilgi Tabanından Bulunan Bağlam ---
-[Kaynak 1: iade-politikasi.pdf]
-İade talebi satın alma tarihinden itibaren...
+Bu doküman, [chat-app.html](chat-app.html) içindeki Bilgi Tabanı (RAG) yapısını açıklar. Tüm RAG motoru **tarayıcıda çalışır**; ayrı bir sunucu, vektör veritabanı veya backend gerekmez. Kod, dosyadaki `14.6 RAG MOTORU` bölümünde yer alır.
 
 ---
 
-[Kaynak 2: odeme-kosullari.docx]
-Ödeme iptali için kullanıcı...
+## 1. Genel Bakış
+
+Kullanıcı belgelerini (PDF, Word, Excel, metin vb.) yükler; sistem bunları parçalara böler, isteğe bağlı olarak her parça için **embedding (vektör)** üretir ve **IndexedDB**'ye kaydeder. Kullanıcı soru sorduğunda en ilgili parçalar bulunur ve soruya **bağlam olarak eklenerek** LLM'e gönderilir.
+
+```mermaid
+flowchart LR
+    subgraph Indexing["İndeksleme (Belge Yükleme)"]
+        A[Dosya] --> B[Metin Çıkarma]
+        B --> C[Chunking]
+        C --> D{Embedding modeli tanımlı mı?}
+        D -- Evet --> E[Embedding API]
+        D -- Hayır --> F[Sadece metin]
+        E --> G[(IndexedDB)]
+        F --> G
+    end
+    subgraph Query["Sorgu Zamanı"]
+        Q[Kullanıcı sorusu] --> R[searchRAG]
+        G --> R
+        R --> S[Anlamsal + BM25 sıralama]
+        S --> T[augmentWithRAG: bağlam bloğu]
+        T --> U[Sohbet API'si / LLM]
+    end
+```
+
+---
+
+## 2. Sabitler ve Ayarlar
+
+| Sabit | Değer | Anlamı |
+| :--- | :--- | :--- |
+| `RAG_DB_NAME` | `aiChat_RAG_v1` | IndexedDB veritabanı adı |
+| `RAG_DB_VERSION` | `1` | Şema sürümü |
+| `RAG_CHUNK_SIZE` | `800` | Hedef parça uzunluğu (karakter) |
+| `RAG_CHUNK_OVERLAP` | `100` | Parçalar arası örtüşme (karakter, yaklaşık) |
+| `RAG_MAX_RESULTS` | `8` | Sorguda döndürülecek en fazla parça |
+| `RAG_MIN_SIMILARITY` | `0.35` | Anlamsal aramada minimum kosinüs benzerliği |
+| `LS_RAG_KEY` | `aiChat.ragEnabled.v1` | RAG aç/kapa durumu (`localStorage`) |
+
+Ek sınırlar:
+- Dosya boyutu en fazla **10 MB**.
+- Embedding'e giden metin en fazla **8000 karakter** (`text.slice(0, 8000)`).
+
+---
+
+## 3. Veri Depolama (IndexedDB)
+
+`openRAGDB()` iki object store oluşturur:
+
+### `documents` (keyPath: `id`)
+| Alan | Açıklama |
+| :--- | :--- |
+| `id` | `doc-<zaman>-<rastgele>` |
+| `name`, `size`, `type` | Dosya adı, boyutu, uzantısı |
+| `chunkCount` | Toplam parça sayısı |
+| `embeddedCount` | Embedding'i alınmış parça sayısı |
+| `totalChars` | Çıkarılan toplam karakter |
+| `createdAt` / `updatedAt` | Zaman damgaları |
+
+### `chunks` (keyPath: `id`, index: `docId`)
+| Alan | Açıklama |
+| :--- | :--- |
+| `id` | `<docId>-c<sıra>` |
+| `docId`, `index` | Ait olduğu belge ve sırası |
+| `text` | Parça metni |
+| `embedding` | Vektör (`number[]`) veya `null` |
+| `embeddingProfile` | Modelin + (hassas bilgiden arındırılmış) URL'nin JSON özeti |
+| `embeddingModel`, `embeddingDimensions` | Model adı ve vektör boyutu |
+
+> [!NOTE]
+> `embeddingProfile`, URL içindeki `key`, `token`, `secret` gibi parametreler ve kullanıcı/parola bilgisi silinerek oluşturulur; yani API anahtarları profile yazılmaz.
+
+---
+
+## 4. İndeksleme Hattı
+
+Fonksiyonlar: `handleKBUpload` → `indexDocumentWithConfig`
+
+### 4.1 Metin çıkarma
+
+| Format | Yöntem |
+| :--- | :--- |
+| `.pdf` | **pdf.js** — sayfa sayfa `getTextContent()`, sayfalar `\n\n` ile birleşir |
+| `.docx` | **mammoth.js** — `extractRawText` |
+| `.doc` | Binary içinden okunabilir ASCII dizileri (≥4 karakter) ayıklanır; başarısızsa `.docx` olarak kaydetme önerilir |
+| `.xlsx/.xls` | **SheetJS** — `parseExcelToCleanText` ile temiz metin/CSV |
+| `.csv` | `cleanCsvText` |
+| Diğer metin/kod dosyaları | `file.text()`; 3+ boş satır sadeleştirilir |
+
+Metin çıkarılamazsa `Dosyadan metin çıkarılamadı.` hatası verilir.
+
+### 4.2 Chunking (`chunkText`)
+
+1. Metin **paragraflara** (`\n\s*\n`) bölünür.
+2. Paragraflar, toplam uzunluk 800 karakteri aşana kadar birleştirilir.
+3. Sınır aşıldığında mevcut parça kaydedilir; yeni parça, önceki parçanın **son ~20 kelimesi** (`overlap / 5`) ile başlar (örtüşme, bağlam kopmasını önler).
+4. Hâlâ `size × 1.5` (1200) karakterden büyük parçalar **cümle sınırlarından** (`. ! ?`) tekrar bölünür.
+
+### 4.3 Embedding üretimi
+
+- Embedding modeli **tanımlıysa** her parça için `getEmbedding()` çağrılır; ilerleme `Embedding 3/42` gibi gösterilir.
+- Tanımlı **değilse** (`resolveEmbeddingConfigForIndexing()` → `null`) belge yalnızca metin olarak kaydedilir ve **anahtar kelime araması** kullanılır.
+- Tek bir parçanın embedding'i başarısız olursa belge **iptal edilmez**; metin korunur, eksik sayı arayüzde gösterilir ve sonradan yeniden indekslenebilir.
+- Vektör boyutu işlem sırasında değişirse hata sayılır (tutarlılık koruması).
+- Geçerli vektör: sonlu sayılardan oluşan, boş olmayan ve tamamı sıfır olmayan dizi (`isEmbeddingVector`).
+
+### 4.4 Eşzamanlılık kilidi
+
+`runRAGIndexing` aynı anda yalnızca **bir** indeksleme/yeniden indeksleme işlemine izin verir. İşlem sürerken dosya seçici devre dışı kalır, belge silme engellenir.
+
+---
+
+## 5. Embedding Yapılandırması
+
+`getEmbeddingSettings()` / `resolveEmbeddingConfig()`:
+
+| Ayar | Açıklama |
+| :--- | :--- |
+| `model` | Embedding model adı (boşsa embedding yok → keyword modu) |
+| `useChatApi` | `true` (varsayılan): sohbet URL'sinden endpoint türetilir |
+| `url` | Ayrı embedding URL'si (`useChatApi=false` iken) |
+| `apiKey` | `Authorization: Bearer ...` olarak eklenir (ayrı URL modunda) |
+| `headers` | Ek header'lar (JSON nesnesi); `Content-Type` her zaman `application/json` |
+
+**Endpoint türetme (`useChatApi=true`):**
+
+| Sohbet URL'si biter | Embedding URL'si |
+| :--- | :--- |
+| `/chat/completions`, `/responses`, `/completions` | `/embeddings` |
+| `/embeddings` | olduğu gibi |
+| `/v1` | `/v1/embeddings` |
+| boş path | `/v1/embeddings` |
+| diğer | Hata: ayrı URL tanımlanmalı |
+
+İstek: `POST { "model": "...", "input": "<metin>" }`
+Yanıt: `data[0].embedding` veya `embedding` alanı okunur (OpenAI uyumlu).
+
+---
+
+## 6. Arama (Retrieval) — `searchRAG`
+
+Hibrit bir strateji uygulanır:
+
+```mermaid
+flowchart TD
+    A[Sorgu] --> B{Sorgu embedding'i alınabildi mi?}
+    B -- Hayır --> K[Tüm parçalarda BM25]
+    B -- Evet --> C[Parçaları ayır]
+    C --> D[Uyumlu embedding'li parçalar]
+    C --> E[Uyumsuz / eksik embedding'li parçalar]
+    D --> F[Kosinüs benzerliği ≥ 0.35, ilk 8]
+    E --> G[BM25 ile kalan kontenjan]
+    F --> H[Birleştir]
+    G --> H
+```
+
+### 6.1 Anlamsal arama
+- `cosineSim(a, b)` ile sorgu vektörü ile parça vektörleri karşılaştırılır.
+- Yalnızca **uyumlu** parçalar dahil edilir: aynı `embeddingProfile`, aynı boyut, geçerli vektör (`isEmbeddingCompatible`).
+- `score ≥ 0.35` olanlar azalan sırada alınır, en fazla 8 sonuç.
+
+### 6.2 Anahtar kelime (BM25) araması
+`rankKeywordChunks`:
+- Küçük harfe çevirme `tr-TR` yerel ayarıyla yapılır.
+- Kelime ayrıştırma: Unicode harf/rakam (`[\p{L}\p{N}]+`), 2 karakterden kısa kelimeler atılır.
+- **Basit Türkçe kök kırpma:** 4 karakterden uzun kelimeler ilk 4 harfe indirilir (ör. `bankalar` → `bank`).
+- **BM25** puanlaması: `k1 = 1.5`, `b = 0.75`; IDF ve ortalama uzunluk tüm korpus üzerinden hesaplanır.
+
+### 6.3 Yedekleme (fallback) davranışı
+- Sorgu embedding'i alınamazsa (model yok, ağ hatası vb.) tüm parçalar BM25 ile aranır; hata kullanıcıya yansıtılmaz.
+- Embedding'i uyumsuz/eksik parçalar, anlamsal sonuçlardan arta kalan kontenjanı BM25 ile doldurur.
+- Kullanıcı isteği iptal ettiyse (`AbortSignal`) hata yukarı fırlatılır.
+
+Dönüş değeri: `[{ text, docName, score }]`
+
+---
+
+## 7. Sohbete Entegrasyon — `augmentWithRAG`
+
+`sendMessage` içinde, **RAG anahtarı açıksa** (`ragEnabled`):
+
+1. Kullanıcının **görünür metni** ile `searchRAG` çağrılır.
+2. Sonuç yoksa bağlam eklenmez.
+3. Sonuçlar şu biçimde API'ye giden metnin sonuna eklenir:
+
+```text
+<kullanıcı sorusu>
+
+--- Bilgi Tabanından Bulunan Bağlam ---
+[Kaynak 1: dosya.pdf]
+<parça metni>
+
+---
+
+[Kaynak 2: rapor.docx]
+<parça metni>
 --- Bağlam Sonu ---
 
 Yukarıdaki bağlamı kullanarak kullanıcı sorusunu yanıtla.
 ```
 
-Bu metin, kullanıcının görünen mesajı değiştirilmeden API'ye giden metnin sonuna eklenir. Ardından normal sohbet modeli cevabı üretir.
+Önemli noktalar:
+- Bağlam, mesajın `apiContent` alanına yazılır; ekranda kullanıcıya **sadece yazdığı soru** (`content`) gösterilir.
+- Şablon (prompt template) seçiliyse, bağlam şablon metninden sonra `Kullanıcı bağlamı:` altında yer alır.
+- RAG aramasındaki herhangi bir hata sohbeti bozmaz; bağlamsız devam edilir (`console.warn`).
+- Gönderim süresince arayüz kilitlenir (`setBusy(true)`); sohbet değişirse mesaj gönderilmez.
 
-Bu aşamada görev dağılımı şöyledir:
+---
 
-| Bileşen | Görevi |
-|---|---|
-| Embedding modeli | Metinleri anlam vektörlerine dönüştürmek |
-| Cosine similarity | Soru ile chunk'ların yakınlığını hesaplamak |
-| RAG kodu | Uygun chunk'ları seçip prompt'a eklemek |
-| Sohbet modeli | Soru ve bulunan bağlamdan son cevabı yazmak |
+## 8. Yeniden İndeksleme ve Uyumluluk Durumu
 
-## 5. Baştan sona örnek
+Embedding modeli veya URL değiştiğinde eski vektörler yeni modelle **uyumsuz** olur.
 
-`sirket-politikasi.pdf` içinde şu cümle olduğunu düşünelim:
+`getRAGIndexStatus` her belge için sayar:
 
-```text
-Çalışanlar kullanılmayan yıllık izinlerini sonraki takvim yılına devredebilir.
-```
+| Durum | Anlamı |
+| :--- | :--- |
+| `compatible` | Güncel modelle uyumlu vektör |
+| `missing` | Hiç embedding'i olmayan parça |
+| `incompatible` | Farklı profil/boyutta embedding'e sahip parça |
+| `needsReindex` | `compatible < total` |
 
-Kullanıcı ise şöyle sorsun:
+`reindexRAGDocuments` tüm parçaların embedding'ini güncel modelle yeniden üretir. Metinler yeniden okunmaz/parçalanmaz; yalnızca vektörler güncellenir. Başarısız parçalar atlanır ve sayılır. Arayüzde uyumsuz belgeler *"Yeniden indeksleme gerekli"* uyarısıyla gösterilir.
 
-```text
-Kalan tatil günlerim gelecek seneye aktarılır mı?
-```
+---
 
-Kelime eşleşmesi zayıftır; belgede “tatil günü” veya “gelecek sene” ifadeleri birebir bulunmayabilir. Buna rağmen embedding modeli şu anlam ilişkilerini yakalayabilir:
+## 9. Kullanıcı Arayüzü
 
-- tatil günü ≈ yıllık izin
-- gelecek sene ≈ sonraki takvim yılı
-- aktarmak ≈ devretmek
+- **Bilgi Tabanı butonu** (`kbBtn`): Bilgi Tabanı modalını açar.
+- **Modal:** sürükle-bırak / tıkla yükleme alanı, belge listesi (parça sayısı, boyut, hazır/eksik/uyumsuz sayıları), silme butonu.
+- **RAG anahtarı** (`ragToggle`): Durum `localStorage`'da saklanır; ayarlar dışa/içe aktarımına (`ragEnabled`) dahildir.
+- **Ayarlar paneli:** Embedding model, URL, API anahtarı ve header alanları ile "Bilgi tabanı uyumu" göstergesi.
 
-İlgili chunk'ın skoru `0.35` eşiğini geçerse prompt'a eklenir. Sohbet modeli de belge bilgisini kullanarak yanıt verir.
+---
 
-## 6. Veri nerede işleniyor?
+## 10. Özet Tablosu
 
-Mimari tamamen yerel değildir:
+| Konu | Karar |
+| :--- | :--- |
+| Çalışma yeri | Tamamen istemci tarafı (tarayıcı) |
+| Depolama | IndexedDB (`documents`, `chunks`) |
+| Parçalama | Paragraf tabanlı, 800 karakter, ~100 karakter örtüşme, cümle bazlı ikincil bölme |
+| Vektör benzerliği | Kosinüs, eşik 0.35 |
+| Metinsel arama | BM25 + Türkçe kök kırpma (4 harf) |
+| Sonuç sayısı | En fazla 8 parça |
+| Embedding yoksa | Anahtar kelime moduna düşer |
+| Hata toleransı | Kısmi embedding hatası belgeyi bozmaz; arama hatası sohbeti bozmaz |
+| Sınırlar | 10 MB/dosya, 8000 karakter/embedding girdisi |
 
-- Dosyadan metin çıkarma tarayıcıda yapılır.
-- Chunk'lar ve embedding'ler tarayıcıdaki IndexedDB'de saklanır.
-- Embedding üretmek için belge metinleri yapılandırılmış API sağlayıcısına gönderilir.
-- Arama ve cosine similarity hesabı tarayıcıda yapılır.
-- Seçilen chunk metinleri, cevap oluşturması için sohbet API'sine gönderilir.
+## 11. Bilinen Sınırlamalar
 
-Bu nedenle hassas belgeler kullanılırken hem embedding sağlayıcısının hem de sohbet modeli sağlayıcısının veri politikaları dikkate alınmalıdır.
-
-## 7. Mevcut mimarinin güçlü yanları
-
-- Kurulum için ayrı bir vektör veritabanı gerektirmez.
-- Veritabanı ve benzerlik hesabı doğrudan tarayıcıda çalışır.
-- PDF, DOCX, Excel, CSV ve metin dosyalarını destekler.
-- Kelime eşleşmesi yerine anlamsal arama yapabilir.
-- Minimum skor eşiği alakasız bağlamı azaltır.
-- En fazla 8 sonuç sınırı prompt'ın kontrolsüz büyümesini önler.
-- Embedding servisi tamamen çalışmazsa kelime aramasıyla temel işlev devam eder.
-
-## 8. Mevcut sınırlamalar
-
-### Sabit embedding modeli
-
-Embedding model adı `text-embedding-3-small` olarak kodda sabittir. Sohbet modeli veya API sağlayıcısı değiştirildiğinde embedding modeli otomatik uyarlanmaz.
-
-### Ayrı embedding URL ayarı yok
-
-Embedding URL'si sohbet URL'sinden türetilir. Bazı sağlayıcılar sohbet ve embedding modellerini farklı sunucularda veya farklı URL yapılarında sunabilir.
-
-### Doğrusal arama
-
-Her soruda IndexedDB'deki bütün chunk'lar okunup tek tek karşılaştırılır. Küçük ve orta büyüklükteki bilgi tabanları için basittir; binlerce veya on binlerce chunk olduğunda yavaşlayabilir.
-
-### Embedding üretimi toplu değil
-
-Belge yüklenirken chunk'lar tek tek embedding API'sine gönderilir. Büyük belgelerde bu durum çok sayıda HTTP isteği ve daha uzun indeksleme süresi oluşturabilir.
-
-### Hatalar yeterince görünür değil
-
-Belge chunk'ının embedding isteği başarısız olduğunda hata sessizce geçilir. Kullanıcı yalnızca `embedded/toplam` sayısından problemi anlayabilir.
-
-### Kaynak gösterimi garanti değil
-
-Kaynak adı prompt'a eklenir, ancak sohbet modelinin cevabında kaynak göstermesi teknik olarak zorunlu tutulmaz.
-
-### Skor eşiği ölçülerek seçilmedi
-
-`0.35` makul bir başlangıç değeridir. En iyi değer, projede gerçekten sorulacak sorular ve doğru cevapların bulunduğu chunk'lar kullanılarak test edilmelidir.
-
-## 9. Sorun giderme
-
-### Belge kartında `0/N embedded` görünüyorsa
-
-Tarayıcı geliştirici araçlarında `Network` sekmesi açılarak `/embeddings` isteği kontrol edilmelidir:
-
-- `200`: İstek başarılıdır; yanıtta embedding dizisi bulunmalıdır.
-- `400 model not found`: Sağlayıcı `text-embedding-3-small` modelini tanımıyor olabilir.
-- `401` veya `403`: API anahtarı ya da yetki problemi vardır.
-- `404`: Sağlayıcıda `/embeddings` endpoint'i olmayabilir veya URL yanlış türetilmiştir.
-- CORS hatası: Sunucu tarayıcıdan gelen isteğe izin vermiyordur.
-
-### RAG açık ama bağlam bulunamıyorsa
-
-Şunlar kontrol edilmelidir:
-
-1. Belge gerçekten indekslenmiş mi?
-2. Belge kartındaki embedded sayısı sıfırdan büyük mü?
-3. Soru ile belge parçasının skoru `0.35` eşiğini geçiyor mu?
-4. API sağlayıcısı embedding modelini destekliyor mu?
-5. Tarayıcıdaki IndexedDB verileri temizlenmiş olabilir mi?
-
-## 10. Kod haritası
-
-Ana uygulama dosyası: [`chat-app.html`](./chat-app.html)
-
-| Bölüm | Fonksiyon veya sabit |
-|---|---|
-| Temel RAG ayarları | `RAG_CHUNK_SIZE`, `RAG_CHUNK_OVERLAP`, `RAG_MAX_RESULTS`, `RAG_MIN_SIMILARITY` |
-| IndexedDB açma | `openRAGDB()` |
-| Metni parçalama | `chunkText()` |
-| Embedding URL'si | `getEmbeddingUrl()` |
-| Embedding isteği | `getEmbedding()` |
-| Benzerlik hesabı | `cosineSim()` |
-| Skor filtreleme ve sıralama | `rankSemanticChunks()` |
-| Belge indeksleme | `indexDocument()` |
-| RAG araması | `searchRAG()` |
-| Prompt'a bağlam ekleme | `augmentWithRAG()` |
-| Mesaj gönderimine entegrasyon | `sendMessage()` içindeki `augmentWithRAG()` çağrısı |
-
-## Sonuç
-
-Projedeki RAG sistemi, tarayıcı içinde çalışan hafif bir anlamsal arama mimarisidir. Belgeler küçük parçalara ayrılır, parçaların embedding'leri API aracılığıyla üretilir ve IndexedDB'de saklanır. Kullanıcının sorusu ile belge parçaları cosine similarity kullanılarak karşılaştırılır. En az `0.35` skor alan en fazla 8 parça sohbet modelinin bağlamına eklenir.
-
-Kısacası sistemin temel mantığı şudur:
-
-> Belgenin tamamını modele göndermek yerine, soruyla anlam bakımından ilgili bölümleri bul ve yalnızca bu bölümleri cevap modeline ver.
-
+- Ayrı bir vektör indeksi (ANN) yoktur; arama tüm parçalar üzerinde doğrusal tarama yapar. Çok büyük bilgi tabanlarında yavaşlayabilir.
+- Arama sorgusu yalnızca son kullanıcı mesajıdır; önceki sohbet geçmişi sorguya katılmaz.
+- `.doc` desteği basit bir ASCII ayıklamadır, kalitesi sınırlıdır.
+- Türkçe kök kırpma basit (ilk 4 harf) olduğundan morfolojik olarak kesin değildir.
+- Parçalar için yeniden sıralama (reranking) uygulanmaz.

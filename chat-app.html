@@ -4884,7 +4884,7 @@ Hedefler:
               <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 font-bold text-base group-hover:scale-110 transition">＋</span>
               <div class="min-w-0">
                 <span class="truncate block text-sm font-semibold text-gray-100 group-hover:text-emerald-300 transition">Dosya Yükle</span>
-                <span class="mt-0.5 block truncate text-xs text-gray-500">CSV, JSON, kod veya log dosyasını incele</span>
+                <span class="mt-0.5 block truncate text-xs text-gray-500" title="PDF, Word, Excel, CSV, JSON, metin, kod, log ve görsel dosyaları">PDF, Word, Excel, CSV, JSON, kod, log, görsel…</span>
               </div>
             </div>
           </button>
@@ -7147,6 +7147,57 @@ Hedefler:
     });
     el.attachFileBtn.addEventListener('click', () => el.fileInput.click());
     el.fileInput.addEventListener('change', () => handleFiles(el.fileInput.files));
+
+    // Sürükle-bırak ile dosya ekleme (sohbet alanı) + panodan yapıştırma
+    (function setupChatDropAndPaste() {
+      const hasFiles = e => [...(e.dataTransfer?.types || [])].includes('Files');
+      const inKB = target => !!target?.closest?.('#kbModal');
+      let dragDepth = 0;
+      const overlay = document.createElement('div');
+      overlay.id = 'chatDropOverlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.72);backdrop-filter:blur(4px);pointer-events:none;';
+      overlay.innerHTML = '<div style="padding:28px 44px;border:2px dashed #34d399;border-radius:20px;color:#d1fae5;font:600 16px system-ui,sans-serif;text-align:center;background:rgba(16,185,129,.12)">Dosyaları buraya bırakın<div style="margin-top:6px;font-size:12px;font-weight:400;opacity:.8">PDF, Word, Excel, CSV, JSON, kod, log, görsel</div></div>';
+      document.body.appendChild(overlay);
+      const hide = () => { dragDepth = 0; overlay.style.display = 'none'; };
+
+      document.addEventListener('dragenter', e => {
+        if (!hasFiles(e) || inKB(e.target)) return;
+        dragDepth++;
+        overlay.style.display = 'flex';
+      });
+      document.addEventListener('dragleave', e => {
+        if (!hasFiles(e)) return;
+        dragDepth = Math.max(0, dragDepth - 1);
+        if (!dragDepth) overlay.style.display = 'none';
+      });
+      document.addEventListener('dragover', e => {
+        if (!hasFiles(e) || inKB(e.target)) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+      });
+      document.addEventListener('drop', e => {
+        if (!hasFiles(e)) return;
+        hide();
+        if (inKB(e.target)) return; // RAG modalı kendi bırakma alanını yönetir
+        e.preventDefault();
+        if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+      });
+
+      el.userInput.addEventListener('paste', e => {
+        const items = [...(e.clipboardData?.items || [])].filter(it => it.kind === 'file');
+        const files = items.map(it => it.getAsFile()).filter(Boolean).map((f, i) => {
+          if (!f.type.startsWith('image/') || (f.name && f.name !== 'image.png')) return f;
+          const ext = (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+          const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+          return new File([f], 'yapistirilan-gorsel-' + stamp + (i ? '-' + (i + 1) : '') + '.' + ext, { type: f.type });
+        });
+        if (!files.length) return; // düz metin yapıştırma normal çalışır
+        e.preventDefault();
+        handleFiles(files);
+      });
+    })();
+
     el.exportBtn.addEventListener('click', () => openModal('exportModal'));
     el.exportMarkdownBtn.addEventListener('click', exportMarkdown);
     el.exportTextBtn?.addEventListener('click', exportText);

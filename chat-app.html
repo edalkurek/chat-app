@@ -5,28 +5,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yapı Kredi Teknoloji — AI Sohbet Paneli</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%232563eb'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 28h24v19H20zM32 17v11M17 37h3m24 0h3' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='27' cy='37' r='2.5' fill='white'/%3E%3Ccircle cx='37' cy='37' r='2.5' fill='white'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
 *,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Plus Jakarta Sans,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono,ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.collapse{visibility:collapse}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-y-0{top:0;bottom:0}.-bottom-0\.5{bottom:-.125rem}.-right-0\.5{right:-.125rem}.-right-1{right:-.25rem}.-top-1{top:-.25rem}.bottom-2{bottom:.5rem}.bottom-32{bottom:8rem}.bottom-full{bottom:100%}.left-0{left:0}.left-2\.5{left:.625rem}.left-3{left:.75rem}.right-0{right:0}.right-1{right:.25rem}.right-4{right:1rem}.right-6{right:1.5rem}.top-0\.5{top:.125rem}.top-2\.5{top:.625rem}.top-3{top:.75rem}.top-4{top:1rem}.top-full{top:100%}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[80\]{z-index:80}.col-span-full{grid-column:1/-1}.m-0{margin:0}.m-4{margin:1rem}.m-5{margin:1.25rem}.mx-auto{margin-left:auto;margin-right:auto}.my-1{margin-top:.25rem;margin-bottom:.25rem}.mb-0{margin-bottom:0}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-0\.5{margin-left:.125rem}.ml-1{margin-left:.25rem}.ml-2{margin-left:.5rem}.mr-1{margin-right:.25rem}.mr-3{margin-right:.75rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.mt-px{margin-top:1px}.line-clamp-1{-webkit-line-clamp:1}.line-clamp-1,.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical}.line-clamp-2{-webkit-line-clamp:2}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-1\.5{height:.375rem}.h-10{height:2.5rem}.h-16{height:4rem}.h-2\.5{height:.625rem}.h-3\.5{height:.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[100dvh\]{height:100dvh}.h-\[88vh\]{height:88vh}.h-\[90vh\]{height:90vh}.h-full{height:100%}.h-px{height:1px}.h-screen{height:100vh}.max-h-48{max-height:12rem}.max-h-64{max-height:16rem}.max-h-72{max-height:18rem}.max-h-\[62vh\]{max-height:62vh}.max-h-\[80vh\]{max-height:80vh}.max-h-\[82vh\]{max-height:82vh}.max-h-\[85vh\]{max-height:85vh}.max-h-\[90vh\]{max-height:90vh}.min-h-0{min-height:0}.min-h-\[18px\]{min-height:18px}.w-10{width:2.5rem}.w-16{width:4rem}.w-2\.5{width:.625rem}.w-3\.5{width:.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-56{width:14rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[280px\]{width:280px}.w-\[min\(360px\2c calc\(100vw-2rem\)\)\]{width:min(360px,calc(100vw - 2rem))}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[520px\]{min-width:520px}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-6xl{max-width:72rem}.max-w-\[170px\]{max-width:170px}.max-w-\[220px\]{max-width:220px}.max-w-\[88\%\]{max-width:88%}.max-w-full{max-width:100%}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes fadeIn{0%{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.animate-fadeIn{animation:fadeIn .25s cubic-bezier(.16,1,.3,1)}@keyframes ping{75%,to{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0,0,.2,1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}.cursor-help{cursor:help}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.resize-none{resize:none}.resize-y{resize:vertical}.resize{resize:both}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.flex-row-reverse{flex-direction:row-reverse}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.space-y-0\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.125rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.125rem*var(--tw-space-y-reverse))}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-3\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.875rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.875rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.self-start{align-self:flex-start}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.break-words{overflow-wrap:break-word}.break-all{word-break:break-all}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-none{border-radius:0}.rounded-xl{border-radius:.75rem}.rounded-b-xl{border-bottom-right-radius:.75rem;border-bottom-left-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-accent{--tw-border-opacity:1;border-color:rgb(37 99 235/var(--tw-border-opacity,1))}.border-accent\/20{border-color:rgba(37,99,235,.2)}.border-accent\/25{border-color:rgba(37,99,235,.25)}.border-accent\/30{border-color:rgba(37,99,235,.3)}.border-accent\/40{border-color:rgba(37,99,235,.4)}.border-amber-500\/20{border-color:rgba(245,158,11,.2)}.border-base{--tw-border-opacity:1;border-color:rgb(9 13 22/var(--tw-border-opacity,1))}.border-blue-400{--tw-border-opacity:1;border-color:rgb(96 165 250/var(--tw-border-opacity,1))}.border-blue-500\/30{border-color:rgba(59,130,246,.3)}.border-blue-500\/40{border-color:rgba(59,130,246,.4)}.border-border{--tw-border-opacity:1;border-color:rgb(30 41 59/var(--tw-border-opacity,1))}.border-border\/50{border-color:rgba(30,41,59,.5)}.border-border\/60{border-color:rgba(30,41,59,.6)}.border-border\/70{border-color:rgba(30,41,59,.7)}.border-borderSubtle\/40{border-color:rgba(42,56,84,.4)}.border-borderSubtle\/50{border-color:rgba(42,56,84,.5)}.border-cyan-500\/30{border-color:rgba(6,182,212,.3)}.border-emerald-500\/30{border-color:rgba(16,185,129,.3)}.border-emerald-500\/40{border-color:rgba(16,185,129,.4)}.border-panel{--tw-border-opacity:1;border-color:rgb(15 23 42/var(--tw-border-opacity,1))}.border-purple-500{--tw-border-opacity:1;border-color:rgb(168 85 247/var(--tw-border-opacity,1))}.border-purple-500\/30{border-color:rgba(168,85,247,.3)}.border-red-400{--tw-border-opacity:1;border-color:rgb(248 113 113/var(--tw-border-opacity,1))}.border-red-500\/20{border-color:rgba(239,68,68,.2)}.border-red-500\/30{border-color:rgba(239,68,68,.3)}.border-red-500\/40{border-color:rgba(239,68,68,.4)}.border-transparent{border-color:transparent}.border-white\/20{border-color:hsla(0,0%,100%,.2)}.border-white\/5{border-color:hsla(0,0%,100%,.05)}.bg-\[\#0d1424\]{--tw-bg-opacity:1;background-color:rgb(13 20 36/var(--tw-bg-opacity,1))}.bg-accent{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.bg-accent\/10{background-color:rgba(37,99,235,.1)}.bg-accent\/15{background-color:rgba(37,99,235,.15)}.bg-accent\/20{background-color:rgba(37,99,235,.2)}.bg-amber-400{--tw-bg-opacity:1;background-color:rgb(251 191 36/var(--tw-bg-opacity,1))}.bg-amber-500\/10{background-color:rgba(245,158,11,.1)}.bg-amber-500\/15{background-color:rgba(245,158,11,.15)}.bg-base{--tw-bg-opacity:1;background-color:rgb(9 13 22/var(--tw-bg-opacity,1))}.bg-base\/40{background-color:rgba(9,13,22,.4)}.bg-base\/50{background-color:rgba(9,13,22,.5)}.bg-base\/60{background-color:rgba(9,13,22,.6)}.bg-base\/95{background-color:rgba(9,13,22,.95)}.bg-black\/25{background-color:rgba(0,0,0,.25)}.bg-black\/40{background-color:rgba(0,0,0,.4)}.bg-black\/60{background-color:rgba(0,0,0,.6)}.bg-black\/70{background-color:rgba(0,0,0,.7)}.bg-black\/75{background-color:rgba(0,0,0,.75)}.bg-black\/80{background-color:rgba(0,0,0,.8)}.bg-blue-500\/10{background-color:rgba(59,130,246,.1)}.bg-blue-500\/15{background-color:rgba(59,130,246,.15)}.bg-blue-500\/20{background-color:rgba(59,130,246,.2)}.bg-border\/60{background-color:rgba(30,41,59,.6)}.bg-cyan-400{--tw-bg-opacity:1;background-color:rgb(34 211 238/var(--tw-bg-opacity,1))}.bg-cyan-500{--tw-bg-opacity:1;background-color:rgb(6 182 212/var(--tw-bg-opacity,1))}.bg-cyan-500\/10{background-color:rgba(6,182,212,.1)}.bg-cyan-500\/15{background-color:rgba(6,182,212,.15)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153/var(--tw-bg-opacity,1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.bg-emerald-500\/10{background-color:rgba(16,185,129,.1)}.bg-emerald-500\/15{background-color:rgba(16,185,129,.15)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105/var(--tw-bg-opacity,1))}.bg-panel{--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity,1))}.bg-panel\/80{background-color:rgba(15,23,42,.8)}.bg-panel\/85{background-color:rgba(15,23,42,.85)}.bg-panel\/95{background-color:rgba(15,23,42,.95)}.bg-panel2{--tw-bg-opacity:1;background-color:rgb(22 32 50/var(--tw-bg-opacity,1))}.bg-panel2\/40{background-color:rgba(22,32,50,.4)}.bg-panel2\/50{background-color:rgba(22,32,50,.5)}.bg-panel2\/60{background-color:rgba(22,32,50,.6)}.bg-panel2\/70{background-color:rgba(22,32,50,.7)}.bg-panel2\/80{background-color:rgba(22,32,50,.8)}.bg-panel2\/90{background-color:rgba(22,32,50,.9)}.bg-panel2\/95{background-color:rgba(22,32,50,.95)}.bg-panel3{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.bg-purple-500\/10{background-color:rgba(168,85,247,.1)}.bg-purple-500\/15{background-color:rgba(168,85,247,.15)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.bg-red-500\/10{background-color:rgba(239,68,68,.1)}.bg-red-500\/20{background-color:rgba(239,68,68,.2)}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38/var(--tw-bg-opacity,1))}.bg-red-950\/25{background-color:rgba(69,10,10,.25)}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/10{background-color:hsla(0,0%,100%,.1)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right,var(--tw-gradient-stops))}.from-\[\#002d72\]{--tw-gradient-from:#002d72 var(--tw-gradient-from-position);--tw-gradient-to:rgba(0,45,114,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgba(59,130,246,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.from-blue-600{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgba(37,99,235,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.via-\[\#0055b8\]{--tw-gradient-to:rgba(0,85,184,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),#0055b8 var(--tw-gradient-via-position),var(--tw-gradient-to)}.via-\[\#0b4d9c\]{--tw-gradient-to:rgba(11,77,156,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),#0b4d9c var(--tw-gradient-via-position),var(--tw-gradient-to)}.to-\[\#00a3e0\]{--tw-gradient-to:#00a3e0 var(--tw-gradient-to-position)}.to-cyan-500{--tw-gradient-to:#06b6d4 var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.\!p-0{padding:0!important}.p-1{padding:.25rem}.p-1\.5{padding:.375rem}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:.25rem}.pb-2{padding-bottom:.5rem}.pb-4{padding-bottom:1rem}.pl-0\.5{padding-left:.125rem}.pl-1\.5{padding-left:.375rem}.pl-2{padding-left:.5rem}.pl-8{padding-left:2rem}.pl-9{padding-left:2.25rem}.pr-0\.5{padding-right:.125rem}.pr-2{padding-right:.5rem}.pr-3{padding-right:.75rem}.pr-4{padding-right:1rem}.pr-9{padding-right:2.25rem}.pt-1{padding-top:.25rem}.pt-1\.5{padding-top:.375rem}.pt-12{padding-top:3rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:JetBrains Mono,ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}.font-sans{font-family:Plus Jakarta Sans,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.lowercase{text-transform:lowercase}.leading-4{line-height:1rem}.leading-5{line-height:1.25rem}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.14em\]{letter-spacing:.14em}.tracking-tight{letter-spacing:-.025em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-\[\#00a3e0\]{--tw-text-opacity:1;color:rgb(0 163 224/var(--tw-text-opacity,1))}.text-accent{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.text-base{--tw-text-opacity:1;color:rgb(9 13 22/var(--tw-text-opacity,1))}.text-blue-100{--tw-text-opacity:1;color:rgb(219 234 254/var(--tw-text-opacity,1))}.text-blue-100\/55{color:rgba(219,234,254,.55)}.text-blue-200{--tw-text-opacity:1;color:rgb(191 219 254/var(--tw-text-opacity,1))}.text-blue-200\/70{color:rgba(191,219,254,.7)}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253/var(--tw-text-opacity,1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250/var(--tw-text-opacity,1))}.text-blue-50\/95{color:rgba(239,246,255,.95)}.text-blue-500\/70{color:rgba(59,130,246,.7)}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249/var(--tw-text-opacity,1))}.text-cyan-400{--tw-text-opacity:1;color:rgb(34 211 238/var(--tw-text-opacity,1))}.text-emerald-200{--tw-text-opacity:1;color:rgb(167 243 208/var(--tw-text-opacity,1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity,1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.text-emerald-500\/70{color:rgba(16,185,129,.7)}.text-gray-100{--tw-text-opacity:1;color:rgb(243 244 246/var(--tw-text-opacity,1))}.text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235/var(--tw-text-opacity,1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219/var(--tw-text-opacity,1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175/var(--tw-text-opacity,1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128/var(--tw-text-opacity,1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99/var(--tw-text-opacity,1))}.text-pink-400{--tw-text-opacity:1;color:rgb(244 114 182/var(--tw-text-opacity,1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254/var(--tw-text-opacity,1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252/var(--tw-text-opacity,1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202/var(--tw-text-opacity,1))}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165/var(--tw-text-opacity,1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113/var(--tw-text-opacity,1))}.text-sky-400{--tw-text-opacity:1;color:rgb(56 189 248/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.placeholder-gray-500::-moz-placeholder{--tw-placeholder-opacity:1;color:rgb(107 114 128/var(--tw-placeholder-opacity,1))}.placeholder-gray-500::placeholder{--tw-placeholder-opacity:1;color:rgb(107 114 128/var(--tw-placeholder-opacity,1))}.accent-blue-600{accent-color:#2563eb}.accent-purple-600{accent-color:#9333ea}.opacity-0{opacity:0}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.opacity-80{opacity:.8}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-2xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgba(0,0,0,.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color)}.shadow-inner,.shadow-lg{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-md,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-black\/20{--tw-shadow-color:rgba(0,0,0,.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-blue-500\/20{--tw-shadow-color:rgba(59,130,246,.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-blue-900{--tw-shadow-color:#1e3a8a;--tw-shadow:var(--tw-shadow-colored)}.shadow-blue-900\/25{--tw-shadow-color:rgba(30,58,138,.25);--tw-shadow:var(--tw-shadow-colored)}.shadow-blue-900\/30{--tw-shadow-color:rgba(30,58,138,.3);--tw-shadow:var(--tw-shadow-colored)}.shadow-red-500\/20{--tw-shadow-color:rgba(239,68,68,.2);--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.outline{outline-style:solid}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring,.ring-1{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-1{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-accent{--tw-ring-opacity:1;--tw-ring-color:rgb(37 99 235/var(--tw-ring-opacity,1))}.ring-blue-500\/30{--tw-ring-color:rgba(59,130,246,.3)}.ring-cyan-500\/25{--tw-ring-color:rgba(6,182,212,.25)}.ring-cyan-500\/30{--tw-ring-color:rgba(6,182,212,.3)}.ring-red-500\/20{--tw-ring-color:rgba(239,68,68,.2)}.blur{--tw-blur:blur(8px)}.blur,.drop-shadow{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow{--tw-drop-shadow:drop-shadow(0 1px 2px rgba(0,0,0,.1)) drop-shadow(0 1px 1px rgba(0,0,0,.06))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px)}.backdrop-blur-md,.backdrop-blur-xl{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.placeholder\:text-gray-500::-moz-placeholder{--tw-text-opacity:1;color:rgb(107 114 128/var(--tw-text-opacity,1))}.placeholder\:text-gray-500::placeholder{--tw-text-opacity:1;color:rgb(107 114 128/var(--tw-text-opacity,1))}.last\:border-0:last-child{border-width:0}.focus-within\:border-accent:focus-within{--tw-border-opacity:1;border-color:rgb(37 99 235/var(--tw-border-opacity,1))}.focus-within\:opacity-100:focus-within{opacity:1}.focus-within\:ring-1:focus-within{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus-within\:ring-accent\/30:focus-within{--tw-ring-color:rgba(37,99,235,.3)}.hover\:-translate-y-0\.5:hover{--tw-translate-y:-0.125rem;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-accent:hover{--tw-border-opacity:1;border-color:rgb(37 99 235/var(--tw-border-opacity,1))}.hover\:border-accent\/50:hover{border-color:rgba(37,99,235,.5)}.hover\:border-accent\/60:hover{border-color:rgba(37,99,235,.6)}.hover\:border-blue-400:hover{--tw-border-opacity:1;border-color:rgb(96 165 250/var(--tw-border-opacity,1))}.hover\:border-blue-500\/60:hover{border-color:rgba(59,130,246,.6)}.hover\:border-border:hover{--tw-border-opacity:1;border-color:rgb(30 41 59/var(--tw-border-opacity,1))}.hover\:border-cyan-400:hover{--tw-border-opacity:1;border-color:rgb(34 211 238/var(--tw-border-opacity,1))}.hover\:border-emerald-400:hover{--tw-border-opacity:1;border-color:rgb(52 211 153/var(--tw-border-opacity,1))}.hover\:border-emerald-500:hover{--tw-border-opacity:1;border-color:rgb(16 185 129/var(--tw-border-opacity,1))}.hover\:border-emerald-500\/60:hover{border-color:rgba(16,185,129,.6)}.hover\:border-purple-500:hover{--tw-border-opacity:1;border-color:rgb(168 85 247/var(--tw-border-opacity,1))}.hover\:border-purple-500\/40:hover{border-color:rgba(168,85,247,.4)}.hover\:border-white\/60:hover{border-color:hsla(0,0%,100%,.6)}.hover\:bg-accent\/20:hover{background-color:rgba(37,99,235,.2)}.hover\:bg-accent\/30:hover{background-color:rgba(37,99,235,.3)}.hover\:bg-amber-500\/10:hover{background-color:rgba(245,158,11,.1)}.hover\:bg-base:hover{--tw-bg-opacity:1;background-color:rgb(9 13 22/var(--tw-bg-opacity,1))}.hover\:bg-black\/35:hover{background-color:rgba(0,0,0,.35)}.hover\:bg-blue-500:hover{--tw-bg-opacity:1;background-color:rgb(59 130 246/var(--tw-bg-opacity,1))}.hover\:bg-blue-500\/10:hover{background-color:rgba(59,130,246,.1)}.hover\:bg-blue-500\/20:hover{background-color:rgba(59,130,246,.2)}.hover\:bg-border:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.hover\:bg-cyan-500\/10:hover{background-color:rgba(6,182,212,.1)}.hover\:bg-cyan-500\/20:hover{background-color:rgba(6,182,212,.2)}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.hover\:bg-emerald-500\/10:hover{background-color:rgba(16,185,129,.1)}.hover\:bg-emerald-500\/20:hover{background-color:rgba(16,185,129,.2)}.hover\:bg-panel2:hover{--tw-bg-opacity:1;background-color:rgb(22 32 50/var(--tw-bg-opacity,1))}.hover\:bg-panel2\/50:hover{background-color:rgba(22,32,50,.5)}.hover\:bg-panel3:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.hover\:bg-purple-500\/5:hover{background-color:rgba(168,85,247,.05)}.hover\:bg-red-500:hover{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.hover\:bg-red-500\/10:hover{background-color:rgba(239,68,68,.1)}.hover\:bg-white\/10:hover{background-color:hsla(0,0%,100%,.1)}.hover\:from-blue-500:hover{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgba(59,130,246,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.hover\:to-indigo-500:hover{--tw-gradient-to:#6366f1 var(--tw-gradient-to-position)}.hover\:text-accent:hover{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.hover\:text-amber-300:hover{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.hover\:text-amber-400:hover{--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.hover\:text-blue-100:hover{--tw-text-opacity:1;color:rgb(219 234 254/var(--tw-text-opacity,1))}.hover\:text-blue-200:hover{--tw-text-opacity:1;color:rgb(191 219 254/var(--tw-text-opacity,1))}.hover\:text-blue-300:hover{--tw-text-opacity:1;color:rgb(147 197 253/var(--tw-text-opacity,1))}.hover\:text-blue-400:hover{--tw-text-opacity:1;color:rgb(96 165 250/var(--tw-text-opacity,1))}.hover\:text-emerald-100:hover{--tw-text-opacity:1;color:rgb(209 250 229/var(--tw-text-opacity,1))}.hover\:text-emerald-200:hover{--tw-text-opacity:1;color:rgb(167 243 208/var(--tw-text-opacity,1))}.hover\:text-emerald-300:hover{--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity,1))}.hover\:text-emerald-400:hover{--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.hover\:text-gray-200:hover{--tw-text-opacity:1;color:rgb(229 231 235/var(--tw-text-opacity,1))}.hover\:text-gray-300:hover{--tw-text-opacity:1;color:rgb(209 213 219/var(--tw-text-opacity,1))}.hover\:text-purple-400:hover{--tw-text-opacity:1;color:rgb(192 132 252/var(--tw-text-opacity,1))}.hover\:text-red-200:hover{--tw-text-opacity:1;color:rgb(254 202 202/var(--tw-text-opacity,1))}.hover\:text-red-300:hover{--tw-text-opacity:1;color:rgb(252 165 165/var(--tw-text-opacity,1))}.hover\:text-red-400:hover{--tw-text-opacity:1;color:rgb(248 113 113/var(--tw-text-opacity,1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.hover\:text-yellow-400:hover{--tw-text-opacity:1;color:rgb(250 204 21/var(--tw-text-opacity,1))}.hover\:shadow-lg:hover{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.hover\:shadow-blue-500\/10:hover{--tw-shadow-color:rgba(59,130,246,.1);--tw-shadow:var(--tw-shadow-colored)}.hover\:shadow-emerald-500\/10:hover{--tw-shadow-color:rgba(16,185,129,.1);--tw-shadow:var(--tw-shadow-colored)}.focus\:border-accent:focus{--tw-border-opacity:1;border-color:rgb(37 99 235/var(--tw-border-opacity,1))}.focus\:border-white\/80:focus{border-color:hsla(0,0%,100%,.8)}.focus\:opacity-100:focus{opacity:1}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-0:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(var(--tw-ring-offset-width)) var(--tw-ring-color)}.focus\:ring-0:focus,.focus\:ring-1:focus{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.focus\:ring-accent\/40:focus{--tw-ring-color:rgba(37,99,235,.4)}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-40:disabled{opacity:.4}.disabled\:opacity-50:disabled{opacity:.5}.group:focus-within .group-focus-within\:opacity-100{opacity:1}.group:hover .group-hover\:scale-105{--tw-scale-x:1.05;--tw-scale-y:1.05}.group:hover .group-hover\:scale-105,.group:hover .group-hover\:scale-110{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:scale-110{--tw-scale-x:1.1;--tw-scale-y:1.1}.group:hover .group-hover\:text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.group:hover .group-hover\:text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253/var(--tw-text-opacity,1))}.group:hover .group-hover\:text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity,1))}.group:hover .group-hover\:text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235/var(--tw-text-opacity,1))}.group:hover .group-hover\:text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254/var(--tw-text-opacity,1))}.group:focus .group-focus\:opacity-100,.group:hover .group-hover\:opacity-100{opacity:1}@media (min-width:640px){.sm\:right-10{right:2.5rem}.sm\:col-span-2{grid-column:span 2/span 2}.sm\:ml-3{margin-left:.75rem}.sm\:inline{display:inline}.sm\:flex{display:flex}.sm\:h-9{height:2.25rem}.sm\:w-9{width:2.25rem}.sm\:w-\[390px\]{width:390px}.sm\:max-w-\[270px\]{max-width:270px}.sm\:max-w-\[80\%\]{max-width:80%}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:gap-1\.5{gap:.375rem}.sm\:gap-3{gap:.75rem}.sm\:p-4{padding:1rem}.sm\:p-6{padding:1.5rem}.sm\:px-0{padding-left:0;padding-right:0}.sm\:px-2\.5{padding-left:.625rem;padding-right:.625rem}.sm\:px-5{padding-left:1.25rem;padding-right:1.25rem}.sm\:py-16{padding-top:4rem;padding-bottom:4rem}.sm\:pl-3{padding-left:.75rem}.sm\:pt-20{padding-top:5rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}}@media (min-width:768px){.md\:relative{position:relative}.md\:z-auto{z-index:auto}.md\:hidden{display:none}.md\:shadow-none{--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}}@media (min-width:1024px){.lg\:relative{position:relative}.lg\:z-20{z-index:20}.lg\:shadow-none{--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}}@media (min-width:1280px){.xl\:block{display:block}.xl\:inline{display:inline}}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>if (window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="vendor/highlight-github-dark.min.css" />
+  <script src="vendor/highlight.min.js"></script>
+  <script src="vendor/marked.umd.js"></script>
+  <script src="vendor/purify.min.js"></script>
+  <script src="vendor/mermaid.min.js"></script>
+  <script src="vendor/pdf.min.js"></script>
+  <script>if (window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdf.worker.min.js';</script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="vendor/chart.umd.min.js"></script>
   <!-- jsPDF: Gerçek PDF üretimi (yazdırma değil) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/jspdf.plugin.autotable.min.js"></script>
   <!-- mammoth.js: Word (.docx) okuma -->
-  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="vendor/mammoth.browser.min.js"></script>
   <!-- html2canvas: Ekran görüntüsü -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="vendor/html2canvas.min.js"></script>
   <style>
     /* ===== Varsayılan API Yapılandırması (Self-Cloning hedef alanı) ===== */
     /* AŞAĞIDAKİ BLOK İNDİRME SIRASINDA REGEX İLE GÜNCELLENİR — DEĞİŞTİRMEYİN */
@@ -1508,141 +1509,163 @@
           </button>
         </div>
 
-        <div role="tablist" aria-label="API türü" class="grid grid-cols-2 gap-1 rounded-xl bg-base p-1 border border-border">
-          <button id="apiChatTab" type="button" role="tab" aria-selected="true" aria-controls="apiChatPanel"
-            data-api-settings-tab="chat" class="rounded-lg px-3 py-2 text-xs font-semibold bg-panel3 text-gray-100 transition">Sohbet</button>
-          <button id="apiEmbeddingTab" type="button" role="tab" aria-selected="false" aria-controls="apiEmbeddingPanel" tabindex="-1"
-            data-api-settings-tab="embedding" class="rounded-lg px-3 py-2 text-xs font-semibold text-gray-400 transition">Embedding</button>
-        </div>
+
 
         <section id="apiChatPanel" role="tabpanel" aria-labelledby="apiChatTab" class="space-y-4">
-        <!-- API URL -->
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">URL</label>
-          <input id="cfgUrl" type="text" spellcheck="false" placeholder="https://api.ornek.com/v1/chat/completions"
-            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200" />
+        <!-- API Anahtarı (Birincil / Sade Alan) -->
+        <div class="rounded-xl border border-accent/30 bg-accent/5 p-3.5 space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="cfgApiKey" class="text-xs font-semibold text-gray-200 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent">
+                <path d="m21 2-2 2m-6 6 7 7-4 4-7-7m0 0L3 17a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h6l3 3Z" />
+              </svg>
+              API Anahtarı (API Key)
+            </label>
+            <span class="text-[10px] text-gray-400 font-mono">Authorization</span>
+          </div>
+          <div class="relative">
+            <input id="cfgApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Bearer sk-... veya sk-..."
+              class="w-full bg-base border border-border rounded-lg pl-3 pr-10 py-2.5 text-xs font-mono outline-none focus:border-accent transition text-gray-100 placeholder-gray-500" />
+            <button id="toggleApiKeyVisibilityBtn" type="button"
+              class="absolute right-2.5 top-2.5 p-0.5 text-gray-400 hover:text-gray-200 transition"
+              title="Göster / Gizle" aria-label="API anahtarını göster veya gizle">
+              <svg id="apiKeyEyeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-[11px] text-gray-400 leading-relaxed">
+            API isteklerinde <code class="font-mono text-blue-300">Authorization: Bearer</code> başlığı olarak otomatik kullanılır.
+          </p>
         </div>
 
-        <!-- Method -->
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">HTTP Metodu</label>
-          <select id="cfgMethod"
-            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200">
-            <option value="POST">POST</option>
-            <option value="GET">GET</option>
-            <option value="PUT">PUT</option>
-          </select>
-        </div>
-
-        <!-- Headers -->
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">Headers - JSON</label>
-          <textarea id="cfgHeaders" rows="5" spellcheck="false"
-            placeholder='{&#10;  "Content-Type": "application/json"&#10;}'
-            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
-        </div>
-
-        <!-- Request Body Template -->
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">
-            Body —
-            <span class="text-accent font-mono">$PROMPT</span> kullanıcı mesajıyla değişir
-          </label>
-          <textarea id="cfgBody" rows="9" spellcheck="false"
-            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
-        </div>
-
-        <!-- Response Path -->
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">
-            Yanıt Yolu
-          </label>
-          <input id="cfgResponsePath" type="text" spellcheck="false" placeholder="choices.0.message.content"
-            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-accent transition text-gray-200" />
-          <p class="text-[11px] text-gray-500 mt-1">Örn: choices.0.message.content veya result.text</p>
-        </div>
-
-        <!-- Sistem Promptu -->
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">Sistem Promptu</label>
-          <textarea id="cfgSystemPrompt" rows="3" spellcheck="false"
-            placeholder="Modele her mesajda gönderilecek sistem talimatı (opsiyonel)..."
-            class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
-          <p class="text-[11px] text-gray-500 mt-1">Her API isteğinde &quot;system&quot; rolüyle mesaj listesinin başına
-            eklenir.</p>
-        </div>
-
-        <!-- Streaming -->
-        <div>
-          <label class="flex items-center gap-2.5 cursor-pointer select-none">
-            <input type="checkbox" id="cfgStreaming" class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
-            <div>
-              <span class="text-xs font-medium text-gray-300">Streaming Yanıt</span>
-              <p class="text-[10px] text-gray-500">Yanıtı kelime kelime gösterir (API'nin SSE desteği gerekir)</p>
-            </div>
-          </label>
-        </div>
-
-        <!-- Butonlar -->
-        <div class="flex flex-col gap-2.5 pt-2">
+        <!-- Bağlantı Testi -->
+        <div class="space-y-1.5 pt-0.5">
           <button id="testCfgBtn"
-            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg transition">
+            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m22 2-7 20-4-9-9-4Z" />
+              <path d="M22 2 11 13" />
+            </svg>
             Bağlantıyı Test Et
           </button>
+          <div id="cfgStatus" role="status" class="text-xs text-center min-h-[18px]"></div>
         </div>
-        <div id="cfgStatus" role="status" class="text-xs text-center min-h-[18px]"></div>
+
+        <!-- Gelişmiş Ayarlar (İhtiyaç oldukça açılır) -->
+        <details id="advancedChatSettings" class="group rounded-xl border border-border bg-panel2/30 transition">
+          <summary
+            class="flex items-center justify-between p-3 cursor-pointer select-none text-xs font-semibold text-gray-300 hover:text-white hover:bg-panel2/60 transition rounded-xl list-none">
+            <span class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-gray-400 group-hover:text-blue-400 transition">
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              Gelişmiş Ayarlar
+            </span>
+            <span class="flex items-center gap-1.5 text-[11px] text-gray-500 font-normal">
+              <span class="group-open:hidden">Göster</span>
+              <span class="hidden group-open:inline">Gizle</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="transform transition-transform duration-200 group-open:rotate-180 text-gray-400">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </span>
+          </summary>
+          <div class="p-3.5 pt-2 space-y-4 border-t border-border/50">
+            <!-- API URL -->
+            <div>
+              <label for="cfgUrl" class="block text-xs font-medium text-gray-400 mb-1.5">URL</label>
+              <input id="cfgUrl" type="text" spellcheck="false" placeholder="https://api.ornek.com/v1/chat/completions"
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200" />
+            </div>
+
+            <!-- Method -->
+            <div>
+              <label for="cfgMethod" class="block text-xs font-medium text-gray-400 mb-1.5">HTTP Metodu</label>
+              <select id="cfgMethod"
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200">
+                <option value="POST">POST</option>
+                <option value="GET">GET</option>
+                <option value="PUT">PUT</option>
+              </select>
+            </div>
+
+            <!-- Headers -->
+            <div>
+              <label for="cfgHeaders" class="block text-xs font-medium text-gray-400 mb-1.5">Headers - JSON</label>
+              <textarea id="cfgHeaders" rows="5" spellcheck="false"
+                placeholder='{&#10;  "Content-Type": "application/json"&#10;}'
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
+            </div>
+
+            <!-- Request Body Template -->
+            <div>
+              <label for="cfgBody" class="block text-xs font-medium text-gray-400 mb-1.5">
+                Body —
+                <span class="text-accent font-mono">$PROMPT</span> kullanıcı mesajıyla değişir
+              </label>
+              <textarea id="cfgBody" rows="9" spellcheck="false"
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
+            </div>
+
+            <!-- Response Path -->
+            <div>
+              <label for="cfgResponsePath" class="block text-xs font-medium text-gray-400 mb-1.5">
+                Yanıt Yolu
+              </label>
+              <input id="cfgResponsePath" type="text" spellcheck="false" placeholder="choices.0.message.content"
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-accent transition text-gray-200" />
+              <p class="text-[11px] text-gray-500 mt-1">Örn: choices.0.message.content veya result.text</p>
+            </div>
+
+            <!-- Sistem Promptu -->
+            <div>
+              <label for="cfgSystemPrompt" class="block text-xs font-medium text-gray-400 mb-1.5">Sistem Promptu</label>
+              <textarea id="cfgSystemPrompt" rows="3" spellcheck="false"
+                placeholder="Modele her mesajda gönderilecek sistem talimatı (opsiyonel)..."
+                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200"></textarea>
+              <p class="text-[11px] text-gray-500 mt-1">Her API isteğinde &quot;system&quot; rolüyle mesaj listesinin başına
+                eklenir.</p>
+            </div>
+
+            <!-- Streaming -->
+            <div>
+              <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                <input type="checkbox" id="cfgStreaming" class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
+                <div>
+                  <span class="text-xs font-medium text-gray-300">Streaming Yanıt</span>
+                  <p class="text-[10px] text-gray-500">Yanıtı kelime kelime gösterir (API'nin SSE desteği gerekir)</p>
+                </div>
+              </label>
+            </div>
+          </div>
+        </details>
         </section>
 
-        <section id="apiEmbeddingPanel" role="tabpanel" aria-labelledby="apiEmbeddingTab" class="hidden space-y-4">
-          <p class="text-xs leading-5 text-gray-400">Bilgi tabanındaki belgeleri ve sorularınızı anlamlarına göre eşleştiren modeli ayarlayın.</p>
-          <div>
-            <label for="cfgEmbeddingModel" class="block text-xs font-medium text-gray-400 mb-1.5">Embedding model adı</label>
-            <input id="cfgEmbeddingModel" type="text" spellcheck="false" placeholder="Embedding model adı"
-              class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-accent transition text-gray-200" />
+        <section id="confluenceSettings" class="rounded-xl border border-border bg-panel2/30 p-3.5 space-y-2.5">
+          <h3 class="text-xs font-semibold text-gray-200">Confluence bağlantısı</h3>
+          <label for="confluencePatInput" class="block text-xs text-gray-400">Kişisel erişim belirteci (PAT)</label>
+          <input id="confluencePatInput" type="password" autocomplete="off" spellcheck="false"
+            placeholder="Confluence PAT değerini girin"
+            class="w-full bg-base border border-border rounded-lg px-3 py-2.5 text-xs font-mono outline-none focus:border-accent text-gray-100" />
+          <p class="text-[11px] text-gray-500">Yalnızca PAT girin. Confluence adresi uygulamada tanımlıdır; PAT tarayıcıda veya indirilen ayarlarda saklanmaz.</p>
+          <div class="flex gap-2">
+            <button id="confluencePatSaveBtn" type="button" class="flex-1 rounded-lg bg-accent px-3 py-2 text-xs font-medium text-white">Kaydet</button>
+            <button id="confluencePatTestBtn" type="button" class="flex-1 rounded-lg border border-border px-3 py-2 text-xs text-gray-200">Bağlantıyı test et</button>
+            <button id="confluencePatClearBtn" type="button" class="rounded-lg border border-border px-3 py-2 text-xs text-gray-400">Kaldır</button>
           </div>
-          <label class="flex items-start gap-2.5 rounded-xl border border-border bg-panel2/50 p-3 cursor-pointer">
-            <input id="cfgEmbeddingUseChatApi" type="checkbox" checked aria-controls="embeddingCustomConnection" class="mt-0.5 w-4 h-4 accent-blue-600 shrink-0" />
-            <span><span class="block text-xs font-medium text-gray-200">Sohbet API ayarlarını kullan</span>
-              <span class="block mt-1 text-[11px] leading-4 text-gray-500">Adres ve yetkilendirme sohbet ayarlarından alınır. Embedding modeli bağımsızdır.</span></span>
-          </label>
-          <div id="embeddingSharedConnection" class="rounded-lg bg-base p-3 border border-border">
-            <p class="text-[10px] text-gray-500 mb-1">Embedding adresi</p>
-            <p id="embeddingResolvedUrl" class="text-[11px] leading-5 font-mono text-gray-400 break-all"></p>
-          </div>
-          <div id="embeddingCustomConnection" class="hidden space-y-4">
-            <div>
-              <label for="cfgEmbeddingUrl" class="block text-xs font-medium text-gray-400 mb-1.5">Embedding API URL’si</label>
-              <input id="cfgEmbeddingUrl" type="url" spellcheck="false" placeholder="https://api.ornek.com/v1/embeddings"
-                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition text-gray-200" />
-              <p class="text-[11px] text-gray-500 mt-1">Servisin tam embedding adresini girin.</p>
-            </div>
-            <div>
-              <label for="cfgEmbeddingApiKey" class="block text-xs font-medium text-gray-400 mb-1.5">API anahtarı <span class="font-normal text-gray-500">(isteğe bağlı)</span></label>
-              <input id="cfgEmbeddingApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="API anahtarınız"
-                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition text-gray-200" />
-            </div>
-            <details class="rounded-lg border border-border p-3">
-              <summary class="text-xs text-gray-400 cursor-pointer">Özel header’lar</summary>
-              <label for="cfgEmbeddingHeaders" class="block text-[11px] text-gray-500 mt-3 mb-2">Ek HTTP header’ları · JSON</label>
-              <textarea id="cfgEmbeddingHeaders" rows="4" spellcheck="false" placeholder='{"api-key": "..."}'
-                class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-accent transition resize-y text-gray-200">{}</textarea>
-              <p class="text-[11px] leading-4 text-gray-500 mt-1">API anahtarı alanı doluysa Authorization: Bearer olarak gönderilir.</p>
-            </details>
-          </div>
-          <p class="text-[11px] leading-4 text-gray-500">OpenAI uyumlu embedding istek ve yanıt biçimini destekleyen servisler içindir.</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button id="saveEmbeddingCfgBtn" type="button" class="rounded-lg bg-accent hover:bg-blue-500 px-3 py-2.5 text-xs font-medium text-white transition disabled:opacity-50">Ayarları kaydet</button>
-            <button id="testEmbeddingCfgBtn" type="button" class="rounded-lg border border-border bg-panel2 hover:bg-panel3 px-3 py-2.5 text-xs font-medium text-gray-200 transition disabled:opacity-50">Bağlantıyı test et</button>
-          </div>
-          <div id="embeddingCfgStatus" role="status" aria-live="polite" class="text-xs leading-5 min-h-[18px]"></div>
-          <div class="rounded-xl border border-border bg-base p-3 space-y-2">
-            <p class="text-xs font-medium text-gray-300">Bilgi tabanı uyumu</p>
-            <p class="text-[11px] leading-5 text-gray-500">Model veya servis değiştiğinde belgeleri yeniden indeksleyin. Kayıtlı metinler kullanılır; dosyaları tekrar yüklemeniz gerekmez.</p>
-            <p id="embeddingIndexStatus" role="status" class="text-[11px] leading-5 text-gray-400"></p>
-            <button id="reindexEmbeddingBtn" type="button" class="w-full rounded-lg border border-border bg-panel2 hover:bg-panel3 px-3 py-2 text-xs font-medium text-gray-200 transition disabled:opacity-50">Belgeleri yeniden indeksle</button>
-            <p id="embeddingReindexStatus" role="status" aria-live="polite" class="text-[11px] leading-5 text-gray-400"></p>
-          </div>
+          <p id="confluencePatStatus" role="status" class="text-xs text-gray-400"></p>
         </section>
+
 
         <div class="border-t border-border pt-4">
           <button id="downloadCloneBtn"
@@ -2109,11 +2132,23 @@
         </div>
       </div>
       <div class="p-4 pb-2 shrink-0">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <button id="kbEmbeddingSettingsBtn" type="button" class="text-xs text-blue-400 hover:text-blue-300">Embedding ayarları</button>
-          <button id="reindexKBBtn" type="button" class="rounded-lg border border-border bg-panel2 px-3 py-1.5 text-xs text-gray-300 hover:bg-panel3 disabled:opacity-50">Yeniden indeksle</button>
+        <!-- Confluence kaynağı (yalnızca masaüstü/JAR sürümünde aktif) -->
+        <div id="confluenceRagCard"
+          class="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl border border-border bg-panel2/50 hover:border-purple-500/40 transition">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-gray-200">🌐 Confluence'ta ara</p>
+            <p id="confluenceStatusText" class="text-xs text-gray-500 truncate">Durum kontrol ediliyor…</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="confluenceEditorOpenBtn" type="button" disabled
+              class="rounded-lg border border-border px-2.5 py-1.5 text-xs text-gray-200 disabled:opacity-40">Sayfa yönet</button>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <span class="text-xs text-gray-400">Aktif</span>
+              <input type="checkbox" id="confluenceRagToggle" class="w-4 h-4 rounded accent-purple-600 cursor-pointer" disabled>
+            </label>
+          </div>
         </div>
-        <p id="kbReindexStatus" role="status" aria-live="polite" class="text-xs text-gray-400 mb-2"></p>
+
         <div id="kbDropZone"
           class="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed border-border hover:border-purple-500 bg-panel2/50 hover:bg-purple-500/5 transition cursor-pointer">
           <span class="text-2xl">📄</span>
@@ -2134,6 +2169,53 @@
         <div id="kbDocList" class="space-y-2">
           <p class="text-center text-xs text-gray-600 py-6">Henüz belge yüklenmemiş.</p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confluence sayfa oluşturma ve düzenleme -->
+  <div id="confluenceEditorModal" class="app-modal fixed inset-0 z-50 items-center justify-center bg-black/70 p-4"
+    role="dialog" aria-modal="true" aria-labelledby="confluenceEditorHeading">
+    <div class="modal-card w-full max-w-3xl max-h-[88vh] overflow-y-auto rounded-2xl border border-border bg-panel shadow-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 id="confluenceEditorHeading" class="font-semibold text-gray-100">Confluence sayfası</h2>
+        <button data-close-modal="confluenceEditorModal" class="text-gray-400 hover:text-white" aria-label="Kapat">✕</button>
+      </div>
+      <div class="flex gap-2">
+        <button id="confluenceCreateModeBtn" type="button" class="rounded-lg bg-accent px-3 py-2 text-xs text-white">Yeni sayfa</button>
+        <button id="confluenceEditModeBtn" type="button" class="rounded-lg border border-border px-3 py-2 text-xs text-gray-200">Sayfayı düzenle</button>
+      </div>
+      <div id="confluenceCreateFields" class="space-y-2">
+        <label for="confluenceSpaceKey" class="block text-xs text-gray-400">Alan anahtarı</label>
+        <input id="confluenceSpaceKey" type="text" placeholder="Örn. KRD" class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm text-gray-100" />
+      </div>
+      <div id="confluenceEditFields" class="hidden space-y-2">
+        <label for="confluencePageUrl" class="block text-xs text-gray-400">Düzenlenecek sayfa bağlantısı</label>
+        <div class="flex gap-2">
+          <input id="confluencePageUrl" type="url" placeholder="https://…/confluence/pages/viewpage.action?pageId=…"
+            class="flex-1 min-w-0 bg-base border border-border rounded-lg px-3 py-2 text-xs text-gray-100" />
+          <button id="confluenceLoadPageBtn" type="button" class="rounded-lg border border-border px-3 py-2 text-xs text-gray-200">Yükle</button>
+        </div>
+        <p class="text-[11px] text-amber-300">Düzenleme, sayfanın Confluence XHTML kaynağını açar. Makroları korumak için yalnızca değiştireceğiniz bölümü düzenleyin.</p>
+      </div>
+      <div class="space-y-2">
+        <label for="confluencePageTitle" class="block text-xs text-gray-400">Sayfa başlığı</label>
+        <input id="confluencePageTitle" type="text" maxlength="255" class="w-full bg-base border border-border rounded-lg px-3 py-2 text-sm text-gray-100" />
+      </div>
+      <div class="space-y-2">
+        <label for="confluencePageBody" id="confluenceBodyLabel" class="block text-xs text-gray-400">İçerik (düz metin)</label>
+        <textarea id="confluencePageBody" rows="11" spellcheck="false"
+          class="w-full bg-base border border-border rounded-lg px-3 py-2 text-xs text-gray-100 font-mono resize-y"></textarea>
+      </div>
+      <div id="confluencePreviewPanel" class="hidden rounded-xl border border-border bg-base p-3 space-y-2">
+        <p class="text-xs font-semibold text-gray-200">Yayın önizlemesi</p>
+        <p id="confluencePreviewMeta" class="text-xs text-gray-400"></p>
+        <div id="confluencePreviewBody" class="text-sm text-gray-200 whitespace-pre-wrap max-h-48 overflow-y-auto"></div>
+      </div>
+      <p id="confluenceEditorStatus" role="status" class="text-xs text-gray-400"></p>
+      <div class="flex justify-end gap-2">
+        <button id="confluencePreviewBtn" type="button" class="rounded-lg border border-border px-4 py-2 text-xs text-gray-200">Önizle</button>
+        <button id="confluencePublishBtn" type="button" disabled class="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-medium text-white disabled:opacity-40">Confluence'a yayınla</button>
       </div>
     </div>
   </div>
@@ -2219,19 +2301,13 @@
       url: "",
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-bf-a4a6d317-618a-40cf-88d7-5cae6eeb3df9"
       },
-      bodyTemplate: '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": "Qwen/Qwen3.5-27B"\n}',
+      bodyTemplate: '{\n  "model": "Qwen/Qwen3.5-27B",\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "temperature": 0.7\n}',
       responsePath: "choices.0.message.content",
       transcriptionUrl: "",
-      transcriptionModel: "whisper-1",
-      embedding: {
-        model: "",
-        useChatApi: true,
-        url: "",
-        apiKey: "",
-        headers: {}
-      }
+      transcriptionModel: "whisper-1"
     };
     let embeddedCustomModels = [
       {
@@ -2298,7 +2374,6 @@
     const RAG_CHUNK_SIZE = 800;
     const RAG_CHUNK_OVERLAP = 100;
     const RAG_MAX_RESULTS = 8;
-    const RAG_MIN_SIMILARITY = 0.35;
 
     /* Sprint 3: Mesaj Yer İmi & Dallanma */
     const LS_BOOKMARKS_KEY = 'aiChat.bookmarks.v1';
@@ -2448,6 +2523,10 @@ Hedefler:
       toggleSettingsBtn: document.getElementById('toggleSettingsBtn'),
       closeSettingsBtn: document.getElementById('closeSettingsBtn'),
       settingsPanel: document.getElementById('settingsPanel'),
+      cfgApiKey: document.getElementById('cfgApiKey'),
+      toggleApiKeyVisibilityBtn: document.getElementById('toggleApiKeyVisibilityBtn'),
+      apiKeyEyeIcon: document.getElementById('apiKeyEyeIcon'),
+      advancedChatSettings: document.getElementById('advancedChatSettings'),
       cfgUrl: document.getElementById('cfgUrl'),
       cfgMethod: document.getElementById('cfgMethod'),
       cfgHeaders: document.getElementById('cfgHeaders'),
@@ -2456,14 +2535,6 @@ Hedefler:
       testCfgBtn: document.getElementById('testCfgBtn'),
       downloadCloneBtn: document.getElementById('downloadCloneBtn'),
       cfgStatus: document.getElementById('cfgStatus'),
-      cfgEmbeddingModel: document.getElementById('cfgEmbeddingModel'),
-      cfgEmbeddingUseChatApi: document.getElementById('cfgEmbeddingUseChatApi'),
-      cfgEmbeddingUrl: document.getElementById('cfgEmbeddingUrl'),
-      cfgEmbeddingApiKey: document.getElementById('cfgEmbeddingApiKey'),
-      cfgEmbeddingHeaders: document.getElementById('cfgEmbeddingHeaders'),
-      embeddingCfgStatus: document.getElementById('embeddingCfgStatus'),
-      saveEmbeddingCfgBtn: document.getElementById('saveEmbeddingCfgBtn'),
-      testEmbeddingCfgBtn: document.getElementById('testEmbeddingCfgBtn'),
       modelLabel: document.getElementById('modelLabel'),
       modelSelect: document.getElementById('modelSelect'),
       modelDropdownBtn: document.getElementById('modelDropdownBtn'),
@@ -4301,8 +4372,10 @@ Hedefler:
         const raw = localStorage.getItem(LS_CONFIG_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
+          delete parsed.embedding;
           apiConfig = Object.assign({}, apiConfig, parsed);
         }
+        delete apiConfig.embedding;
         // Eğer bodyTemplate içinde model tanımlı değilse veya boşsa varsayılan modeli ata
         if (apiConfig.bodyTemplate) {
           try {
@@ -4323,7 +4396,9 @@ Hedefler:
 
     function saveConfigToLS() {
       try {
-        localStorage.setItem(LS_CONFIG_KEY, JSON.stringify(apiConfig));
+        const configToSave = { ...apiConfig };
+        delete configToSave.embedding;
+        localStorage.setItem(LS_CONFIG_KEY, JSON.stringify(configToSave));
         return true;
       } catch (e) {
         console.warn('Config kaydedilemedi:', e);
@@ -4449,174 +4524,11 @@ Hedefler:
         : '{\n  "Content-Type": "application/json"\n}';
       el.cfgBody.value = apiConfig.bodyTemplate || '{\n  "messages": [\n    {\n      "role": "user",\n      "content": "$PROMPT"\n    }\n  ],\n  "model": ""\n}';
       el.cfgResponsePath.value = apiConfig.responsePath || 'choices.0.message.content';
-      fillEmbeddingSettingsForm();
+      if (el.cfgApiKey) {
+        const auth = (apiConfig.headers && (apiConfig.headers.Authorization || apiConfig.headers.authorization)) || '';
+        el.cfgApiKey.value = auth ? (auth.startsWith('Bearer ') ? auth.slice(7).trim() : auth.trim()) : '';
+      }
       updateModelLabel();
-    }
-
-    let embeddingSettingsDirty = false;
-    let embeddingTestRunning = false;
-    let embeddingReindexRunning = false;
-    let embeddingIndexRequest = 0;
-
-    function setApiSettingsTab(name) {
-      document.querySelectorAll('[data-api-settings-tab]').forEach(button => {
-        const active = button.dataset.apiSettingsTab === name;
-        button.setAttribute('aria-selected', String(active));
-        button.tabIndex = active ? 0 : -1;
-        button.classList.toggle('bg-panel3', active);
-        button.classList.toggle('text-gray-100', active);
-        button.classList.toggle('text-gray-400', !active);
-      });
-      document.getElementById('apiChatPanel').classList.toggle('hidden', name !== 'chat');
-      document.getElementById('apiEmbeddingPanel').classList.toggle('hidden', name !== 'embedding');
-      if (name === 'embedding') {
-        updateEmbeddingConnectionFields();
-        refreshEmbeddingIndexStatus();
-      }
-    }
-
-    function showEmbeddingStatus(message, type = 'info') {
-      el.embeddingCfgStatus.textContent = message;
-      el.embeddingCfgStatus.className = 'text-xs leading-5 min-h-[18px] ' +
-        (type === 'error' ? 'text-red-400' : type === 'success' ? 'text-emerald-400' : 'text-gray-400');
-    }
-
-    function fillEmbeddingSettingsForm() {
-      const settings = getEmbeddingSettings();
-      el.cfgEmbeddingModel.value = settings.model;
-      el.cfgEmbeddingUseChatApi.checked = settings.useChatApi;
-      el.cfgEmbeddingUrl.value = settings.url;
-      el.cfgEmbeddingApiKey.value = settings.apiKey;
-      el.cfgEmbeddingHeaders.value = JSON.stringify(settings.headers, null, 2);
-      embeddingSettingsDirty = false;
-      showEmbeddingStatus('');
-      updateEmbeddingConnectionFields();
-    }
-
-    function updateEmbeddingConnectionFields() {
-      const shared = el.cfgEmbeddingUseChatApi.checked;
-      document.getElementById('embeddingCustomConnection').classList.toggle('hidden', shared);
-      document.getElementById('embeddingSharedConnection').classList.toggle('hidden', !shared);
-      if (shared) {
-        const target = document.getElementById('embeddingResolvedUrl');
-        try {
-          const config = resolveEmbeddingConfig({ ...getEmbeddingSettings(), useChatApi: true });
-          const display = new URL(config.url);
-          display.search = ''; display.hash = ''; display.username = ''; display.password = '';
-          target.textContent = display.toString();
-        } catch (_) {
-          target.textContent = 'Sohbet sekmesinde geçerli bir API adresi ayarlayın veya ayrı bir bağlantı kullanın.';
-        }
-      }
-    }
-
-    function readEmbeddingSettingsForm({ reportErrors = true } = {}) {
-      try {
-        const useChatApi = el.cfgEmbeddingUseChatApi.checked;
-        const settings = {
-          model: el.cfgEmbeddingModel.value.trim(),
-          useChatApi,
-          url: el.cfgEmbeddingUrl.value.trim(),
-          apiKey: el.cfgEmbeddingApiKey.value.trim(),
-          headers: useChatApi ? getEmbeddingSettings().headers : JSON.parse(el.cfgEmbeddingHeaders.value.trim() || '{}'),
-        };
-        if (!settings.model) throw new Error('Embedding model adı zorunludur.');
-        if (!settings.headers || typeof settings.headers !== 'object' || Array.isArray(settings.headers) ||
-          Object.values(settings.headers).some(value => typeof value !== 'string')) {
-          throw new Error('Header’lar metin değerleri içeren bir JSON nesnesi olmalıdır.');
-        }
-        if (!useChatApi || apiConfig.url) resolveEmbeddingConfig(settings);
-        const previous = apiConfig.embedding;
-        apiConfig.embedding = settings;
-        if (!saveConfigToLS()) {
-          apiConfig.embedding = previous;
-          throw new Error('Ayarlar kaydedilemedi. Tarayıcı depolama alanını kontrol edin.');
-        }
-        embeddingSettingsDirty = false;
-        if (reportErrors) showEmbeddingStatus('Embedding ayarları kaydedildi.', 'success');
-        updateEmbeddingConnectionFields();
-        refreshEmbeddingIndexStatus();
-        return true;
-      } catch (error) {
-        if (reportErrors) showEmbeddingStatus(error instanceof SyntaxError ? 'Özel header’lar geçerli JSON olmalıdır.' : error.message, 'error');
-        return false;
-      }
-    }
-
-    async function testEmbeddingConnection() {
-      if (embeddingTestRunning || embeddingReindexRunning) return;
-      if (!readEmbeddingSettingsForm()) return;
-      embeddingTestRunning = true;
-      el.testEmbeddingCfgBtn.disabled = true;
-      el.testEmbeddingCfgBtn.textContent = 'Test ediliyor…';
-      showEmbeddingStatus('Embedding bağlantısı test ediliyor…');
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 20000);
-      try {
-        const config = resolveEmbeddingConfig();
-        const vector = await getEmbedding('Bu bir embedding bağlantı testidir.', controller.signal, config);
-        showEmbeddingStatus('Bağlantı başarılı · ' + config.model + ' · ' + vector.length + ' boyut.', 'success');
-      } catch (error) {
-        showEmbeddingStatus(controller.signal.aborted ? 'Bağlantı testi zaman aşımına uğradı.' : 'Test başarısız: ' + error.message, 'error');
-      } finally {
-        clearTimeout(timeout);
-        embeddingTestRunning = false;
-        el.testEmbeddingCfgBtn.disabled = false;
-        el.testEmbeddingCfgBtn.textContent = 'Bağlantıyı test et';
-      }
-    }
-
-    async function refreshEmbeddingIndexStatus() {
-      const request = ++embeddingIndexRequest;
-      const target = document.getElementById('embeddingIndexStatus');
-      try {
-        const status = await getRAGIndexStatus();
-        if (request !== embeddingIndexRequest) return;
-        target.textContent = !status.total ? 'Henüz belge yüklenmedi.' :
-          status.compatible + '/' + status.total + ' parça seçili modelle uyumlu.' +
-          (status.needsReindex ? ' Eksik veya eski parçalar için yeniden indeksleme gerekli.' : ' Belgeler hazır.');
-        target.classList.toggle('text-amber-400', !!status.needsReindex);
-        document.getElementById('reindexEmbeddingBtn').disabled = !status.total || embeddingReindexRunning;
-      } catch (_) {
-        if (request !== embeddingIndexRequest) return;
-        target.textContent = 'Uyumluluğu görmek için geçerli bir embedding bağlantısı ayarlayın.';
-      }
-    }
-
-    async function reindexKnowledgeBase() {
-      if (embeddingReindexRunning || embeddingTestRunning || isRAGIndexing()) {
-        showToast('Devam eden embedding işleminin tamamlanmasını bekleyin.', 'info');
-        return;
-      }
-      if (embeddingSettingsDirty && !readEmbeddingSettingsForm()) {
-        closeModal('kbModal');
-        el.settingsPanel.classList.remove('settings-hidden');
-        setApiSettingsTab('embedding');
-        return;
-      }
-      embeddingReindexRunning = true;
-      const controls = ['reindexEmbeddingBtn', 'reindexKBBtn', 'saveEmbeddingCfgBtn', 'testEmbeddingCfgBtn'];
-      controls.forEach(id => { document.getElementById(id).disabled = true; });
-      const progress = message => {
-        document.getElementById('embeddingReindexStatus').textContent = message;
-        document.getElementById('kbReindexStatus').textContent = message;
-      };
-      progress('Belgeler yeniden indeksleniyor…');
-      try {
-        const result = await reindexRAGDocuments(progress);
-        const message = !result.total ? 'İndekslenecek belge bulunamadı.' :
-          result.embedded + '/' + result.total + ' parça indekslendi.' +
-          (result.failed ? ' ' + result.failed + ' parça tamamlanamadı; mevcut veriler korundu. Bağlantıyı kontrol edip tekrar deneyin.' : ' Belgeler hazır.');
-        progress(message);
-        showToast(message, result.failed ? 'error' : 'success');
-      } catch (error) {
-        progress('Yeniden indeksleme başarısız: ' + error.message);
-      } finally {
-        embeddingReindexRunning = false;
-        controls.forEach(id => { document.getElementById(id).disabled = false; });
-        await refreshEmbeddingIndexStatus();
-        await renderKBDocuments();
-      }
     }
 
     function updateModelLabel() {
@@ -4644,6 +4556,21 @@ Hedefler:
         } catch (e) {
           showStatus('Headers geçerli bir JSON değil!', 'error');
           return false;
+        }
+      }
+      if (el.cfgApiKey) {
+        if (document.activeElement === el.cfgApiKey) {
+          const keyVal = el.cfgApiKey.value.trim();
+          if (keyVal) {
+            headers['Authorization'] = keyVal.startsWith('Bearer ') ? keyVal : 'Bearer ' + keyVal;
+          } else {
+            delete headers['Authorization'];
+            delete headers['authorization'];
+          }
+          el.cfgHeaders.value = JSON.stringify(headers, null, 2);
+        } else {
+          const auth = headers.Authorization || headers.authorization || '';
+          el.cfgApiKey.value = auth ? (auth.startsWith('Bearer ') ? auth.slice(7).trim() : auth.trim()) : '';
         }
       }
       apiConfig.url = el.cfgUrl.value.trim();
@@ -6727,6 +6654,10 @@ Hedefler:
           const ragContext = await augmentWithRAG(visibleText, controller.signal);
           if (ragContext) apiText += ragContext;
         }
+        if (confluenceStatus) {
+          apiText += await augmentWithConfluenceLinks(visibleText, controller.signal);
+          apiText += await augmentWithConfluenceSearch(visibleText, controller.signal);
+        }
         if (controller.signal.aborted) throw new DOMException('İstek durduruldu.', 'AbortError');
         if (conversationId !== activeConversationId) throw new Error('Sohbet değiştiği için mesaj gönderilmedi.');
         if (templateSnapshot?.prompt) {
@@ -6788,12 +6719,13 @@ Hedefler:
 
     function downloadClone() {
       if (!readSettingsForm()) return;
-      if (embeddingSettingsDirty && !readEmbeddingSettingsForm()) return;
       setHeadersVisibility(false);
 
       // Güncel API ayarlarını ve özel model listesini kaynak koda göm.
+      const cloneApiConfig = { ...apiConfig };
+      delete cloneApiConfig.embedding;
       const configString =
-        'let apiConfig = ' + serializeForInlineScript(apiConfig) + ';\n' +
+        'let apiConfig = ' + serializeForInlineScript(cloneApiConfig) + ';\n' +
         'let embeddedCustomModels = ' + serializeForInlineScript(customModels) + ';';
 
       // Başlangıç şablonunu kullan; mesajlar, aramalar ve önizlemeler taşınmaz.
@@ -6822,10 +6754,6 @@ Hedefler:
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      showStatus('Ayarlar ve ' + customModels.length + ' özel model gömüldü; dosya indirildi ✓', 'success');
-      if (!document.getElementById('apiEmbeddingPanel').classList.contains('hidden')) {
-        showEmbeddingStatus('Sohbet ve embedding ayarlarını içeren HTML indirildi.', 'success');
-      }
     }
 
     /* ============================================================
@@ -7327,44 +7255,42 @@ Hedefler:
     el.testCfgBtn.addEventListener('click', testConnection);
     el.downloadCloneBtn.addEventListener('click', downloadClone);
 
-    document.querySelectorAll('[data-api-settings-tab]').forEach(button => {
-      button.addEventListener('click', () => setApiSettingsTab(button.dataset.apiSettingsTab));
-      button.addEventListener('keydown', event => {
-        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-        event.preventDefault();
-        const name = event.key === 'Home' ? 'chat' : event.key === 'End' ? 'embedding' :
-          button.dataset.apiSettingsTab === 'chat' ? 'embedding' : 'chat';
-        setApiSettingsTab(name);
-        document.querySelector('[data-api-settings-tab="' + name + '"]').focus();
-      });
-    });
-    [el.cfgEmbeddingModel, el.cfgEmbeddingUrl, el.cfgEmbeddingApiKey, el.cfgEmbeddingHeaders].forEach(input => {
-      input.addEventListener('input', () => {
-        embeddingSettingsDirty = true;
-        showEmbeddingStatus('Kaydedilmemiş değişiklikler var.');
-      });
-    });
-    el.cfgEmbeddingUseChatApi.addEventListener('change', () => {
-      embeddingSettingsDirty = true;
-      updateEmbeddingConnectionFields();
-      showEmbeddingStatus('Kaydedilmemiş değişiklikler var.');
-    });
-    el.saveEmbeddingCfgBtn.addEventListener('click', () => readEmbeddingSettingsForm());
-    el.testEmbeddingCfgBtn.addEventListener('click', testEmbeddingConnection);
-    document.getElementById('reindexEmbeddingBtn').addEventListener('click', reindexKnowledgeBase);
-    document.getElementById('reindexKBBtn').addEventListener('click', reindexKnowledgeBase);
-    document.getElementById('kbEmbeddingSettingsBtn').addEventListener('click', () => {
-      closeModal('kbModal');
-      el.settingsPanel.classList.remove('settings-hidden');
-      setApiSettingsTab('embedding');
-      document.getElementById('apiEmbeddingTab').focus();
+    // Ayarlar formundaki değişiklikleri otomatik kaydet ve iki yönlü senkronize et
+    el.cfgApiKey?.addEventListener('input', () => {
+      let headers = {};
+      try {
+        headers = JSON.parse(el.cfgHeaders?.value.trim() || '{}');
+      } catch (_) {
+        headers = apiConfig.headers || {};
+      }
+      const keyVal = el.cfgApiKey.value.trim();
+      if (keyVal) {
+        headers['Authorization'] = keyVal.startsWith('Bearer ') ? keyVal : 'Bearer ' + keyVal;
+      } else {
+        delete headers['Authorization'];
+        delete headers['authorization'];
+      }
+      apiConfig.headers = headers;
+      if (el.cfgHeaders) {
+        el.cfgHeaders.value = JSON.stringify(headers, null, 2);
+      }
+      saveConfigToLS();
     });
 
-    // Ayarlar formundaki değişiklikleri otomatik kaydet ve iki yönlü senkronize et
+    el.toggleApiKeyVisibilityBtn?.addEventListener('click', () => {
+      if (!el.cfgApiKey) return;
+      const isPass = el.cfgApiKey.type === 'password';
+      el.cfgApiKey.type = isPass ? 'text' : 'password';
+      if (el.apiKeyEyeIcon) {
+        el.apiKeyEyeIcon.innerHTML = isPass
+          ? '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>'
+          : '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+      }
+    });
+
     el.cfgUrl?.addEventListener('input', () => {
       readSettingsForm();
       saveConfigToLS();
-      updateEmbeddingConnectionFields();
     });
 
     el.cfgMethod?.addEventListener('change', () => {
@@ -7825,9 +7751,10 @@ Hedefler:
        14.57 AYAR İÇE/DIŞA AKTARMA & KISAYOLLAR (Sprint 4)
        ============================================================ */
     function exportSettings() {
-      if (embeddingSettingsDirty && !readEmbeddingSettingsForm()) return;
+      const exportedApiConfig = { ...apiConfig };
+      delete exportedApiConfig.embedding;
       const data = {
-        apiConfig: { ...apiConfig },
+        apiConfig: exportedApiConfig,
         customModels,
         promptTemplates,
         systemPrompt,
@@ -7857,16 +7784,6 @@ Hedefler:
           if (isBusy) throw new Error('Yanıt tamamlandıktan sonra ayarları içe aktarın.');
           if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Geçersiz ayar dosyası.');
           if (data.apiConfig !== undefined && (!data.apiConfig || typeof data.apiConfig !== 'object' || Array.isArray(data.apiConfig))) throw new Error('Geçersiz API ayarları.');
-          if (data.apiConfig?.embedding !== undefined) {
-            const settings = data.apiConfig.embedding;
-            if (!settings || typeof settings !== 'object' || Array.isArray(settings) ||
-              (settings.useChatApi !== undefined && typeof settings.useChatApi !== 'boolean') ||
-              ['model', 'url', 'apiKey'].some(key => settings[key] !== undefined && typeof settings[key] !== 'string') ||
-              (settings.headers !== undefined && (!settings.headers || typeof settings.headers !== 'object' || Array.isArray(settings.headers) ||
-                Object.values(settings.headers).some(value => typeof value !== 'string')))) {
-              throw new Error('Geçersiz embedding ayarları.');
-            }
-          }
           for (const key of ['customModels', 'promptTemplates']) {
             if (data[key] !== undefined && (!Array.isArray(data[key]) || data[key].some(item => !item || typeof item !== 'object' || Array.isArray(item)))) {
               throw new Error('Geçersiz ayar listesi: ' + key);
@@ -7876,7 +7793,14 @@ Hedefler:
           for (const key of ['streamingEnabled', 'ragEnabled']) {
             if (data[key] !== undefined && typeof data[key] !== 'boolean') throw new Error('Geçersiz ayar: ' + key);
           }
-          if (data.apiConfig) { Object.assign(apiConfig, data.apiConfig); saveConfigToLS(); fillSettingsForm(); }
+          if (data.apiConfig) {
+            const importedApiConfig = { ...data.apiConfig };
+            delete importedApiConfig.embedding;
+            Object.assign(apiConfig, importedApiConfig);
+            delete apiConfig.embedding;
+            saveConfigToLS();
+            fillSettingsForm();
+          }
           if (data.customModels) { customModels = data.customModels; saveCustomModels(); renderModelControls(); }
           if (data.promptTemplates) {
             promptTemplates = data.promptTemplates;
@@ -8052,105 +7976,7 @@ Hedefler:
       return result;
     }
 
-    // --- Embedding API ---
-    const embeddingDimensionsByProfile = new Map();
     let ragIndexOperation = false;
-
-    function getEmbeddingSettings() {
-      const raw = apiConfig.embedding || {};
-      return {
-        // Defaults apply to omitted legacy settings, never to explicitly invalid values.
-        model: raw.model === undefined ? '' : typeof raw.model === 'string' ? raw.model.trim() : raw.model,
-        useChatApi: raw.useChatApi !== false,
-        url: typeof raw.url === 'string' ? raw.url.trim() : '',
-        apiKey: typeof raw.apiKey === 'string' ? raw.apiKey.trim() : '',
-        headers: raw.headers === undefined ? {} : raw.headers && typeof raw.headers === 'object' && !Array.isArray(raw.headers) ? { ...raw.headers } : raw.headers,
-      };
-    }
-
-    function resolveEmbeddingConfig(settings = getEmbeddingSettings()) {
-      const model = typeof settings.model === 'string' ? settings.model.trim() : '';
-      if (!model) throw new Error('Embedding model adını girin.');
-      const useChatApi = settings.useChatApi !== false;
-      const rawUrl = useChatApi ? apiConfig.url : settings.url;
-      if (typeof rawUrl !== 'string' || !rawUrl.trim()) throw new Error('Embedding API URL adresini girin.');
-      let url;
-      try { url = new URL(rawUrl.trim(), useChatApi ? location.href : undefined); }
-      catch (_) { throw new Error('Embedding API URL adresi geçersiz.'); }
-      if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Embedding API URL adresi HTTP veya HTTPS olmalıdır.');
-      if (useChatApi) {
-        const path = url.pathname.replace(/\/+$/, '');
-        if (/\/(chat\/completions|responses|completions)$/i.test(path)) {
-          url.pathname = path.replace(/\/(chat\/completions|responses|completions)$/i, '/embeddings');
-        } else if (/\/embeddings$/i.test(path)) {
-          url.pathname = path;
-        } else if (/\/v1$/i.test(path)) {
-          url.pathname = path + '/embeddings';
-        } else if (!path) {
-          url.pathname = '/v1/embeddings';
-        } else {
-          throw new Error('Sohbet URL adresinden embedding endpoint’i türetilemedi. Ayrı embedding API URL adresi tanımlayın.');
-        }
-      }
-      url.hash = '';
-      const configuredHeaders = useChatApi ? apiConfig.headers : settings.headers;
-      const sourceHeaders = configuredHeaders === undefined ? {} : configuredHeaders;
-      if (!sourceHeaders || typeof sourceHeaders !== 'object' || Array.isArray(sourceHeaders)) throw new Error('Embedding header ayarı bir JSON nesnesi olmalıdır.');
-      const headers = {};
-      for (const [name, value] of Object.entries(sourceHeaders)) {
-        if (typeof value !== 'string') throw new Error('Embedding header değerleri metin olmalıdır.');
-        if (name.toLowerCase() !== 'content-type' && !(!useChatApi && settings.apiKey && name.toLowerCase() === 'authorization')) {
-          headers[name] = value;
-        }
-      }
-      headers['Content-Type'] = 'application/json';
-      if (!useChatApi && settings.apiKey?.trim()) headers.Authorization = 'Bearer ' + settings.apiKey.trim();
-      const profileUrl = new URL(url.toString());
-      profileUrl.username = '';
-      profileUrl.password = '';
-      for (const name of [...profileUrl.searchParams.keys()]) {
-        if (/(key|token|secret|signature|authorization|credential)/i.test(name)) profileUrl.searchParams.delete(name);
-      }
-      profileUrl.searchParams.sort();
-      const profile = JSON.stringify({ model, url: profileUrl.toString() });
-      return { url: url.toString(), headers, model, profile };
-    }
-
-    function getEmbeddingUrl() {
-      return resolveEmbeddingConfig().url;
-    }
-
-    // Embedding modeli tanımlı değilse null döner: belge yalnızca metin olarak indekslenir (anahtar kelime araması).
-    function resolveEmbeddingConfigForIndexing() {
-      const model = getEmbeddingSettings().model;
-      if (model === '' ) return null;
-      return resolveEmbeddingConfig();
-    }
-
-    function isEmbeddingVector(value) {
-      return Array.isArray(value) && value.length > 0 && value.every(n => typeof n === 'number' && Number.isFinite(n)) && value.some(n => n !== 0);
-    }
-
-    async function getEmbedding(text, signal, config = resolveEmbeddingConfig()) {
-      const res = await fetch(config.url, {
-        method: 'POST',
-        headers: config.headers,
-        body: JSON.stringify({ model: config.model, input: text.slice(0, 8000) }),
-        signal,
-      });
-      if (!res.ok) throw new Error('Embedding HTTP ' + res.status);
-      const data = await res.json();
-      const embedding = data?.data?.[0]?.embedding ?? data?.embedding;
-      if (!isEmbeddingVector(embedding)) throw new Error('Embedding API geçerli, sonlu sayılardan oluşan bir vektör döndürmedi.');
-      embeddingDimensionsByProfile.set(config.profile, embedding.length);
-      return embedding;
-    }
-
-    function isEmbeddingCompatible(chunk, config, dimensions = embeddingDimensionsByProfile.get(config?.profile)) {
-      return !!config && chunk.embeddingProfile === config.profile && isEmbeddingVector(chunk.embedding) &&
-        chunk.embeddingDimensions === chunk.embedding.length && (!dimensions || chunk.embeddingDimensions === dimensions);
-    }
-
     function isRAGIndexing() {
       return ragIndexOperation;
     }
@@ -8166,28 +7992,12 @@ Hedefler:
       }
     }
 
-    // --- Cosine Similarity ---
-    function cosineSim(a, b) {
-      if (!a || !b || a.length !== b.length) return 0;
-      let dot = 0, nA = 0, nB = 0;
-      for (let i = 0; i < a.length; i++) { dot += a[i] * b[i]; nA += a[i] * a[i]; nB += b[i] * b[i]; }
-      return dot / (Math.sqrt(nA) * Math.sqrt(nB) + 1e-10);
-    }
-
-    function rankSemanticChunks(chunks, queryEmbedding, minScore = RAG_MIN_SIMILARITY, maxResults = RAG_MAX_RESULTS) {
-      return chunks.filter(c => isEmbeddingVector(c.embedding) && c.embedding.length === queryEmbedding.length)
-        .map(c => ({ ...c, score: cosineSim(queryEmbedding, c.embedding) }))
-        .filter(c => c.score >= minScore)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, maxResults);
-    }
-
     // --- Belge İndeksleme ---
     async function indexDocument(file, onProgress) {
-      return runRAGIndexing(() => indexDocumentWithConfig(file, onProgress, resolveEmbeddingConfigForIndexing()));
+      return runRAGIndexing(() => indexDocumentCore(file, onProgress));
     }
 
-    async function indexDocumentWithConfig(file, onProgress, config) {
+    async function indexDocumentCore(file, onProgress) {
       const id = 'doc-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
       let text = '';
       const ext = file.name.split('.').pop().toLowerCase();
@@ -8240,111 +8050,21 @@ Hedefler:
 
       if (onProgress) onProgress('Parçalanıyor...');
       const chunks = chunkText(text);
-      const records = [];
-      let dimensions = null;
-
-      for (let i = 0; i < chunks.length; i++) {
-        let emb = null;
-        if (config) {
-          if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
-          try {
-            const candidate = await getEmbedding(chunks[i], undefined, config);
-            if (dimensions && candidate.length !== dimensions) throw new Error('Embedding vektör boyutu işlem sırasında değişti.');
-            dimensions = candidate.length;
-            emb = candidate;
-          } catch (_) { /* Metin korunur; eksik embedding sayısı arayüzde gösterilir. */ }
-        }
-        records.push({
-          id: id + '-c' + i, docId: id, index: i, text: chunks[i], embedding: emb,
-          embeddingProfile: emb ? config.profile : null,
-          embeddingModel: emb ? config.model : null,
-          embeddingDimensions: emb ? emb.length : null,
-        });
-      }
-      if (config && dimensions) embeddingDimensionsByProfile.set(config.profile, dimensions);
+      const records = chunks.map((chunk, index) => ({
+        id: id + '-c' + index, docId: id, index, text: chunk,
+      }));
 
       if (onProgress) onProgress('Kaydediliyor...');
       const db = await openRAGDB();
       const tx = db.transaction(['documents', 'chunks'], 'readwrite');
       tx.objectStore('documents').put({
         id, name: file.name, size: file.size, type: ext,
-        chunkCount: chunks.length, embeddedCount: records.filter(r => r.embedding).length,
+        chunkCount: chunks.length,
         totalChars: text.length, createdAt: Date.now(),
       });
       for (const r of records) tx.objectStore('chunks').put(r);
       await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
-      const embedded = records.filter(r => r.embedding).length;
-      return { id, name: file.name, chunkCount: chunks.length, embedded, total: chunks.length, failed: config ? chunks.length - embedded : 0, keywordOnly: !config };
-    }
-
-    async function getRAGSnapshot() {
-      const db = await openRAGDB();
-      const tx = db.transaction(['documents', 'chunks'], 'readonly');
-      const readAll = store => new Promise((resolve, reject) => {
-        const request = tx.objectStore(store).getAll();
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-      const [documents, chunks] = await Promise.all([readAll('documents'), readAll('chunks')]);
-      return { documents, chunks };
-    }
-
-    async function getRAGIndexStatus(config) {
-      let configError = '';
-      if (!config) {
-        try { config = resolveEmbeddingConfig(); }
-        catch (error) { configError = error.message; }
-      }
-      const snapshot = await getRAGSnapshot();
-      const counts = chunks => {
-        const compatible = chunks.filter(chunk => isEmbeddingCompatible(chunk, config)).length;
-        const missing = chunks.filter(chunk => !isEmbeddingVector(chunk.embedding)).length;
-        const incompatible = chunks.length - compatible - missing;
-        return { total: chunks.length, compatible, missing, incompatible, needsReindex: compatible < chunks.length };
-      };
-      const documents = snapshot.documents.sort((a, b) => b.createdAt - a.createdAt).map(doc => ({
-        ...doc, ...counts(snapshot.chunks.filter(chunk => chunk.docId === doc.id)),
-      }));
-      return { ...counts(snapshot.chunks), documents, configError };
-    }
-
-    async function reindexRAGDocuments(onProgress) {
-      return runRAGIndexing(async () => {
-        const config = resolveEmbeddingConfig();
-        const { documents, chunks } = await getRAGSnapshot();
-        const updates = [];
-        let dimensions = null;
-        let failed = 0;
-        for (let i = 0; i < chunks.length; i++) {
-          if (onProgress) onProgress('Embedding ' + (i + 1) + '/' + chunks.length);
-          try {
-            const embedding = await getEmbedding(chunks[i].text, undefined, config);
-            if (dimensions && embedding.length !== dimensions) throw new Error('Embedding vektör boyutu işlem sırasında değişti.');
-            dimensions = embedding.length;
-            updates.push({
-              ...chunks[i], embedding, embeddingProfile: config.profile,
-              embeddingModel: config.model, embeddingDimensions: embedding.length,
-            });
-          } catch (_) { failed++; }
-        }
-        if (dimensions) embeddingDimensionsByProfile.set(config.profile, dimensions);
-        if (updates.length) {
-          if (onProgress) onProgress('Kaydediliyor...');
-          const replacements = new Map(updates.map(chunk => [chunk.id, chunk]));
-          const finalChunks = chunks.map(chunk => replacements.get(chunk.id) || chunk);
-          const db = await openRAGDB();
-          const tx = db.transaction(['documents', 'chunks'], 'readwrite');
-          for (const chunk of updates) tx.objectStore('chunks').put(chunk);
-          for (const doc of documents) {
-            tx.objectStore('documents').put({
-              ...doc, embeddedCount: finalChunks.filter(chunk => chunk.docId === doc.id && isEmbeddingVector(chunk.embedding)).length,
-              updatedAt: Date.now(),
-            });
-          }
-          await new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error || new Error('İndeks kaydı iptal edildi.')); });
-        }
-        return { embedded: updates.length, total: chunks.length, failed };
-      });
+      return { id, name: file.name, chunkCount: chunks.length, total: chunks.length };
     }
 
     // Kelime araması: tam kelime sınırı + basit Türkçe kök kırpma (ilk 4 harf) + BM25 puanlama.
@@ -8386,30 +8106,14 @@ Hedefler:
 
     // --- RAG Arama ---
     async function searchRAG(query, maxResults = RAG_MAX_RESULTS, signal) {
+      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       const db = await openRAGDB();
-      let qEmb;
-      let config;
-      try {
-        config = resolveEmbeddingConfig();
-        qEmb = await getEmbedding(query, signal, config);
-      }
-      catch (error) { if (signal?.aborted) throw error; }
-
       const tx = db.transaction('chunks', 'readonly');
       const allChunks = await new Promise((res, rej) => {
         const r = tx.objectStore('chunks').getAll();
         r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
       });
-
-      let scored;
-      if (qEmb) {
-        const compatible = allChunks.filter(chunk => isEmbeddingCompatible(chunk, config, qEmb.length));
-        const fallback = allChunks.filter(chunk => !isEmbeddingCompatible(chunk, config, qEmb.length));
-        const semanticResults = rankSemanticChunks(compatible, qEmb, RAG_MIN_SIMILARITY, maxResults);
-        scored = semanticResults.concat(rankKeywordChunks(fallback, query, maxResults - semanticResults.length, allChunks));
-      } else {
-        scored = rankKeywordChunks(allChunks, query, maxResults);
-      }
+      const scored = rankKeywordChunks(allChunks, query, maxResults);
 
       // Belge adlarını al
       const dtx = db.transaction('documents', 'readonly');
@@ -8453,7 +8157,7 @@ Hedefler:
     async function renderKBDocuments() {
       if (!el.kbDocList) return;
       try {
-        const { documents: docs } = await getRAGIndexStatus();
+        const docs = await getRAGDocuments();
         el.kbDocCount.textContent = docs.length + ' belge';
         if (docs.length === 0) {
           el.kbDocList.innerHTML = '<p class="text-center text-xs text-gray-600 py-6">Henüz belge yüklenmemiş.</p>';
@@ -8469,8 +8173,7 @@ Hedefler:
               <span class="text-lg shrink-0">${typeIcon}</span>
               <div class="min-w-0">
                 <p class="text-xs font-medium text-gray-200 truncate">${escapeHtml(doc.name)}</p>
-                <p class="text-[10px] text-gray-500 mt-0.5">${doc.total} parça · ${formatFileSize(doc.size)} · Güncel model: ${doc.compatible}/${doc.total} hazır</p>
-                <p class="text-[10px] ${doc.needsReindex ? 'text-amber-400' : 'text-gray-500'} mt-0.5">${doc.missing} eksik · ${doc.incompatible} uyumsuz${doc.needsReindex ? ' · Yeniden indeksleme gerekli' : ''}</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">${doc.chunkCount || 0} parça · ${formatFileSize(doc.size)}</p>
               </div>
             </div>
             <button type="button" class="shrink-0 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition" title="Sil">
@@ -8483,7 +8186,6 @@ Hedefler:
               await deleteRAGDocument(doc.id);
               showToast('Belge silindi.', 'success');
               await renderKBDocuments();
-              if (typeof refreshEmbeddingIndexStatus === 'function') refreshEmbeddingIndexStatus();
             } catch (error) { showToast(error.message || 'Belge silinemedi.', 'error'); }
           });
           el.kbDocList.appendChild(card);
@@ -8508,16 +8210,11 @@ Hedefler:
       if (isRAGIndexing()) { showToast('Bilgi tabanında indeksleme sürüyor. Tamamlanmasını bekleyin.', 'info'); return; }
       try {
         await runRAGIndexing(async () => {
-          const config = resolveEmbeddingConfigForIndexing();
           for (const file of files) {
             if (file.size > 10 * 1024 * 1024) { showToast(file.name + ' 10 MB sınırını aşıyor.', 'error'); continue; }
             try {
-              const result = await indexDocumentWithConfig(file, msg => showKBStatus('⏳ ' + file.name + ': ' + msg), config);
-              if (result.failed) {
-                showToast(file.name + ': ' + result.embedded + '/' + result.total + ' parça hazır. ' + result.failed + ' parça için embedding alınamadı; metinler korundu. Yeniden indeksleyebilirsiniz.', 'info');
-              } else {
-                showToast(file.name + (result.keywordOnly ? ' yalnızca metin olarak kaydedildi (embedding modeli tanımlı değil; anahtar kelime araması kullanılır).' : ' başarıyla indekslendi.'), result.keywordOnly ? 'info' : 'success');
-              }
+              await indexDocumentCore(file, msg => showKBStatus('⏳ ' + file.name + ': ' + msg));
+              showToast(file.name + ' başarıyla indekslendi.', 'success');
             } catch (err) {
               console.warn('Index error:', err);
               showToast(file.name + ' indekslenemedi: ' + (err.message || err), 'error');
@@ -8529,7 +8226,6 @@ Hedefler:
       } finally {
         showKBStatus('', false);
         await renderKBDocuments();
-        if (typeof refreshEmbeddingIndexStatus === 'function') refreshEmbeddingIndexStatus();
       }
     }
 
@@ -8585,6 +8281,335 @@ Hedefler:
     }
 
     /* ============================================================
+       14b. CONFLUENCE ENTEGRASYONU
+       Masaüstü (Spring Boot) sürümünde /api/confluence-* uçları üzerinden çalışır;
+       istek sunucudan gittiği için CORS yoktur ve token tarayıcıya gelmez.
+       HTML dosyadan (file://) açıldığında tamamen pasiftir.
+       ============================================================ */
+    const LS_CONFLUENCE_RAG_KEY = 'aiChat.confluenceRag.v1';
+    const CONFLUENCE_MAX_LINKS = 3;
+    const CONFLUENCE_SEARCH_PAGES = 5;
+    const CONFLUENCE_MAX_PASSAGES = 6;
+    let confluenceStatus = null; // { baseUrl, tokenConfigured } | null
+    let confluenceRagEnabled = false;
+    let confluenceEditorMode = 'create';
+    let confluenceLoadedPage = null;
+    let confluencePreviewSignature = null;
+
+    async function loadConfluenceStatus() {
+      if (!/^https?:$/.test(location.protocol)) return null;
+      try {
+        const res = await fetch('/api/confluence-status', { cache: 'no-store' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data && data.baseUrl ? data : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function renderConfluenceStatus() {
+      const toggle = document.getElementById('confluenceRagToggle');
+      const text = document.getElementById('confluenceStatusText');
+      const editorButton = document.getElementById('confluenceEditorOpenBtn');
+      const settingsStatus = document.getElementById('confluencePatStatus');
+      if (!toggle || !text) return;
+      if (!confluenceStatus) {
+        toggle.checked = false;
+        toggle.disabled = true;
+        if (editorButton) editorButton.disabled = true;
+        for (const id of ['confluencePatInput', 'confluencePatSaveBtn', 'confluencePatTestBtn', 'confluencePatClearBtn']) {
+          const control = document.getElementById(id);
+          if (control) control.disabled = true;
+        }
+        text.textContent = 'Yalnızca masaüstü uygulamasında (ChatApp.exe) kullanılabilir.';
+        text.className = 'text-xs text-gray-500 truncate';
+        if (settingsStatus) settingsStatus.textContent = 'Confluence bağlantısı yalnızca masaüstü uygulamasında kullanılabilir.';
+        return;
+      }
+      const host = new URL(confluenceStatus.baseUrl).host;
+      for (const id of ['confluencePatInput', 'confluencePatSaveBtn', 'confluencePatTestBtn', 'confluencePatClearBtn']) {
+        const control = document.getElementById(id);
+        if (control) control.disabled = false;
+      }
+      toggle.disabled = !confluenceStatus.tokenConfigured;
+      toggle.checked = confluenceStatus.tokenConfigured && confluenceRagEnabled;
+      if (editorButton) editorButton.disabled = !confluenceStatus.tokenConfigured;
+      text.textContent = confluenceStatus.tokenConfigured
+        ? host + ' · PAT kayıtlı'
+        : host + ' · PAT tanımlı değil';
+      text.title = text.textContent;
+      text.className = 'text-xs truncate ' + (confluenceStatus.tokenConfigured ? 'text-emerald-400' : 'text-amber-400');
+      if (settingsStatus && !settingsStatus.dataset.testResult) {
+        settingsStatus.textContent = confluenceStatus.tokenConfigured
+          ? 'PAT kayıtlı. Erişimi doğrulamak için bağlantıyı test edin.'
+          : 'PAT henüz kaydedilmedi.';
+      }
+    }
+
+    // Mesajdaki, yapılandırılmış Confluence sunucusuna ait linkler (en fazla 3).
+    function findConfluenceLinks(text) {
+      if (!confluenceStatus || !text) return [];
+      const host = new URL(confluenceStatus.baseUrl).host.toLowerCase();
+      const urls = (text.match(/https?:\/\/[^\s<>"'`)\]]+/g) || []).map(url => url.replace(/[.,;:!?]+$/, ''));
+      return [...new Set(urls)].filter(url => {
+        try { return new URL(url).host.toLowerCase() === host; } catch { return false; }
+      }).slice(0, CONFLUENCE_MAX_LINKS);
+    }
+
+    async function confluenceGet(path, signal) {
+      const res = await fetch(path, { signal, headers: { Accept: 'application/json' } });
+      let data = null;
+      try { data = await res.json(); } catch { /* gövde JSON değil */ }
+      if (!res.ok) throw new Error((data && data.error) || ('Confluence HTTP ' + res.status));
+      return data;
+    }
+
+    // 1) Mesajdaki Confluence linklerinin içeriğini modele bağlam olarak ekler.
+    async function augmentWithConfluenceLinks(userText, signal) {
+      if (!confluenceRagEnabled || !confluenceStatus?.tokenConfigured) return '';
+      const links = findConfluenceLinks(userText);
+      if (!links.length) return '';
+      const parts = [];
+      for (const link of links) {
+        try {
+          const page = await confluenceGet('/api/confluence-page?url=' + encodeURIComponent(link), signal);
+          parts.push(
+            '[Confluence Sayfası: ' + page.title + (page.spaceName ? ' — ' + page.spaceName : '') + ']\n' +
+            'Adres: ' + page.url + '\n\n' + (page.text || '(Sayfa boş)') +
+            (page.truncated ? '\n\n(Not: Sayfa uzun olduğu için kısaltıldı.)' : '')
+          );
+          showToast('Confluence sayfası eklendi: ' + page.title, 'success');
+        } catch (err) {
+          if (signal?.aborted) throw err;
+          showToast('Confluence sayfası alınamadı: ' + err.message, 'error');
+        }
+      }
+      if (!parts.length) return '';
+      return '\n\n--- Mesajdaki Confluence Sayfalarının İçeriği ---\n' + parts.join('\n\n---\n\n') +
+        '\n--- Confluence İçeriği Sonu ---';
+    }
+
+    // 2) Soruyla Confluence'ta arar; sayfaları parçalayıp mevcut BM25 ile en alakalı pasajları seçer.
+    async function augmentWithConfluenceSearch(userText, signal) {
+      if (!confluenceRagEnabled || !confluenceStatus?.tokenConfigured) return '';
+      const query = userText.replace(/https?:\/\/\S+/g, ' ').trim();
+      if (!query) return '';
+      try {
+        const data = await confluenceGet('/api/confluence-search?limit=' + CONFLUENCE_SEARCH_PAGES + '&q=' + encodeURIComponent(query), signal);
+        const pages = (data && data.results) || [];
+        if (!pages.length) return '';
+        const chunks = pages.flatMap(page => chunkText(page.text || '').map(text => ({ text, title: page.title, url: page.url })));
+        let top = rankKeywordChunks(chunks, query, CONFLUENCE_MAX_PASSAGES);
+        if (!top.length) {
+          // Confluence eşleşme buldu ama yerel BM25 bulamadıysa (ör. eş anlamlılar): ilk sayfaların başını kullan.
+          top = pages.slice(0, 3).map(page => ({ text: (page.text || '').slice(0, RAG_CHUNK_SIZE), title: page.title, url: page.url }))
+            .filter(chunk => chunk.text);
+        }
+        if (!top.length) return '';
+        const context = top.map((chunk, i) => '[Confluence ' + (i + 1) + ': ' + chunk.title + ' — ' + chunk.url + ']\n' + chunk.text)
+          .join('\n\n---\n\n');
+        return '\n\n--- Confluence\'tan Bulunan Bağlam ---\n' + context + '\n--- Bağlam Sonu ---\n\n' +
+          'Yanıtta kullandığın Confluence kaynaklarının başlık ve adreslerini belirt.';
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        console.warn('Confluence search error:', err);
+        showToast('Confluence araması başarısız: ' + err.message, 'error');
+        return '';
+      }
+    }
+
+    async function confluenceRequest(path, options = {}) {
+      const headers = { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}) };
+      if (options.method && options.method !== 'GET') headers['X-ChatApp-Request'] = '1';
+      const response = await fetch(path, { ...options, headers, cache: 'no-store' });
+      let data = null;
+      try { data = await response.json(); } catch (_) { /* boş yanıt */ }
+      if (!response.ok) throw new Error(data?.error || 'Confluence HTTP ' + response.status);
+      return data;
+    }
+
+    async function refreshConfluenceStatus() {
+      confluenceStatus = await loadConfluenceStatus();
+      renderConfluenceStatus();
+    }
+
+    async function testConfluenceConnection() {
+      const status = document.getElementById('confluencePatStatus');
+      if (!confluenceStatus) return;
+      status.textContent = 'Bağlantı test ediliyor…';
+      try {
+        const result = await confluenceRequest('/api/confluence-connection');
+        status.textContent = 'Bağlandı: ' + result.user;
+        status.className = 'text-xs text-emerald-400';
+        status.dataset.testResult = 'success';
+      } catch (error) {
+        status.textContent = 'Bağlantı kurulamadı: ' + error.message;
+        status.className = 'text-xs text-red-400';
+        status.dataset.testResult = 'error';
+      }
+    }
+
+    function confluenceEditorSignature() {
+      return JSON.stringify([
+        confluenceEditorMode,
+        document.getElementById('confluenceSpaceKey').value.trim(),
+        document.getElementById('confluencePageTitle').value.trim(),
+        document.getElementById('confluencePageBody').value,
+        confluenceLoadedPage?.id,
+        confluenceLoadedPage?.version,
+      ]);
+    }
+
+    function invalidateConfluencePreview() {
+      confluencePreviewSignature = null;
+      document.getElementById('confluencePreviewPanel').classList.add('hidden');
+      document.getElementById('confluencePublishBtn').disabled = true;
+    }
+
+    function setConfluenceEditorMode(mode) {
+      confluenceEditorMode = mode;
+      confluenceLoadedPage = null;
+      document.getElementById('confluenceCreateFields').classList.toggle('hidden', mode !== 'create');
+      document.getElementById('confluenceEditFields').classList.toggle('hidden', mode !== 'edit');
+      document.getElementById('confluenceBodyLabel').textContent = mode === 'create'
+        ? 'İçerik (düz metin)' : 'İçerik (Confluence XHTML kaynağı)';
+      document.getElementById('confluenceCreateModeBtn').classList.toggle('bg-accent', mode === 'create');
+      document.getElementById('confluenceEditModeBtn').classList.toggle('bg-accent', mode === 'edit');
+      document.getElementById('confluencePageTitle').value = '';
+      document.getElementById('confluencePageBody').value = '';
+      document.getElementById('confluenceEditorStatus').textContent = '';
+      invalidateConfluencePreview();
+    }
+
+    async function loadConfluencePageForEdit() {
+      const status = document.getElementById('confluenceEditorStatus');
+      const url = document.getElementById('confluencePageUrl').value.trim();
+      if (!url) { status.textContent = 'Sayfa bağlantısını girin.'; return; }
+      status.textContent = 'Sayfa yükleniyor…';
+      invalidateConfluencePreview();
+      confluenceLoadedPage = null;
+      try {
+        const page = await confluenceRequest('/api/confluence-editor/page?url=' + encodeURIComponent(url));
+        confluenceLoadedPage = page;
+        document.getElementById('confluencePageTitle').value = page.title || '';
+        document.getElementById('confluencePageBody').value = page.storage || '';
+        status.textContent = 'Sayfa yüklendi (sürüm ' + page.version + '). Kaynağı gözden geçirip önizleyin.';
+      } catch (error) {
+        status.textContent = 'Sayfa yüklenemedi: ' + error.message;
+      }
+    }
+
+    function previewConfluencePage() {
+      const status = document.getElementById('confluenceEditorStatus');
+      const title = document.getElementById('confluencePageTitle').value.trim();
+      const body = document.getElementById('confluencePageBody').value;
+      const spaceKey = document.getElementById('confluenceSpaceKey').value.trim();
+      if (!title || !body.trim() || (confluenceEditorMode === 'create' && !spaceKey)
+        || (confluenceEditorMode === 'edit' && !confluenceLoadedPage)) {
+        status.textContent = 'Alan anahtarını, sayfa başlığını ve içeriği tamamlayın; düzenleme için önce sayfayı yükleyin.';
+        return;
+      }
+      document.getElementById('confluencePreviewMeta').textContent = confluenceEditorMode === 'create'
+        ? 'Yeni sayfa · ' + spaceKey + ' · ' + title
+        : 'Mevcut sayfa · ' + confluenceLoadedPage.spaceKey + ' · ' + title + ' · sürüm ' + confluenceLoadedPage.version;
+      const preview = document.getElementById('confluencePreviewBody');
+      if (confluenceEditorMode === 'edit' && window.DOMPurify) {
+        preview.classList.remove('whitespace-pre-wrap');
+        preview.innerHTML = window.DOMPurify.sanitize(body);
+      } else {
+        preview.classList.add('whitespace-pre-wrap');
+        preview.textContent = body;
+      }
+      document.getElementById('confluencePreviewPanel').classList.remove('hidden');
+      confluencePreviewSignature = confluenceEditorSignature();
+      document.getElementById('confluencePublishBtn').disabled = false;
+      status.textContent = 'Önizlemeyi kontrol edin. Yayınla düğmesi Confluence sayfasını değiştirir.';
+    }
+
+    async function publishConfluencePage() {
+      const status = document.getElementById('confluenceEditorStatus');
+      const button = document.getElementById('confluencePublishBtn');
+      if (!confluencePreviewSignature || confluencePreviewSignature !== confluenceEditorSignature()) {
+        invalidateConfluencePreview();
+        status.textContent = 'İçerik değişti. Yayınlamadan önce tekrar önizleyin.';
+        return;
+      }
+      button.disabled = true;
+      status.textContent = 'Confluence sayfası yayınlanıyor…';
+      try {
+        const title = document.getElementById('confluencePageTitle').value.trim();
+        const body = document.getElementById('confluencePageBody').value;
+        const path = confluenceEditorMode === 'create' ? '/api/confluence-editor/pages'
+          : '/api/confluence-editor/pages/' + encodeURIComponent(confluenceLoadedPage.id);
+        const payload = confluenceEditorMode === 'create'
+          ? { spaceKey: document.getElementById('confluenceSpaceKey').value.trim(), title, text: body }
+          : { title, storage: body, version: confluenceLoadedPage.version };
+        const result = await confluenceRequest(path, {
+          method: confluenceEditorMode === 'create' ? 'POST' : 'PUT',
+          body: JSON.stringify(payload),
+        });
+        invalidateConfluencePreview();
+        status.textContent = 'Yayınlandı: ' + result.title + ' — ' + result.url;
+        showToast('Confluence sayfası yayınlandı.', 'success');
+      } catch (error) {
+        invalidateConfluencePreview();
+        status.textContent = 'Yayınlama sonucu doğrulanamadı: ' + error.message
+          + '. Yeniden denemeden önce Confluence sayfasını kontrol edin.';
+      }
+    }
+
+    async function initConfluence() {
+      confluenceRagEnabled = localStorage.getItem(LS_CONFLUENCE_RAG_KEY) === 'true';
+      document.getElementById('confluenceRagToggle')?.addEventListener('change', (event) => {
+        confluenceRagEnabled = event.target.checked;
+        localStorage.setItem(LS_CONFLUENCE_RAG_KEY, String(confluenceRagEnabled));
+      });
+      const patInput = document.getElementById('confluencePatInput');
+      const patStatus = document.getElementById('confluencePatStatus');
+      document.getElementById('confluencePatSaveBtn')?.addEventListener('click', async () => {
+        const pat = patInput.value.trim();
+        if (!pat) { patStatus.textContent = 'PAT değerini girin.'; return; }
+        try {
+          await confluenceRequest('/api/confluence-token', { method: 'PUT', body: JSON.stringify({ pat }) });
+          patInput.value = '';
+          delete patStatus.dataset.testResult;
+          await refreshConfluenceStatus();
+          await testConfluenceConnection();
+        } catch (error) {
+          patStatus.textContent = 'PAT kaydedilemedi: ' + error.message;
+        }
+      });
+      document.getElementById('confluencePatTestBtn')?.addEventListener('click', testConfluenceConnection);
+      document.getElementById('confluencePatClearBtn')?.addEventListener('click', async () => {
+        if (!confirm('Kayıtlı Confluence PAT kaldırılsın mı?')) return;
+        try {
+          await confluenceRequest('/api/confluence-token', { method: 'DELETE' });
+          patInput.value = '';
+          delete patStatus.dataset.testResult;
+          await refreshConfluenceStatus();
+        } catch (error) {
+          patStatus.textContent = 'PAT kaldırılamadı: ' + error.message;
+        }
+      });
+      document.getElementById('confluenceEditorOpenBtn')?.addEventListener('click', () => {
+        if (!confluenceStatus?.tokenConfigured) return;
+        closeModal('kbModal');
+        setConfluenceEditorMode('create');
+        openModal('confluenceEditorModal');
+      });
+      document.getElementById('confluenceCreateModeBtn')?.addEventListener('click', () => setConfluenceEditorMode('create'));
+      document.getElementById('confluenceEditModeBtn')?.addEventListener('click', () => setConfluenceEditorMode('edit'));
+      document.getElementById('confluenceLoadPageBtn')?.addEventListener('click', loadConfluencePageForEdit);
+      document.getElementById('confluencePreviewBtn')?.addEventListener('click', previewConfluencePage);
+      document.getElementById('confluencePublishBtn')?.addEventListener('click', publishConfluencePage);
+      for (const id of ['confluenceSpaceKey', 'confluencePageUrl', 'confluencePageTitle', 'confluencePageBody']) {
+        document.getElementById(id)?.addEventListener('input', invalidateConfluencePreview);
+      }
+      await refreshConfluenceStatus();
+    }
+
+    /* ============================================================
        15. BAŞLATMA
        ============================================================ */
     (function init() {
@@ -8622,6 +8647,7 @@ Hedefler:
       loadSystemPrompt();
       loadStreamingSetting();
       initRAG();
+      initConfluence();
       initBookmarks();
       initThemeColorPicker();
 

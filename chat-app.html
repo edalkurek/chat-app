@@ -1651,21 +1651,6 @@
         </details>
         </section>
 
-        <section id="confluenceSettings" class="rounded-xl border border-border bg-panel2/30 p-3.5 space-y-2.5">
-          <h3 class="text-xs font-semibold text-gray-200">Confluence bağlantısı</h3>
-          <label for="confluencePatInput" class="block text-xs text-gray-400">Kişisel erişim belirteci (PAT)</label>
-          <input id="confluencePatInput" type="password" autocomplete="off" spellcheck="false"
-            placeholder="Confluence PAT değerini girin"
-            class="w-full bg-base border border-border rounded-lg px-3 py-2.5 text-xs font-mono outline-none focus:border-accent text-gray-100" />
-          <p class="text-[11px] text-gray-500">Yalnızca PAT girin. Confluence adresi uygulamada tanımlıdır; PAT tarayıcıda veya indirilen ayarlarda saklanmaz.</p>
-          <div class="flex gap-2">
-            <button id="confluencePatSaveBtn" type="button" class="flex-1 rounded-lg bg-accent px-3 py-2 text-xs font-medium text-white">Kaydet</button>
-            <button id="confluencePatTestBtn" type="button" class="flex-1 rounded-lg border border-border px-3 py-2 text-xs text-gray-200">Bağlantıyı test et</button>
-            <button id="confluencePatClearBtn" type="button" class="rounded-lg border border-border px-3 py-2 text-xs text-gray-400">Kaldır</button>
-          </div>
-          <p id="confluencePatStatus" role="status" class="text-xs text-gray-400"></p>
-        </section>
-
 
         <div class="border-t border-border pt-4">
           <button id="downloadCloneBtn"
@@ -8437,16 +8422,20 @@ Hedefler:
     async function testConfluenceConnection() {
       const status = document.getElementById('confluencePatStatus');
       if (!confluenceStatus) return;
-      status.textContent = 'Bağlantı test ediliyor…';
+      if (status) status.textContent = 'Bağlantı test ediliyor…';
       try {
         const result = await confluenceRequest('/api/confluence-connection');
-        status.textContent = 'Bağlandı: ' + result.user;
-        status.className = 'text-xs text-emerald-400';
-        status.dataset.testResult = 'success';
+        if (status) {
+          status.textContent = 'Bağlandı: ' + result.user;
+          status.className = 'text-xs text-emerald-400';
+          status.dataset.testResult = 'success';
+        }
       } catch (error) {
-        status.textContent = 'Bağlantı kurulamadı: ' + error.message;
-        status.className = 'text-xs text-red-400';
-        status.dataset.testResult = 'error';
+        if (status) {
+          status.textContent = 'Bağlantı kurulamadı: ' + error.message;
+          status.className = 'text-xs text-red-400';
+          status.dataset.testResult = 'error';
+        }
       }
     }
 
